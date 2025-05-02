@@ -1,16 +1,16 @@
 #' @title Parameter structure setting
-#' Sets the parameters (speciation, extinction and transition) ids. Needed for 
+#' Sets the parameters (speciation, extinction and transition) ids. Needed for
 #' ML calculation ([secsse_ml()]).
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @return A list that includes the ids of the parameters for ML analysis.
 #' @examples
 #' traits <- sample(c(0,1,2), 45,replace = TRUE) #get some traits
 #' num_concealed_states <- 3
 #' param_posit <- id_paramPos(traits,num_concealed_states)
 #' @export
-#' @rawNamespace useDynLib(secsse, .registration = TRUE)
+#' @rawNamespace useDynLib(treeLL, .registration = TRUE)
 #' @rawNamespace import(Rcpp)
 #' @rawNamespace importFrom(RcppParallel, RcppParallelLibs)
 id_paramPos <- function(traits, num_concealed_states) { #noLint
@@ -91,9 +91,9 @@ create_q_matrix_int <- function(masterBlock,
 
 #' @title Basic Qmatrix
 #' Sets a Q matrix where double transitions are not allowed
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @return Q matrix that includes both examined and concealed states, it should
 #' be declared as the third element of idparslist.
 #' @description This function expands the Q_matrix, but it does so assuming
@@ -179,9 +179,9 @@ q_doubletrans <- function(traits, masterBlock, diff.conceal) {
 #' @title Data checking and trait sorting
 #' In preparation for likelihood calculation, it orders trait data according
 #' the tree tips
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @return Vector of traits
 #' @examples
 #' # Some data we have prepared
@@ -226,9 +226,9 @@ sortingtraits <- function(trait_info, phy) {
 #' @title Parameter structure setting for cla_secsse
 #' It sets the parameters (speciation, extinction and transition)
 #' IDs. Needed for ML calculation with cladogenetic options (cla_secsse_ml)
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @return A list that includes the ids of the parameters for ML analysis.
 #' @examples
 #'traits <- sample(c(0,1,2), 45,replace = TRUE) #get some traits
@@ -287,9 +287,9 @@ cla_id_paramPos <- function(traits, num_concealed_states) {
 
 #' @title Prepares the entire set of lambda matrices for cla_secsse.
 #' It provides the set of matrices containing all the speciation rates
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @return A list of lambdas, its length would be the same than the number of
 #' trait states * num_concealed_states..
 #' @export
@@ -404,7 +404,7 @@ check_tree <- function(phy, is_complete_tree) {
     }
     # using option = 2, which uses the variance, the default method until ape
     # 3.5. This seems to be less sensitive.
-    if (ape::is.ultrametric(phy, option = 2) == FALSE && 
+    if (ape::is.ultrametric(phy, option = 2) == FALSE &&
         is_complete_tree == FALSE) {
         stop("The tree needs to be ultrametric.")
     }
@@ -417,7 +417,7 @@ check_tree <- function(phy, is_complete_tree) {
 check_traits <- function(traits, sampling_fraction) {
     if (is.matrix(traits)) {
         if (length(sampling_fraction) != length(sort(unique(traits[, 1])))) {
-            stop("Sampling_fraction must have as many elements 
+            stop("Sampling_fraction must have as many elements
            as the number of traits.")
         }
 
@@ -430,7 +430,7 @@ check_traits <- function(traits, sampling_fraction) {
         }
     } else {
         if (length(sampling_fraction) != length(sort(unique(traits)))) {
-            stop("Sampling_fraction must have as many elements as 
+            stop("Sampling_fraction must have as many elements as
            the number of traits.")
         }
     }
@@ -444,7 +444,7 @@ check_traits <- function(traits, sampling_fraction) {
 check_root_state_weight <- function(root_state_weight, traits) {
     if (is.numeric(root_state_weight)) {
         #if (length(root_state_weight) != length(sort(unique(traits)))) {
-        #    stop("There need to be as many elements in root_state_weight 
+        #    stop("There need to be as many elements in root_state_weight
         #   as there are traits.")
         #}
         if (length(which(root_state_weight == 1)) != 1) {
@@ -457,7 +457,7 @@ check_root_state_weight <- function(root_state_weight, traits) {
         if (any(root_state_weight == "maddison_weights" |
                 root_state_weight == "equal_weights" |
                 root_state_weight == "proper_weights") == FALSE) {
-            stop("The root_state_weight must be any of 
+            stop("The root_state_weight must be any of
            maddison_weights, equal_weights, or proper_weights.")
         }
     }
@@ -512,7 +512,7 @@ transf_funcdefpar <- function(idparsfuncdefpar,
         list2env(y, envir = a_new_envir)
 
         if (is.numeric(value_func_defining_parm) == FALSE) {
-            stop("Something went wrong with the calculation of 
+            stop("Something went wrong with the calculation of
                  parameters in 'functions_param_struct'")
         }
         trparfuncdefpar <- c(trparfuncdefpar, value_func_defining_parm)
@@ -704,7 +704,7 @@ secsse_transform_parameters <- function(trparsopt,
 condition_root_edge <- function(mergeBranch2,
                                 nodeM) {
   # note that we don't do maddison conditioning here.
-  
+
 }
 
 
@@ -719,14 +719,14 @@ condition <- function(cond,
     if (cond == "no_cond") {
       return(mergeBranch2)
     }
-  
+
     lmb <- length(mergeBranch2)
     d <- length(lambdas)
-    
+
     if (is_root_edge) {
       return(mergeBranch2 / (1 - nodeM[1:d]))
     }
-    
+
     if (is.list(lambdas)) {
         if (cond == "maddison_cond") {
             pre_cond <- rep(NA, lmb) # nolint
@@ -827,10 +827,10 @@ create_states <- function(usetraits,
 
     for (iii in seq_along(traitStates)) {  # Initial state probabilities
         StatesPresents <- d + iii
-        toPlaceOnes <- StatesPresents + 
+        toPlaceOnes <- StatesPresents +
                        length(traitStates) * (0:(num_concealed_states - 1))
         tipSampling <- 1 * sampling_fraction
-        states[which(usetraits == traitStates[iii]), 
+        states[which(usetraits == traitStates[iii]),
                toPlaceOnes] <- tipSampling[iii]
     }
 
@@ -838,10 +838,10 @@ create_states <- function(usetraits,
     extinct_species <- geiger::is.extinct(phy)
     if (!is.null(extinct_species)) {
       for (i in seq_along(extinct_species)) {
-        
-        entry <- mus * states[which(phy$tip.label == extinct_species[i]), 
+
+        entry <- mus * states[which(phy$tip.label == extinct_species[i]),
                               (d + 1):ly]
-        
+
         states[which(phy$tip.label == extinct_species[i]), (d + 1):ly] <-
           mus * states[which(phy$tip.label == extinct_species[i]), (d + 1):ly]
       }
@@ -874,7 +874,7 @@ build_states <- function(phy,
     if (length(phy$tip.label) != nrow(traits)) {
      stop("Number of species in the tree must be the same as in the trait file")
     }
-  
+
     # if there are traits that are not in the observed tree,
     # the user passes these themselves.
     # yes, this is a weird use-case
@@ -888,7 +888,7 @@ build_states <- function(phy,
             traitStates <- 1:num_unique_traits
         }
     }
-    
+
     obs_traits <- unique(traits[, 1])
     obs_traits <- obs_traits[!is.na(obs_traits)]
     if (sum(obs_traits %in% traitStates) != length(obs_traits)) {
@@ -1063,7 +1063,7 @@ print_init_ll <- function(initloglik) {
                initloglik)
     init_ll_msg3 <- c("Optimizing the likelihood - this may take a while.")
     message(paste(init_ll_msg1, init_ll_msg2, init_ll_msg3, sep = "\n"))
-    
+
     invisible(NULL)
 }
 
@@ -1078,41 +1078,41 @@ set_and_check_structure_func <- function(idparsfuncdefpar,
   structure_func <- list()
   structure_func[[1]] <- idparsfuncdefpar
   structure_func[[2]] <- functions_defining_params
-  
+
   # checks specific to when the user has specified factors:
-  
+
   if (is.null(idfactorsopt) == FALSE) {
     if (length(initfactors) != length(idfactorsopt)) {
       stop("idfactorsopt should have the same length as initfactors.")
     }
   }
-  
+
   if (is.list(functions_defining_params) == FALSE) {
     stop(
-      "The argument functions_defining_params should be a list of 
+      "The argument functions_defining_params should be a list of
             functions. See example and vignette"
     )
   }
-  
+
   if (length(functions_defining_params) != length(idparsfuncdefpar)) {
     stop(
-      "The argument functions_defining_params should have the same 
+      "The argument functions_defining_params should have the same
             length than idparsfuncdefpar"
     )
   }
-  
+
   if (anyDuplicated(c(idparsopt, idparsfix, idparsfuncdefpar)) != 0) {
-    stop("At least one element was asked to be fixed, 
+    stop("At least one element was asked to be fixed,
              estimated or a function at the same time")
   }
-  
+
   if (identical(as.numeric(sort(
     c(idparsopt, idparsfix, idparsfuncdefpar)
   )), as.numeric(sort(unique(
     unlist(idparslist)
   )))) == FALSE) {
     stop(
-      "All elements in idparslist must be included in either 
+      "All elements in idparslist must be included in either
             idparsopt or idparsfix or idparsfuncdefpar "
     )
   }
@@ -1121,7 +1121,7 @@ set_and_check_structure_func <- function(idparsfuncdefpar,
   } else {
     structure_func[[3]] <- idfactorsopt
   }
-  
+
   return(structure_func)
 }
 
@@ -1136,27 +1136,27 @@ check_ml_conditions <- function(traits,
     warning("you are setting a model where some species have more
             than one trait state")
   }
-  
+
   if (length(initparsopt) != length(idparsopt)) {
     stop("initparsopt must be the same length as idparsopt.
              Number of parameters to optimize does not match the number of
              initial values for the search")
   }
-  
+
   if (length(idparsfix) != length(parsfix)) {
     stop("idparsfix and parsfix must be the same length.
              Number of fixed elements does not match the fixed figures")
   }
-  
+
   if (anyDuplicated(c(idparsopt, idparsfix)) != 0) {
     stop("at least one element was asked to be both fixed and estimated ")
   }
-  
+
   if (anyDuplicated(c(unique(sort(as.vector(idparslist[[3]]))),
                       idparsfix[which(parsfix == 0)])) != 0) {
     warning("Note: you set some transitions as impossible to happen.")
   }
-  
+
   if (min(initparsopt) <= 0.0) {
     stop("All elements in init_parsopt need to be larger than 0")
   }
@@ -1169,21 +1169,21 @@ get_trait_states <- function(idparslist,
   trait_names <- names(idparslist[[1]])
   if (is.null(trait_names)) trait_names <- names(idparslist[[2]])
   if (is.null(trait_names)) trait_names <- colnames(idparslist[[3]])
-  
-  
+
+
   if (is.null(trait_names)) return(NULL)
 
   # by convention, hidden states are appended A,B,C letters
   num_traits <- length(idparslist[[2]]) / num_concealed_states
   focal_names <- trait_names[1:num_traits]
-  
+
   for (i in seq_along(focal_names)) {
     focal_names[i] <- substr(focal_names[i], 1, nchar(focal_names[i]) - 1)
   }
-  
+
   if (display_warning) {
     output <- "Deduced names and order of used states to be: "
-    
+
     for (i in seq_along(focal_names)) {
       if (i != length(focal_names)) {
         output <- paste0(output, focal_names[i], ", ")
@@ -1191,8 +1191,8 @@ get_trait_states <- function(idparslist,
         output <- paste0(output, focal_names[i])
       }
     }
-    
-    rlang::warn(message = paste0(output, "\n", "if this is incorrect, consider passing states as matching numeric 
+
+    rlang::warn(message = paste0(output, "\n", "if this is incorrect, consider passing states as matching numeric
   ordering, e.g. 1 for the first state, 2 for the second etc."))
   }
 
@@ -1224,11 +1224,11 @@ get_rates <- function(lambda_list, all_states, lambda_order) {
     local_v <- extract_data(lambda_list[[i]])
     colnames(local_v) <- c("x", "y", "rate")
     local_v <- as.data.frame(local_v)
-    
+
     local_v$focal_rate <- lambda_order[i]
     to_plot <- rbind(to_plot, local_v)
   }
-  
+
   to_plot$x <- factor(to_plot$x, levels = all_states)
   to_plot$y <- factor(to_plot$y, levels = rev(all_states))
   to_plot$focal_rate <- factor(to_plot$focal_rate, levels = all_states)
@@ -1239,15 +1239,15 @@ get_rates <- function(lambda_list, all_states, lambda_order) {
 #' function to visualize the structure of the idparslist
 #' @param idparslist idparslist setup list
 #' @param state_names names of all states (including concealed states)
-#' @return list with two ggplot objects: plot_qmat which visualizes the 
-#' q_matrix, and plot_lambda which visualizes the lambda matrices. 
+#' @return list with two ggplot objects: plot_qmat which visualizes the
+#' q_matrix, and plot_lambda which visualizes the lambda matrices.
 #' @export
 #' @examples
 #' idparslist <- list()
 #' focal_matrix <-
 #' secsse::create_default_lambda_transition_matrix(state_names = c("1", "2"),
 #'                                                 model = "CR")
-#' idparslist[[1]] <- 
+#' idparslist[[1]] <-
 #'   secsse::create_lambda_list(state_names = c("1", "2"),
 #'                              num_concealed_states = 2,
 #'                              transition_matrix = focal_matrix,
@@ -1266,37 +1266,37 @@ get_rates <- function(lambda_list, all_states, lambda_order) {
 #' p <- plot_idparslist(idparslist, state_names = names(idparslist[[1]]))
 #' p$plot_lambda
 #' p$plot_qmat
-plot_idparslist <- function(idparslist, 
+plot_idparslist <- function(idparslist,
                             state_names) {
-  
+
   v <- extract_data(idparslist[[3]])
   colnames(v) <- c("x", "y", "rate")
   v <- as.data.frame(v)
-  
+
   v$x <- factor(v$x, levels = state_names)
   v$y <- factor(v$y, levels = rev(state_names))
-  
-  plot_qmat <- 
-    ggplot2::ggplot(v, 
-                    ggplot2::aes(x = .data[["x"]], 
-                                 y = .data[["y"]], 
+
+  plot_qmat <-
+    ggplot2::ggplot(v,
+                    ggplot2::aes(x = .data[["x"]],
+                                 y = .data[["y"]],
                                  fill = .data[["rate"]])) +
     ggplot2::geom_tile()
-  
+
   to_plot <- get_rates(idparslist[[1]], state_names, state_names)
-  
+
   to_plot$x <- factor(to_plot$x, levels = state_names)
   to_plot$y <- factor(to_plot$y, levels = rev(state_names))
   to_plot$focal_rate <- factor(to_plot$focal_rate, levels = state_names)
-  
-  plot_lambda <- 
-    ggplot2::ggplot(to_plot, 
-                    ggplot2::aes(x = .data[["x"]], 
-                                 y = .data[["y"]], 
+
+  plot_lambda <-
+    ggplot2::ggplot(to_plot,
+                    ggplot2::aes(x = .data[["x"]],
+                                 y = .data[["y"]],
                                  fill = .data[["rate"]])) +
     ggplot2::geom_tile() +
     ggplot2::facet_wrap(~.data[["focal_rate"]])
-  
+
   return(list("plot_qmat" = plot_qmat,
               "plot_lambda" = plot_lambda))
 }

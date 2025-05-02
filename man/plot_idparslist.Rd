@@ -23,7 +23,7 @@ idparslist <- list()
 focal_matrix <-
 secsse::create_default_lambda_transition_matrix(state_names = c("1", "2"),
                                                 model = "CR")
-idparslist[[1]] <- 
+idparslist[[1]] <-
   secsse::create_lambda_list(state_names = c("1", "2"),
                              num_concealed_states = 2,
                              transition_matrix = focal_matrix,
