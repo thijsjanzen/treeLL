@@ -48,9 +48,9 @@ get_state_names <- function(state_names, num_concealed_states) {
 #' When choosing the CTD model, rates associated with observed states are now
 #' re-distributed to concealed states. This implicitly assumes that the number
 #' of observed and concealed states is identical.
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @examples
 #' trans_matrix <- c(0, 0, 0, 1)
 #' trans_matrix <- rbind(trans_matrix, c(1, 1, 1, 2))
@@ -85,19 +85,19 @@ create_lambda_list <- function(state_names = c(0, 1),
   transition_list <- convert_transition_list(transition_matrix, state_names)
 
   if (model == "ETD" || model == "CR") {
-  
+
     # ETD settings
     for (i in seq_len(nrow(transition_list))) {
       focal_state <- transition_list[i, 1]
       daughter1   <- transition_list[i, 2]
       daughter2   <- transition_list[i, 3]
       target_rate <- transition_list[i, 4]
-  
+
       for (j in seq_len(num_concealed_states)) {
         incr <- (j - 1) * num_obs_states
         focal_rate <- target_rate
         #if (model == "CTD") focal_rate <- concealed_spec_rates[j]
-  
+
         lambdas[[focal_state + incr]][daughter1 + incr,
                                       daughter2 + incr] <- focal_rate
         lambdas[[focal_state + incr]][daughter2 + incr,
@@ -105,16 +105,16 @@ create_lambda_list <- function(state_names = c(0, 1),
       }
     }
   }
-  
+
   if (model == "CTD") {
     for (i in seq_len(nrow(transition_list))) {
       focal_state <- (transition_list[i, 1] - 1) * num_obs_states
       daughter1   <- (transition_list[i, 2] - 1) * num_obs_states
       daughter2   <- (transition_list[i, 3] - 1) * num_obs_states
       target_rate <- transition_list[i, 4]
-      
+
       for (incr in 1:num_concealed_states) {
-        
+
         lambdas[[focal_state + incr]][daughter1 + incr,
                                       daughter2 + incr] <- target_rate
         lambdas[[focal_state + incr]][daughter2 + incr,
@@ -127,9 +127,9 @@ create_lambda_list <- function(state_names = c(0, 1),
 
 #' Helper function to neatly setup a Q matrix, without transitions to
 #' concealed states (only observed transitions shown)
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @return transition matrix
 #' @examples
 #' shift_matrix <- c(0, 1, 5)
@@ -164,7 +164,7 @@ create_q_matrix <- function(state_names,
   trans_matrix <- secsse::q_doubletrans(traits = state_names,
                                         masterBlock = trans_matrix,
                                         diff.conceal = diff.conceal)
-  
+
   all_state_names <- get_state_names(state_names, num_concealed_states)
   colnames(trans_matrix) <- all_state_names
   rownames(trans_matrix) <- all_state_names
@@ -174,34 +174,34 @@ create_q_matrix <- function(state_names,
 }
 
 #' Function to expand an existing q_matrix to a number of concealed states
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @note This is highly similar to [q_doubletrans()].
-#' 
+#'
 #' @return updated q matrix
 #' @export
 expand_q_matrix <- function(q_matrix,
                             num_concealed_states,
                             diff.conceal = FALSE) {
-  
+
   warning("This function is deprecated, please use q_doubletrans, piping result
           to q_doubletrans, this may introduce inaccuracies.")
-  
+
   traits <- get_state_names(names(q_matrix), num_concealed_states)
-  
+
   return(secsse::q_doubletrans(traits = traits,
                                masterBlock = q_matrix,
                                diff.conceal = diff.conceal))
 }
 
 #' Helper function to create a default `shift_matrix` list
-#' 
+#'
 #' This function generates a generic shift matrix to be used with the function
 #' [create_q_matrix()].
-#' 
+#'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @examples
 #' shift_matrix <- create_default_shift_matrix(state_names = c(0, 1),
 #'                                             num_concealed_states = 2,
@@ -235,13 +235,13 @@ create_default_shift_matrix <- function(state_names = c("0", "1"),
 }
 
 #' Helper function to create a default lambda list
-#' 
+#'
 #' This function generates a generic lambda list, assuming no transitions
 #' between states, e.g. a species of observed state 0 generates daughter
 #' species with state 0 as well.
 #'
 #' @inheritParams default_params_doc
-#' 
+#'
 #' @examples
 #' lambda_matrix <-
 #'      create_default_lambda_transition_matrix(state_names = c(0, 1),
@@ -319,13 +319,13 @@ replace_matrix <- function(focal_matrix,
       for (j in seq_len(ncol(focal_matrix))) {
         if (focal_matrix[i, j] != 0 && !is.na(focal_matrix[i, j]))  {
           index <- focal_matrix[i, j]
-          
+
           new_val <- params[index]
           if (index %in% names(entries)) {
             mult <- 1 / entries[names(entries) == index]
             new_val <- new_val * mult
           }
-          
+
           focal_matrix[i, j] <- new_val
         }
       }
@@ -344,7 +344,7 @@ replace_matrix <- function(focal_matrix,
 }
 
 #' Helper function to enter parameter value on their right place
-#' 
+#'
 #' @inheritParams default_params_doc
 #' @return lambda matrices, `q_matrix` or mu vector with the correct values in
 #'   their right place.
@@ -383,9 +383,9 @@ extract_answ <- function(indic_mat,
 }
 
 
-#' Extract parameter values out of the result of a maximum likelihood inference 
+#' Extract parameter values out of the result of a maximum likelihood inference
 #' run
-#' 
+#'
 #' @inheritParams default_params_doc
 
 #' @return Vector of parameter estimates.
