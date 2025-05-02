@@ -21,11 +21,6 @@ master_loglik <- function(parameter,
   parameter[[3]][is.na(parameter[[3]])] <- 0
   q_matrix <- parameter[[3]]
 
-  num_modeled_traits <- ncol(q_matrix) / floor(num_concealed_states)
-
-  traitStates = get_trait_states(parameter,
-                                 num_concealed_states, display_warning)
-
   if (is.null(setting_calculation)) {
     check_input(traits,
                 phy,
@@ -50,8 +45,7 @@ master_loglik <- function(parameter,
 
   RcppParallel::setThreadOptions(numThreads = num_threads)
 
-  calcul <- calc_ll_cpp(rhs = "ode_cla",
-                        ances = ances,
+  calcul <- calc_ll_cpp(ances = ances,
                         states = states,
                         forTime = forTime,
                         lambdas = lambdas,

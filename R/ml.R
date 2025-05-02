@@ -52,19 +52,14 @@ master_ml <- function(phy,
 
   optimpars <- c(tol, maxiter, verbose)
 
-  num_modeled_traits <- length(idparslist[[1]]) / num_concealed_states
-
-
   setting_calculation <- build_initStates_time(phy,
                                                traits,
-                                               num_concealed_states,
                                                sampling_fraction,
                                                is_complete_tree,
                                                mus,
                                                num_modeled_traits,
                                                traitStates =
-                                                 get_trait_states(idparslist,
-                                                                  num_concealed_states, FALSE))
+                                                 get_trait_states(idparslist, 1, FALSE))
 
   ll_verbose <- ifelse(optimmethod == "subplex",
                        verbose,
@@ -174,8 +169,6 @@ loglik_choosepar <- function(trparsopt,
     loglik <- master_loglik(parameter = pars1,
                             phy = phy,
                             traits = traits,
-                            num_concealed_states =
-                              num_concealed_states,
                             cond = cond,
                             root_state_weight =
                               root_state_weight,

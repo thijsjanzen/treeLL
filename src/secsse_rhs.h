@@ -12,7 +12,7 @@
 #include <vector>
 
 
-namespace secsse {
+namespace loglik {
 
   template <typename T>
   using rvector = RcppParallel::RVector<T>;
@@ -20,7 +20,7 @@ namespace secsse {
   template <typename T>
   using rmatrix = RcppParallel::RMatrix<T>;
 
-  
+
   template <typename T>
   class vector_view_t {
   public:
@@ -37,14 +37,6 @@ namespace secsse {
     size_t n_ = 0;
   };
 
-
-  enum class OdeVariant {
-    normal_tree,
-    complete_tree,
-    ct_condition
-  };
-
-
   inline auto flat_q_matrix(const Rcpp::NumericMatrix& rq) {
     assert(rq.nrow() == rq.ncol());
     const auto d = static_cast<size_t>(rq.nrow());
@@ -59,78 +51,12 @@ namespace secsse {
     return q;
   }
 
-
-  template <OdeVariant variant>
-  class ode_standard {
-    rvector<const double> l_;
-    rvector<const double> m_;
-    const std::vector<double> q_;
-
-  public:
-    ode_standard(const Rcpp::NumericVector& l,
-                 const Rcpp::NumericVector& m,
-                 const Rcpp::NumericMatrix& q)
-    : l_(l), m_(m), q_(flat_q_matrix(q)) {
-    }
-
-    size_t size() const noexcept { return l_.size(); }
-
-    void mergebranch(const std::vector<double>& N,
-                     const std::vector<double>& M,
-                     std::vector<double>& out) const {
-      const auto d = size();
-      assert(2 * d == out.size());
-      for (size_t i = 0; i < d; ++i) {
-        out[i] = M[i];
-        out[i + d] = M[i + d] * N[i + d] * l_[i];
-      }
-    }
-
-    void operator()(const std::vector<double>& x,
-                    std::vector<double>& dxdt,   // NOLINT [runtime/references]
-                    const double /* t */) const
-    {
-      const auto d = size();
-      if  constexpr (variant == OdeVariant::normal_tree) {
-        // normal tree
-        auto qv = vector_view_t<const double>{q_.data(), d};
-        for (size_t i = 0; i < d; ++i, qv.advance(d)) {
-          const double t0 = l_[i] + m_[i];
-          const double t1 = l_[i] * x[i];
-          double dx0 = m_[i] + (t1 - t0) * x[i];
-          double dxd = (2 * t1 - t0) * x[i + d];
-          for (size_t j = 0; j < d; ++j) {
-            dx0 += (x[j] - x[i]) * qv[j];
-            dxd += (x[j + d] - x[i + d]) * qv[j];
-          }
-          dxdt[i] = dx0;
-          dxdt[i + d] = dxd;
-        }
-      }
-      else if constexpr ((variant == OdeVariant::complete_tree) || 
-                         (variant == OdeVariant::ct_condition)) {
-        // complete tree including extinct branches or conditioning
-        auto qv = vector_view_t<const double>{q_.data(), d};
-        for (size_t i = 0; i < d; ++i, qv.advance(d)) {
-          double dx0 = (m_[i] - (l_[i] * x[i])) * (1 - x[i]);
-          double dxd = -(l_[i] + m_[i]) * x[i + d];
-          for (size_t j = 0; j < d; ++j) {
-            dx0 += (x[j] - x[i]) * qv[j];
-            dxd += (x[j + d] - x[i + d]) * qv[j];
-          }
-          dxdt[i] = dx0;
-          dxdt[i + d] = dxd;
-        }
-      }
-    }
-  };
-
-  struct ode_cla_precomp_t {
+  struct ode_rhs_precomp_t {
     std::vector<double> ll;               // flat, transposed ll matrices
     std::vector<std::vector<size_t>> nz;  // indices of non-zero values
     std::vector<double> lambda_sum;
 
-    explicit ode_cla_precomp_t(const Rcpp::List& Rll) {
+    explicit ode_rhs_precomp_t(const Rcpp::List& Rll) {
       const auto n = Rll.size();
       auto probe = Rcpp::as<Rcpp::NumericMatrix>(Rll[0]);
       assert(probe.nrow() == probe.ncol());
@@ -155,16 +81,15 @@ namespace secsse {
     }
   };
 
-
-  template <OdeVariant variant>
-  class ode_cla {
-    const rvector<const double> m_;
+  class ode_rhs {
+    const rvector<const double> m_; // extinction rates
     const std::vector<double> q_;   // flat, transposed q matrix
-    const ode_cla_precomp_t prec_;
+    const ode_rhs_precomp_t prec_;  // precomputed speciation rate matrices
 
   public:
 
-    ode_cla(const Rcpp::List ll,
+    // constructor
+    ode_rhs(const Rcpp::List ll,
             const Rcpp::NumericVector& m,
             const Rcpp::NumericMatrix& q)
     : m_(m), q_(flat_q_matrix(q)), prec_(ll) {
@@ -175,6 +100,8 @@ namespace secsse {
     void mergebranch(const std::vector<double>& N,
                      const std::vector<double>& M,
                      std::vector<double>& out) const {
+
+      // substitute the code below with your own node-merging code
       const auto d = size();
       assert(2 * d == out.size());
       auto llv = vector_view_t<const double>(prec_.ll.data(), d);
@@ -190,13 +117,16 @@ namespace secsse {
       }
     }
 
+    // this is the dx/dt calculation // true rhs that gets integrated
+    // along the branches
     void operator()(const std::vector<double>& x,
                     std::vector<double>& dxdt,
                     const double /* t */ ) const
     {
-      
+
+      // substitute with your own code below:
+
       const auto d = size();
-      if constexpr (variant == OdeVariant::normal_tree) {
         auto llv = vector_view_t<const double>(prec_.ll.data(), d);
         auto nzv = prec_.nz.begin();
         auto qv = vector_view_t<const double>{q_.data(), d};
@@ -214,33 +144,6 @@ namespace secsse {
           dxdt[i] = dx0 + m_[i] - (prec_.lambda_sum[i] + m_[i]) * x[i];
           dxdt[i + d] = dxd - (prec_.lambda_sum[i] + m_[i]) * x[i + d];
         }
-      }
-      else if constexpr (variant == OdeVariant::complete_tree) {
-        // complete tree including extinct branches
-        auto qv = vector_view_t<const double>{q_.data(), d};
-        for (size_t i = 0; i < d; ++i, qv.advance(d)) {
-          double dxd = -(prec_.lambda_sum[i] + m_[i]) * x[i + d];
-          for (size_t j = 0; j < d; ++j) {
-            dxd += (x[j + d] - x[i + d]) * qv[j];
-          }
-          dxdt[i + d] = dxd;
-        }
-      }
-      else if constexpr (variant == OdeVariant::ct_condition) {
-        auto llv = vector_view_t<const double>(prec_.ll.data(), d);
-        auto nzv = prec_.nz.begin();
-        auto qv = vector_view_t<const double>{q_.data(), d};
-        for (size_t i = 0; i < d; ++i, qv.advance(d)) {
-          double dx0 = m_[i] * (1 - x[i]);
-          for (size_t j = 0; j < d; ++j, llv.advance(d), ++nzv) {
-            dx0 += (x[j] - x[i]) * qv[j];
-            for (auto k : *nzv) {
-              dx0 += llv[k] * (x[j] * x[k] - x[i]);
-            }
-          }
-          dxdt[i] = dx0;
-        }
-      }
     }
   };
 } // namespace secsse

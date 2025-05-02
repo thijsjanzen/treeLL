@@ -35,10 +35,9 @@ using bstime_t = double;
 #endif   // USE_BULRISCH_STOER_PATCH
 
 // forward declare
-namespace secsse {
-  template <typename RaIt>
-  double normalize_loglik(RaIt first, RaIt last);
-}
+template <typename RaIt>
+double normalize_loglik(RaIt first, RaIt last);
+
 
 namespace odeintcpp {
   namespace bno = boost::numeric::odeint;
@@ -61,16 +60,16 @@ namespace odeintcpp {
                  double t0, double t1, double dt,
                  NORMALIZER& norm) {
 
-    
+
     using time_type = typename STEPPER::time_type;
-    
+
     if constexpr (std::is_same<NORMALIZER, normalize>::value) {
-    
+
       auto observer = [&norm](STATE &x, double t) {
         auto d = x.size() / 2;
-        norm.loglik += secsse::normalize_loglik(x.begin() + d, x.end());
+        norm.loglik += normalize_loglik(x.begin() + d, x.end());
       };
-      
+
       bno::integrate_adaptive(stepper, std::ref(ode), (*y),
                               time_type{t0}, time_type{t1}, time_type{dt},
                               observer);
@@ -79,7 +78,7 @@ namespace odeintcpp {
                               time_type{t0}, time_type{t1}, time_type{dt});
     }
   }
-  
+
 
   namespace {
 
@@ -106,11 +105,11 @@ namespace odeintcpp {
                  double rtol,
                  NORMALIZER&  norm) {
     static_assert(is_unique_ptr<ODE>::value ||
-                  std::is_pointer_v<ODE>, 
+                  std::is_pointer_v<ODE>,
                   "ODE shall be pointer or unique_ptr type");
     if ("odeint::runge_kutta_cash_karp54" == stepper_name) {
-      integrate(bno::make_controlled<bno::runge_kutta_cash_karp54<STATE>>(atol, 
-                                                                          rtol), 
+      integrate(bno::make_controlled<bno::runge_kutta_cash_karp54<STATE>>(atol,
+                                                                          rtol),
                 *ode, y, t0, t1, dt, norm);
     } else if ("odeint::runge_kutta_fehlberg78" == stepper_name) {
       integrate(bno::make_controlled<bno::runge_kutta_fehlberg78<STATE>>(atol,
@@ -123,7 +122,7 @@ namespace odeintcpp {
     } else if ("odeint::bulirsch_stoer" == stepper_name) {
       // no controlled stepper for bulirsch stoer
       integrate(bno::bulirsch_stoer<STATE, double, STATE, bstime_t>(atol,
-                                                                    rtol), 
+                                                                    rtol),
                                                            *ode, y, t0, t1, dt, norm);
     } else if ("odeint::runge_kutta4" == stepper_name) {
       integrate(bno::runge_kutta4<STATE>(), *ode, y, t0, t1, dt, norm);
