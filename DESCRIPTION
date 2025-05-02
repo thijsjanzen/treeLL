@@ -1,0 +1,45 @@
+Package: treeLL
+Type: Package
+Title: Bare-bones package allowing for implemenation of tree-likelihood
+Version: 0.0.1
+Date: 2025-05-02
+License: GPL (>= 3) | file LICENSE
+Authors@R: c(
+ person(given = "Thijs",
+        family = "Janzen",
+        email = "t.janzen@rug.nl",
+        role = c("cre", "aut"),
+        comment = c(ORCID = "0000-0002-4162-1140")),
+ person(given = "Hanno",
+        family = "Hildenbrandt",
+        email = "h.hildenbrandt@rug.nl",
+        role = "ctb",
+        comment = c(ORCID = "0000-0002-6784-1037")))
+Description: Provides a back-bone architecture that allows for integrating a rhs along a tree.
+Depends: R (>= 4.2.0)
+Imports: 
+ utils,
+ DDD (>= 5.0),
+ ape,
+ geiger,
+ Rcpp (>= 1.0.10),
+ RcppParallel,
+ rlang
+Suggests: 
+ diversitree,
+ phytools,
+ testthat,
+ subplex,
+ knitr,
+ rmarkdown
+LinkingTo: 
+ Rcpp,
+ RcppParallel,
+ BH (>= 1.81.0-1)
+NeedsCompilation: yes
+SystemRequirements: C++17
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: knitr
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
