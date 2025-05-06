@@ -7,6 +7,8 @@ construct_row <- function(v, state_names) {
   return(out)
 }
 
+
+
 #' @keywords internal
 convert_transition_list <- function(transition_list, state_names) {
   res <- apply(transition_list, 1, construct_row, state_names)
@@ -134,8 +136,10 @@ create_lambda_list <- function(state_names = c(0, 1),
 #' @examples
 #' shift_matrix <- c(0, 1, 5)
 #' shift_matrix <- rbind(shift_matrix, c(1, 0, 6))
-#' q_matrix <- secsse::create_q_matrix(state_names = c(0, 1),
-#'                                     num_concealed_states = 2,
+#' shift_matrix <- rbind(shift_matrix, c(0, 2, 3))
+#' shift_matrix <- rbind(shift_matrix, c(2, 0, 4))
+#' q_matrix <- secsse::create_q_matrix(state_names = c(0, 1, 2),
+#'                                     num_concealed_states = 3,
 #'                                     shift_matrix = shift_matrix,
 #'                                     diff.conceal = TRUE)
 #' @export
@@ -273,6 +277,11 @@ create_default_lambda_transition_matrix <- function(state_names = c("0", "1"),
 #'
 #' @return mu vector
 #' @export
+
+
+
+
+
 create_mu_vector <- function(state_names,
                              num_concealed_states,
                              model = "CR",
@@ -307,6 +316,118 @@ create_mu_vector <- function(state_names,
   names(mus) <- all_names
   return(mus)
 }
+
+
+
+create_lambdaa_vector <- function(state_names,
+                             num_concealed_states,
+                             model = "CR",
+                             lambda_list) {
+  focal_rate <- 1 + max(unlist(lambda_list), na.rm = TRUE)
+
+  if (!(model %in% c("CR", "ETD", "CTD"))) {
+    stop("only CR, ETD or CTD are specified")
+  }
+
+  all_names <- get_state_names(state_names, num_concealed_states)
+
+  lambdaas <- rep(focal_rate, length(all_names))
+
+  num_obs_states <- length(state_names)
+
+  if (model == "ETD") {
+    for (i in 1:num_obs_states) {
+      indices <- seq(i, length(lambdaas), by = num_concealed_states)
+      lambdaas[indices] <- focal_rate
+      focal_rate <- focal_rate + 1
+    }
+  }
+  if (model == "CTD") {
+    lambdaas <- c()
+    for (i in 1:num_obs_states) {
+      lambdaas <- c(lambdaas, rep(focal_rate, num_concealed_states))
+      focal_rate <- focal_rate + 1
+    }
+  }
+
+  names(lambdaas) <- all_names
+  return(lambdaas)
+}
+
+
+create_lambdac_vector <- function(state_names,
+                                  num_concealed_states,
+                                  model = "CR",
+                                  lambda_list) {
+  focal_rate <- 1 + max(unlist(lambda_list), na.rm = TRUE)
+
+  if (!(model %in% c("CR", "ETD", "CTD"))) {
+    stop("only CR, ETD or CTD are specified")
+  }
+
+  all_names <- get_state_names(state_names, num_concealed_states)
+
+  lambdacs <- rep(focal_rate, length(all_names))
+
+  num_obs_states <- length(state_names)
+
+  if (model == "ETD") {
+    for (i in 1:num_obs_states) {
+      indices <- seq(i, length(lambdacs), by = num_concealed_states)
+      lambdacs[indices] <- focal_rate
+      focal_rate <- focal_rate + 1
+    }
+  }
+  if (model == "CTD") {
+    lambdacs <- c()
+    for (i in 1:num_obs_states) {
+      lambdaas <- c(lambdacs, rep(focal_rate, num_concealed_states))
+      focal_rate <- focal_rate + 1
+    }
+  }
+
+  names(lambdacs) <- all_names
+  return(lambdacs)
+}
+
+create_gamma_vector <- function(state_names,
+                                  num_concealed_states,
+                                  model = "CR",
+                                  lambda_list) {
+  focal_rate <- 1 + max(unlist(lambda_list), na.rm = TRUE)
+
+  if (!(model %in% c("CR", "ETD", "CTD"))) {
+    stop("only CR, ETD or CTD are specified")
+  }
+
+  all_names <- get_state_names(state_names, num_concealed_states)
+
+  gammas <- rep(focal_rate, length(all_names))
+
+  num_obs_states <- length(state_names)
+
+  if (model == "ETD") {
+    for (i in 1:num_obs_states) {
+      indices <- seq(i, length(gammas), by = num_concealed_states)
+      gammas[indices] <- focal_rate
+      focal_rate <- focal_rate + 1
+    }
+  }
+  if (model == "CTD") {
+    gammas <- c()
+    for (i in 1:num_obs_states) {
+      gammas <- c(gammas, rep(focal_rate, num_concealed_states))
+      focal_rate <- focal_rate + 1
+    }
+  }
+
+  names(gammas) <- all_names
+  return(gammas)
+}
+
+
+
+
 
 #' @keywords internal
 replace_matrix <- function(focal_matrix,
