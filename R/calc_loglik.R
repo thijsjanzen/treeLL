@@ -1,3 +1,17 @@
+calc_init_state <- function(trait) {
+  out <- rep(7, 0)
+  if (trait == 0) {
+    out <- c(1, 0, 0, 0, 0, 0, 1)
+  }
+  if (trait == 1) {
+    out <- c(0, 1, 0, 0, 0, 0, 1)
+  }
+  return(out)
+}
+
+
+
+
 #' @keywords internal
 master_loglik <- function(parameter,
                           phy,
@@ -16,30 +30,27 @@ master_loglik <- function(parameter,
                           display_warning = TRUE,
                           use_normalization = TRUE) {
 
-  lambdas <- parameter[[1]]
-  mus <- parameter[[2]]
-  parameter[[3]][is.na(parameter[[3]])] <- 0
-  q_matrix <- parameter[[3]]
+  lambda_c <- parameter[[1]]
+  lambda_a <- parameter[[2]]
+  mus <- parameter[[3]]
+  gammas <- parameter[[4]]
+  qs <- parameter[[5]]
+  p_value <- parameter[[6]]
 
-  if (is.null(setting_calculation)) {
-    check_input(traits,
-                phy,
-                sampling_fraction,
-                root_state_weight,
-                is_complete_tree)
-    setting_calculation <- build_initStates_time(phy,
-                                                 traits,
-                                                 num_concealed_states,
-                                                 sampling_fraction,
-                                                 is_complete_tree,
-                                                 mus,
-                                                 num_modeled_traits,
-                                                 traitStates = traitStates)
+  number_of_lineages <- length(phy$tip.label)
+
+  states <- matrix(nrow = number_of_lineages + phy$Nnode,
+                   ncol = 7,
+                   data = NA)
+
+  for (i in 1:traits) {
+    states[i, ] <- calc_init_state(traits[i])
   }
 
-  states <- setting_calculation$states
-  forTime <- setting_calculation$forTime
-  ances <- setting_calculation$ances
+  phy$node.label <- NULL
+  split_times <- sort(event_times(phy), decreasing = FALSE)
+  ances <- as.numeric(names(split_times))
+  forTime <- cbind(phy$edge, phy$edge.length)
 
   d <- ncol(states) / 2
 
@@ -48,9 +59,12 @@ master_loglik <- function(parameter,
   calcul <- calc_ll_cpp(ances = ances,
                         states = states,
                         forTime = forTime,
-                        lambdas = lambdas,
+                        lambda_cs = lambda_c,
+                        lambda_as = lambda_a,
                         mus = mus,
-                        Q = q_matrix,
+                        gammas = gammas,
+                        qs = qs,
+                        p = p_value,
                         method = method,
                         atol = atol,
                         rtol = rtol,
@@ -63,20 +77,7 @@ master_loglik <- function(parameter,
 
   if (length(nodeM) > 2 * d) nodeM <- nodeM[1:(2 * d)]
 
-  ## At the root
-  weight_states <- get_weight_states(root_state_weight,
-                                     num_concealed_states,
-                                     mergeBranch,
-                                     lambdas,
-                                     nodeM,
-                                     d,
-                                     is_cla = using_cla)
-
-  wholeLike <- sum((mergeBranch2) * (weight_states))
-
-  LL <- log(wholeLike) +
-    loglik -
-    penalty(pars = parameter, loglik_penalty = loglik_penalty)
+  LL <- loglik
 
   if (see_ancestral_states == TRUE) {
     states <- calcul$states

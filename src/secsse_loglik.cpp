@@ -74,15 +74,18 @@ Rcpp::List calc_ll(std::unique_ptr<ODE> od,
 Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances,
                        const Rcpp::NumericMatrix& states,
                        const Rcpp::NumericMatrix& forTime,
-                       const Rcpp::RObject& lambdas,
+                       const Rcpp::NumericVector& lambda_cs,
+                       const Rcpp::NumericVector& lambda_as,
                        const Rcpp::NumericVector& mus,
-                       const Rcpp::NumericMatrix& Q,
+                       const Rcpp::NumericVector& gammas,
+                       const Rcpp::NumericVector& qs,
+                       const double& p,
                        const std::string& method,
                        double atol,
                        double rtol,
                        bool see_states,
                        bool use_normalization) {
-  auto ll = Rcpp::as<Rcpp::List>(lambdas);
 
-  return calc_ll(std::make_unique<loglik::ode_rhs>(ll, mus, Q), ances, states, forTime, method, atol, rtol, see_states, use_normalization);
+  return calc_ll(std::make_unique<loglik::ode_tree>(lambda_cs, lambda_as, mus, gammas, qs, p),
+                 ances, states, forTime, method, atol, rtol, see_states, use_normalization);
 }
