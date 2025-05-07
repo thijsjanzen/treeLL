@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <vector>
 
-enum states {DE_0, DE_1, DM3_0, DM3_1, E_0, E_1, D_A};
+enum states {DE_0, DE_1, DM3_0, DM3_1, E_0, E_1, DA};
 
 namespace loglik {
 
@@ -39,18 +39,22 @@ namespace loglik {
   };
 
   class ode_rhs {
-    const rvector<const double> m_; // extinction rates
-    const rvector<const double> l_; // speciation rates
+    const rvector<const double> lc_; // cladogenesis rates
+    const rvector<const double> m_; //  extinction rates
+    const rvector<const double> g_; //  colonization rates
+    const rvector<const double> la_; // anagenesis rates
     const rvector<const double> q_; // transition rates
 
   public:
 
     // constructor
-    ode_rhs(const Rcpp::NumericVector ll,
+    ode_rhs(const Rcpp::NumericVector lc,
             const Rcpp::NumericVector& m,
+            const Rcpp::NumericVector g,
+            const Rcpp::NumericVector la,
             const Rcpp::NumericMatrix& q)
-    : m_(m), q_(q), l_(ll) {
-    }
+      :lc_(lc) m_(m), g_(g), la_(la), q_(q){
+      }
 
     size_t size() const noexcept { return m_.size(); }
 
@@ -71,17 +75,36 @@ namespace loglik {
 
       // substitute with your own code below:
 
-     // vector x is:
-     // [
-     // DE_0, DE_1
-     // DM3_0, DM3_1
-     // E_0, E_1
-     // D_A
-     // ]
+           // vector x is:
+            // [
+              // DE_0, DE_1
+              // DM3_0, DM3_1
+              // E_0, E_1
+              // DA
+              // ]
 
-     dxdt[DE_0] = -(lambda_c_0 + mu_0 + q_01) * x[DE_0] + 2 * lambda_0_c * x[DE_0] * x[E_0] + q_01 * x[E_1];
+          dxdt[DE_0] = -(lambda_c_0 + mu_0 + q_01) * x[DE_0] + 2 * lambda_c_0 * x[DE_0] * x[E_0] + q_01 * x[DE_1];
 
-      // etc
+          dxdt[DE_1] = -(lambda_c_1 + mu_1 + q_10) * x[DE_1] + 2 * lambda_c_1 * x[DE_1] * x[E_1] + q_10 * x[DE_0];
+
+          dxdt[DM3_0] = -(lambda_a_0 + lambda_c_0 + mu_0 + gamma_1 + q_01) * x[DM3_0]
+                        + (lambda_a_0 * x[E_0]  + lambda_c_0 * x[E_0]^2 + mu_0 + p*q_01*x[E_1])*x[DA_3]
+                        + (1 - p)*q_01*x[DM3_1] + gamma_1*x[DM3_1];
+
+          dxdt[DM3_1] = -(lambda_c_1 + lambda_a_1 + mu_1 + gamma_0 + q_10) * x[DM3_1]
+          + (lambda_a_1 * x[E_1]  + lambda_c_1 * x[E_1]^2 + mu_1 + p*q_10*x[E_0])*x[DA_3]
+          + (1 - p)*q_10*x[DM3_0] + gamma_0*x[DM3_0];
+
+
+          dxdt[E_0] = mu_0 - (lambda_c_0 + mu_0 + q_01) * x[E_0] +  lambda_c_0 * x[E_0]^2 + q_01 * x[E_1];
+
+
+          dxdt[E_1] = mu_1 - (lambda_c_1 + mu_1 + q_10) * x[E_1] +  lambda_c_1 * x[E_1]^2 + q_10 * x[E_0];
+
+          dxdt[DA_3] = -(gamma_0 + gamma_1) * x[DA_3] + gamma_0*x[DM3_0] + gamma_1*x[DM3_1];
+
+
+
 
 
 
