@@ -10,8 +10,6 @@ calc_init_state <- function(trait) {
 }
 
 
-
-
 #' @keywords internal
 master_loglik <- function(parameter,
                           phy,
@@ -43,7 +41,7 @@ master_loglik <- function(parameter,
                    ncol = 7,
                    data = NA)
 
-  for (i in 1:traits) {
+  for (i in 1:length(traits)) {
     states[i, ] <- calc_init_state(traits[i])
   }
 
@@ -82,11 +80,8 @@ master_loglik <- function(parameter,
   if (see_ancestral_states == TRUE) {
     states <- calcul$states
     num_tips <- ape::Ntip(phy)
-    ancestral_states <- states[(num_tips + 1):(nrow(states)), ]
-    ancestral_states <-
-      ancestral_states[, -1 * (1:(ncol(ancestral_states) / 2))]
-    rownames(ancestral_states) <- ances
-    return(list(ancestral_states = ancestral_states, LL = LL, states = states))
+    colnames(states) <- c("DE_0", "DE_1", "DM3_0", "DM3_1", "E_0", "E_1", "DA_3")
+    return(list(LL = LL, states = states))
   } else {
     return(LL)
   }

@@ -40,7 +40,7 @@ private:
 
 class ode_tree {
 
-  enum states {DE_0, DE_1, DM3_0, DM3_1, E_0, E_1, DA_3};
+  enum states {DE_0, DE_1, DM3_0, DM3_1, E_0, E_1, DA_3, num_states};
 
   const rvector<const double> lc_; // cladogenesis rates
   const rvector<const double> m_; //  extinction rates
@@ -68,16 +68,15 @@ public:
     : lc_(lc), m_(m), g_(g), la_(la), q_(q), p_(p) {
   }
 
-  size_t size() const noexcept { return m_.size(); }
+  size_t size() const noexcept { return num_states; }
 
   void mergebranch(const std::vector<double>& N,
                    const std::vector<double>& M,
                    std::vector<double>& out) const {
 
     // substitute the code below with your own node-merging code
-    size_t d = N.size();
-    out.clear();
-    out.reserve(d);
+    size_t s = num_states;
+    out.resize(s);
 
     out[DE_0]  = lc_[0] * N[DE_0] * M[DE_0];
     out[DE_1]  = lc_[1] * N[DE_1] * M[DE_1];
