@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <vector>
 
+enum states {DE_0, DE_1, DM3_0, DM3_1, E_0, E_1, D_A};
 
 namespace loglik {
 
@@ -37,62 +38,18 @@ namespace loglik {
     size_t n_ = 0;
   };
 
-  inline auto flat_q_matrix(const Rcpp::NumericMatrix& rq) {
-    assert(rq.nrow() == rq.ncol());
-    const auto d = static_cast<size_t>(rq.nrow());
-    auto q = std::vector<double>(d * d);
-    auto qv = vector_view_t<double>{q.data(), d};
-    for (size_t i = 0; i < d; ++i, qv.advance(d)) {
-      auto qrow = rq.row(i);
-      for (size_t j = 0; j < d; ++j) {
-        qv[j] = qrow[j];
-      }
-    }
-    return q;
-  }
-
-  struct ode_rhs_precomp_t {
-    std::vector<double> ll;               // flat, transposed ll matrices
-    std::vector<std::vector<size_t>> nz;  // indices of non-zero values
-    std::vector<double> lambda_sum;
-
-    explicit ode_rhs_precomp_t(const Rcpp::List& Rll) {
-      const auto n = Rll.size();
-      auto probe = Rcpp::as<Rcpp::NumericMatrix>(Rll[0]);
-      assert(probe.nrow() == probe.ncol());
-      const auto d = static_cast<size_t>(probe.nrow());
-      ll.resize(n * d * d, 0.0);
-      nz.resize(n * d, {});
-      auto llv = vector_view_t<double>{ll.data(), d};
-      auto nzv = nz.begin();
-      for (int i = 0; i < Rll.size(); ++i) {
-        // we all love deeply nested loops...
-        rmatrix<const double> mr(Rcpp::as<Rcpp::NumericMatrix>(Rll[i]));
-        auto& ls = lambda_sum.emplace_back(0.0);
-        for (size_t j = 0; j < mr.nrow(); ++j, llv.advance(d), ++nzv) {
-          for (size_t k = 0; k < d; ++k) {
-            if (0.0 != (llv[k] = mr.row(j)[k])) {
-              nzv->push_back(k);
-              ls += llv[k];
-            }
-          }
-        }
-      }
-    }
-  };
-
   class ode_rhs {
     const rvector<const double> m_; // extinction rates
-    const std::vector<double> q_;   // flat, transposed q matrix
-    const ode_rhs_precomp_t prec_;  // precomputed speciation rate matrices
+    const rvector<const double> l_; // speciation rates
+    const rvector<const double> q_; // transition rates
 
   public:
 
     // constructor
-    ode_rhs(const Rcpp::List ll,
+    ode_rhs(const Rcpp::NumericVector ll,
             const Rcpp::NumericVector& m,
             const Rcpp::NumericMatrix& q)
-    : m_(m), q_(flat_q_matrix(q)), prec_(ll) {
+    : m_(m), q_(q), l_(ll) {
     }
 
     size_t size() const noexcept { return m_.size(); }
@@ -102,48 +59,41 @@ namespace loglik {
                      std::vector<double>& out) const {
 
       // substitute the code below with your own node-merging code
-      const auto d = size();
-      assert(2 * d == out.size());
-      auto llv = vector_view_t<const double>(prec_.ll.data(), d);
-      for (size_t i = 0; i < d; ++i) {
-        out[i] = M[i];
-        out[i + d] = 0.0;
-        for (size_t j = 0; j < d; ++j, llv.advance(d)) {
-          for (size_t k = 0; k < d; ++k) {
-            out[i + d] += llv[k] * (N[j + d] * M[k + d] + M[j + d] * N[k + d]);
-          }
-        }
-        out[i + d] *= 0.5;
-      }
+
     }
 
     // this is the dx/dt calculation // true rhs that gets integrated
     // along the branches
     void operator()(const std::vector<double>& x,
                     std::vector<double>& dxdt,
-                    const double /* t */ ) const
+                    const double /* t */) const
     {
 
       // substitute with your own code below:
 
-      const auto d = size();
-        auto llv = vector_view_t<const double>(prec_.ll.data(), d);
-        auto nzv = prec_.nz.begin();
-        auto qv = vector_view_t<const double>{q_.data(), d};
-        for (size_t i = 0; i < d; ++i, qv.advance(d)) {
-          double dx0 = 0.0;
-          double dxd = 0.0;
-          for (size_t j = 0; j < d; ++j, llv.advance(d), ++nzv) {
-            for (auto k : *nzv) {
-              dx0 += llv[k] * (x[j] * x[k]);
-              dxd += llv[k] * (x[j] * x[k + d] + x[j + d] * x[k]);
-            }
-            dx0 += (x[j] - x[i]) * qv[j];
-            dxd += (x[j + d] - x[i + d]) * qv[j];
-          }
-          dxdt[i] = dx0 + m_[i] - (prec_.lambda_sum[i] + m_[i]) * x[i];
-          dxdt[i + d] = dxd - (prec_.lambda_sum[i] + m_[i]) * x[i + d];
-        }
+     // vector x is:
+     // [
+     // DE_0, DE_1
+     // DM3_0, DM3_1
+     // E_0, E_1
+     // D_A
+     // ]
+
+     dxdt[DE_0] = -(lambda_c_0 + mu_0 + q_01) * x[DE_0] + 2 * lambda_0_c * x[DE_0] * x[E_0] + q_01 * x[E_1];
+
+      // etc
+
+
+
+
+
+
+
+
+
+
+
+
     }
   };
 } // namespace secsse
