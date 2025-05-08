@@ -66,7 +66,7 @@ namespace odeintcpp {
     if constexpr (std::is_same<NORMALIZER, normalize>::value) {
 
       auto observer = [&norm](STATE &x, double t) {
-        auto d = x.size() / 2;
+     //   auto d = x.size() / 2;
         norm.loglik += 0.0;
       };
 

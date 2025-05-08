@@ -10,16 +10,14 @@ calc_loglik(
   traits,
   cond = "proper_cond",
   root_state_weight = "proper_weights",
-  sampling_fraction,
-  setting_calculation = NULL,
   see_ancestral_states = FALSE,
-  loglik_penalty = 0,
   num_threads = 1,
   method = "odeint::bulirsch_stoer",
   atol = 1e-08,
   rtol = 1e-07,
   display_warning = TRUE,
-  use_normalization = TRUE
+  use_normalization = TRUE,
+  use_R_version = TRUE
 )
 }
 \arguments{
@@ -47,19 +45,8 @@ indicates state 1 was the root state. When
 using a \code{multiPhylo} object, root_state_weight should be list where each
 entry in the list corresponds to the root_state_weight for each tree.}
 
-\item{sampling_fraction}{vector that states the sampling proportion per
-trait state. It must have as many elements as there are trait states. When
-using a \code{multiPhylo} object, sampling fraction should be list where each
-entry in the list corresponds to the sampling proportion for each tree.}
-
-\item{setting_calculation}{argument used internally to speed up calculation.
-It should be left blank (default : \code{setting_calculation = NULL}).}
-
 \item{see_ancestral_states}{Boolean for whether the ancestral states should
 be shown? Defaults to \code{FALSE}.}
-
-\item{loglik_penalty}{the size of the penalty for all parameters; default is
-0 (no penalty).}
 
 \item{num_threads}{number of threads to be used. Default is one thread.}
 
