@@ -138,7 +138,7 @@ DAISIE_DE_logpEC_trait1 <- function (brts,
                              atol = 1e-10,
                              rtol = 1e-10,
                              use_R_version = TRUE,
-                             rhs_func = rhs_func)
+                             rhs_func = loglik_rhs)
 
   # Initial conditions
   initial_conditions2 <- c(DE_0 = res[,'DE_0'][[1]],
