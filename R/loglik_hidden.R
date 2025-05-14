@@ -117,14 +117,19 @@ calcThruNodes <- function(
 }
 
 #' @keywords internal
-calc_init_state_hidden <- function(trait, num_unique_states) {
+calc_init_state_hidden <- function(trait,
+                                   num_unique_states,
+                                   num_hidden_states) {
 
   DE  <- rep(0, num_unique_states)
   DM3 <- rep(0, num_unique_states)
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  DE[trait + 1] <- 1
+  for (i in 1:num_hidden_states) {
+    # assuming the traits start counting at 0 !!!!
+    DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
+  }
 
   return( c(DE, DM3, E, DA3))
 }
@@ -158,7 +163,8 @@ loglik_R_hidden <- function(parameter,
 
   for (i in 1:length(traits)) {
     states[i, ] <- calc_init_state_hidden(traits[i],
-                                          length(parameter[[1]]))
+                                          length(parameter[[1]]),
+                                          num_hidden_traits)
   }
 
   phy$node.label <- NULL
