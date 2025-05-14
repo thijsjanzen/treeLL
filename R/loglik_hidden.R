@@ -1,42 +1,52 @@
 #' @keywords internal
-loglik_rhs <- function(t, state, parameter) {
+loglik_hidden_rhs <- function(t, state, parameter) {
   with(as.list(c(state, parameter)), {
 
-    DE_0 = state[1]
-    DE_1 = state[2]
-    DM3_0 = state[3]
-    DM3_1 = state[4]
-    E_0 = state[5]
-    E_1 = state[6]
-    DA3 = state[7]
-
-    lambdac_0 <- parameter[[1]][1]; lambdac_1 <- parameter[[1]][2]
-    mu_0 <- parameter[[2]][1]; mu_1 <- parameter[[2]][2]
-    gamma_0 <- parameter[[3]][1]; gamma_1 <- parameter[[3]][2]
-    lambdaa_0 <- parameter[[4]][1]; lambdaa_1 <- parameter[[4]][2]
-    q_01 <- parameter[[5]][1]; q_10 <- parameter[[5]][2]
-    p <- parameter[[6]]
-
-    dDE_0 <- -(lambdac_0 + mu_0 + q_01) * DE_0 + 2 * lambdac_0 * DE_0 * E_0 + q_01 * DE_1
-
-    dDE_1 <- -(lambdac_1 + mu_1 + q_10) * DE_1 + 2 * lambdac_1 * DE_1 * E_1 + q_10 * DE_0
-
-    dDM3_0 <- -(lambdac_0 + mu_0 + gamma_1 + lambdaa_0 + q_01) * DM3_0 +
-      (mu_0 + lambdaa_0 * E_0 + lambdac_0 * E_0^2 + p * q_01 * E_1) * DA3 +
-      (1 - p) * q_01 * DM3_1 + gamma_1 * DM3_1
-
-    dDM3_1 <- -(lambdac_1 + mu_1 + gamma_0 + lambdaa_1 + q_10) * DM3_1 +
-      (mu_1 + lambdaa_1 * E_1 + lambdac_1 * E_1^2 + p * q_10 * E_0) * DA3 +
-      (1 - p) * q_10 * DM3_0 + gamma_0 * DM3_0
+    lambdac <- parameter[[1]]
+    mu      <- parameter[[2]]
+    gamma   <- parameter[[3]]
+    lambdaa <- parameter[[4]]
+    q       <- parameter[[5]]
+    p       <- parameter[[6]]
 
 
+    n <- (length(state) - 1) / 3
 
-    dE_0 <- mu_0 - (mu_0 + lambdac_0 + q_01) * E_0 + lambdac_0 * E_0^2 + q_01 * E_1
-    dE_1 <- mu_1 - (mu_1 + lambdac_1 + q_10) * E_1 + lambdac_1 * E_1^2 + q_10 * E_0
+    dDE     <- numeric(n)
+    dDM3    <- numeric(n)
+    dE      <- numeric(n)
 
-    dDA3 <- - (gamma_0 + gamma_1) * DA3 + gamma_0 * DM3_0 + gamma_1 * DM3_1
+    t_vec   <- rowSums(q)
 
-    list(c(dDE_0, dDE_1, dDM3_0, dDM3_1, dE_0, dE_1, dDA3))
+    DE  <- state[1:n]
+    DM3 <- state[(n + 1):(n + n)]
+    E   <- state[(n + n + 1):(n + n + n)]
+    DA3 <- state[length(state)]
+
+    gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
+    gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+
+    q_mult_E   <- t(q %*% E)
+    q_mult_DE  <- t(q %*% DE)
+    q_mult_DM3 <- t(q %*% DM3)
+
+
+    dDE <- -(lambdac + mu + t_vec) * DE +
+              2 * lambdac * DE * E +
+              q_mult_DE
+
+    dDM3 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM3 +
+      (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA3 +
+      (1 - p) * q_mult_DM3 +
+      gamma_nonself * DM3
+
+    dE <- mu - (mu + lambdac + t_vec) * E +
+      lambdac * E * E +
+      q_mult_E
+
+    dDA3 <- -sum(gamma) * DA3 + sum(gamma * DM3)
+
+    return(list(c(dDE, dDM3, dE, dDA3)))
   })
 }
 
@@ -88,10 +98,15 @@ calcThruNodes <- function(
   nodeM <- as.numeric(nodeM[2,-1])
   nodeN <- as.numeric(nodeN[2,-1])
 
-  combined_state <- nodeN
+
   lambda_c <- parameter[[1]]
-  combined_state[1] <- lambda_c[1] * nodeN[1] * nodeM[1];
-  combined_state[2] <- lambda_c[2] * nodeN[2] * nodeM[2];
+  n <- length(lambda_c)
+
+  DE_N <- nodeN[1:n]
+  DE_M <- nodeM[1:n]
+
+  combined_state <- nodeN
+  combined_state[1:n] <- lambda_c * DE_N * DE_M
 
   states[focal,] <- combined_state
   return(list(states = states,
@@ -102,22 +117,29 @@ calcThruNodes <- function(
 }
 
 #' @keywords internal
-calc_init_state <- function(trait) {
-  out <- rep(7, 0)
-  if (trait == 0) {
-    out <- c(DE_0 = 1, DE_1 = 0, DM3_0 = 0, DM3_1 = 0, E_0 = 0, E_1 = 0, DA3 = 1)
-  }
-  if (trait == 1) {
-    out <- c(DE_0 = 0, DE_1 = 1, DM3_0 = 0, DM3_1 = 0, E_0 = 0, E_1 = 0, DA3 = 1)
-  }
-  return(out)
+calc_init_state_hidden <- function(trait, num_unique_states) {
+
+  DE  <- rep(0, num_unique_states)
+  DM3 <- rep(0, num_unique_states)
+  E   <- rep(0, num_unique_states)
+  DA3 <- 1
+
+  DE[trait + 1] <- 1
+
+  return( c(DE, DM3, E, DA3))
 }
 
 
-#' @keywords internal
-master_loglik_R <- function(parameter,
+#' Likelihood calculation including hidden traits
+#' @title Using hidden traits
+#'
+#' @inheritParams default_params_doc
+#'
+#' @export
+loglik_R_hidden <- function(parameter,
                             phy,
                             traits,
+                            num_hidden_traits,
                             cond = "proper_cond",
                             root_state_weight = "proper_weights",
                             setting_calculation = NULL,
@@ -126,16 +148,17 @@ master_loglik_R <- function(parameter,
                             rtol = 1e-7,
                             methode = "ode45",
                             use_normalization = TRUE,
-                            rhs_func = loglik_rhs) {
+                            rhs_func = loglik_hidden_rhs) {
 
   number_of_lineages <- length(phy$tip.label)
 
   states <- matrix(nrow = number_of_lineages + phy$Nnode,
-                   ncol = 7,
+                   ncol = 3 * length(parameter[[1]]) + 1,
                    data = NA)
 
   for (i in 1:length(traits)) {
-    states[i, ] <- calc_init_state(traits[i])
+    states[i, ] <- calc_init_state_hidden(traits[i],
+                                          length(parameter[[1]]))
   }
 
   phy$node.label <- NULL
@@ -143,10 +166,9 @@ master_loglik_R <- function(parameter,
   ances <- as.numeric(names(split_times))
   forTime <- cbind(phy$edge, phy$edge.length)
 
-  d <- ncol(states) / 2
   loglik <- 0
 
-  for (i in 1:length(ances)){
+  for (i in 1:length(ances)) {
     calcul <- calcThruNodes(ances = ances[i],
                             states = states,
                             loglik = loglik,
@@ -163,7 +185,6 @@ master_loglik_R <- function(parameter,
   }
 
   prob_states <- calcul$combined_state
-  prob_states <- matrix(prob_states, nrow = 1,
-                        dimnames = list(NULL, c("DE_0", "DE_1", "DM3_0", "DM3_1", "E_0", "E_1", "DA3")))
+  prob_states <- matrix(prob_states, nrow = 1)
   return(prob_states)
 }

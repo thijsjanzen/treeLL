@@ -65,22 +65,10 @@ master_loglik <- function(parameter,
                         see_states = see_ancestral_states,
                         use_normalization = use_normalization)
 
-  loglik <- calcul$loglik
-  nodeM <- calcul$node_M
-  mergeBranch <- calcul$merge_branch
-
-  if (length(nodeM) > 2 * d) nodeM <- nodeM[1:(2 * d)]
-
-  LL <- loglik
-
-  if (see_ancestral_states == TRUE) {
-    states <- calcul$states
-    num_tips <- ape::Ntip(phy)
-    colnames(states) <- c("DE_0", "DE_1", "DM3_0", "DM3_1", "E_0", "E_1", "DA_3")
-    return(list(LL = LL, states = states))
-  } else {
-    return(LL)
-  }
+  prob_states <- calcul$merge_branch
+  prob_states <- matrix(prob_states, nrow = 1,
+                        dimnames = list(NULL, c("DE_0", "DE_1", "DM3_0", "DM3_1", "E_0", "E_1", "DA3")))
+  return(prob_states)
 }
 
 #' @title Likelihood for any model, using Rcpp
@@ -141,18 +129,21 @@ calc_loglik <- function(parameter,
                         rtol = 1e-7,
                         display_warning = TRUE,
                         use_normalization = TRUE,
-                        use_R_version = TRUE) {
+                        use_R_version = TRUE,
+                        methode = "ode45",
+                        rhs_func = loglik_rhs) {
 
   if (use_R_version) {
     return(master_loglik_R(parameter = parameter,
-                         phy = phy,
-                         traits = traits,
-                         cond = cond,
-                         root_state_weight = root_state_weight,
-                         see_ancestral_states = see_ancestral_states,
-                         atol = atol,
-                         rtol = rtol,
-                         methode = "ode45")
+                           phy = phy,
+                           traits = traits,
+                           cond = cond,
+                           root_state_weight = root_state_weight,
+                           see_ancestral_states = see_ancestral_states,
+                           atol = atol,
+                           rtol = rtol,
+                           methode = methode,
+                           rhs_func = rhs_func)
     )
   } else {
     return(master_loglik(parameter = parameter,

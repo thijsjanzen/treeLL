@@ -14,12 +14,10 @@ calc_ml(
   parsfix,
   cond = "proper_cond",
   root_state_weight = "proper_weights",
-  sampling_fraction,
   tol = c(1e-04, 1e-05, 1e-07),
   maxiter = 1000 * round((1.25)^length(idparsopt)),
   optimmethod = "simplex",
   num_cycles = 1,
-  loglik_penalty = 0,
   verbose = FALSE,
   num_threads = 1,
   atol = 1e-08,
@@ -61,11 +59,6 @@ indicates state 1 was the root state. When
 using a \code{multiPhylo} object, root_state_weight should be list where each
 entry in the list corresponds to the root_state_weight for each tree.}
 
-\item{sampling_fraction}{vector that states the sampling proportion per
-trait state. It must have as many elements as there are trait states. When
-using a \code{multiPhylo} object, sampling fraction should be list where each
-entry in the list corresponds to the sampling proportion for each tree.}
-
 \item{tol}{A numeric vector with the maximum tolerance of the optimization
 algorithm. Default is \code{c(1e-04, 1e-05, 1e-05)}.}
 
@@ -80,9 +73,6 @@ is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
 \item{num_cycles}{Number of cycles of the optimization. When set to \code{Inf},
 the optimization will be repeated until the result is, within the
 tolerance, equal to the starting values, with a maximum of 10 cycles.}
-
-\item{loglik_penalty}{the size of the penalty for all parameters; default is
-0 (no penalty).}
 
 \item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
 \code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to

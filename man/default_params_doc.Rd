@@ -305,6 +305,11 @@ no longer needs to assume a speciation event at the start of the tree)}
 
 \item{use_normalization}{normalize the density vector during integration,
 more accurate but slower (default = TRUE)}
+
+\item{use_R_version}{if TRUE (default) uses R based integration. If FALSE,
+uses Rcpp implementation (faster)}
+
+\item{rhs_func}{rhs function used in R implementation}
 }
 \value{
 Nothing

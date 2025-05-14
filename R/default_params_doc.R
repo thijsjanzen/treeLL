@@ -165,6 +165,7 @@
 #' more accurate but slower (default = TRUE)
 #' @param use_R_version if TRUE (default) uses R based integration. If FALSE,
 #' uses Rcpp implementation (faster)
+#' @param rhs_func rhs function used in R implementation
 #' @return Nothing
 #' @keywords internal
 #' @export

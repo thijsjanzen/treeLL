@@ -17,7 +17,9 @@ calc_loglik(
   rtol = 1e-07,
   display_warning = TRUE,
   use_normalization = TRUE,
-  use_R_version = TRUE
+  use_R_version = TRUE,
+  methode = "ode45",
+  rhs_func = loglik_rhs
 )
 }
 \arguments{
@@ -63,6 +65,11 @@ be shown? Defaults to \code{FALSE}.}
 
 \item{use_normalization}{normalize the density vector during integration,
 more accurate but slower (default = TRUE)}
+
+\item{use_R_version}{if TRUE (default) uses R based integration. If FALSE,
+uses Rcpp implementation (faster)}
+
+\item{rhs_func}{rhs function used in R implementation}
 }
 \value{
 The loglikelihood of the data given the parameters
