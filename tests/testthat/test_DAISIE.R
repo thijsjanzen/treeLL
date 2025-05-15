@@ -46,7 +46,7 @@ test_that("identical R and Rcpp", {
 
   # and now we test with 1 hidden trait (which should be the same)
   qs <- c(0.000, 0.000)
-  parameters2 <- parameters
+  parameters2 <- parameter
   parameters2[[5]] <- matrix(0, 2, 2)
   parameters2[[5]][1, 2] <- qs[1]
   parameters2[[5]][2, 1] <- qs[2]

@@ -21,13 +21,11 @@ Imports:
  utils,
  DDD (>= 5.0),
  ape,
- geiger,
  Rcpp (>= 1.0.10),
  RcppParallel,
  rlang
 Suggests: 
- diversitree,
- phytools,
+ DAISIE,
  testthat,
  subplex,
  knitr,

@@ -34,24 +34,6 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   ti <- sort(brts)
   ti <- ti[1:(length(ti) - 2)]
 
-  #########Initial conditions [tp, t2]
-  calc_init_state_hidden <- function(trait,
-                                     num_unique_states,
-                                     num_hidden_states) {
-
-    DE  <- rep(0, num_unique_states)
-    DM3 <- rep(0, num_unique_states)
-    E   <- rep(0, num_unique_states)
-    DA3 <- 1
-
-    for (i in 1:num_hidden_states) {
-      # assuming the traits start counting at 0 !!!!
-      DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
-    }
-
-    return( c(DE, DM3, E, DA3))
-  }
-
   #########Interval2 [t_2, t_1]
 
   interval2 <- function(t, state, parameter) {

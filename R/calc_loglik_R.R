@@ -115,7 +115,7 @@ calc_init_state <- function(trait) {
 
 
 #' @keywords internal
-master_loglik_R <- function(parameter,
+simple_loglik_R <- function(parameter,
                             phy,
                             traits,
                             cond = "proper_cond",
