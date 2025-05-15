@@ -14,19 +14,19 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
-DAISIE_DE_logpEC_trait1_hidden <- function (brts,
-                                            missnumspec,
-                                            parameter,
-                                            phy,
-                                            traits,
-                                            num_hidden_traits,
-                                            cond = "proper_cond",
-                                            root_state_weight = "proper_weights",
-                                            see_ancestral_states = TRUE,
-                                            atol = 1e-10,
-                                            rtol = 1e-10,
-                                            methode = "ode45",
-                                            rhs_func = loglik_hidden_rhs) {
+DAISIE_DE_logpEC_trait1_hidden <- function(brts,
+                                           missnumspec,
+                                           parameter,
+                                           phy,
+                                           traits,
+                                           num_hidden_traits,
+                                           cond = "proper_cond",
+                                           root_state_weight = "proper_weights",
+                                           see_ancestral_states = TRUE,
+                                           atol = 1e-10,
+                                           rtol = 1e-10,
+                                           methode = "ode45",
+                                           rhs_func = loglik_hidden_rhs) {
   t0 <- brts[1]
   t1 <- brts[2]
   t2 <- brts[3]
