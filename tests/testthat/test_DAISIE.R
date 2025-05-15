@@ -19,7 +19,7 @@ test_that("identical R and Rcpp", {
                                                         atol = 1e-10,
                                                         rtol = 1e-10,
                                                         methode = "lsodes",
-                                                        rhs = loglik_rhs)
+                                                        rhs_func = loglik_rhs)
 
   pars2 <- c(100, 11,0,2)
   pars <- c(2.546591, 2.678781, Inf, 0.009326754, 1.008583)
@@ -38,4 +38,22 @@ test_that("identical R and Rcpp", {
 
   testthat::expect_equal(loglik_DAISIE_trait,
                          loglik_DAISIE)
+
+
+  # and now we test with 1 hidden trait (which should be the same)
+  qs <- c(0.000, 0.000)
+  parameters2 <- parameters
+  parameters2[[5]] <- matrix(0, 2, 2)
+  parameters2[[5]][1, 2] <- qs[1]
+  parameters2[[5]][2, 1] <- qs[2]
+
+  loglik_hidden <- DAISIE_DE_logpEC_trait1_hidden(brts = brts,
+                                                  missnumspec = 0,
+                                                  parameter = parameters2,
+                                                  phy = phy,
+                                                  traits = traits,
+                                                  num_hidden_traits = 1)
+
+  testthat::expect_equal(loglik_DAISIE_trait,
+                         loglik_hidden)
 })

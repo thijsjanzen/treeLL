@@ -117,8 +117,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
 
 
   # Solve the system for interval [tp, t2]
-  # res <- treeLL::loglik_R_hidden(parameter,
-  res <- loglik_R_hidden(parameter,
+  res <- treeLL::loglik_R_hidden(parameter,
                          phy,
                          traits,
                          num_hidden_traits = num_hidden_traits,
@@ -137,7 +136,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
                              res[(m + m + 1):(m + m + m)],  ## E
                              res[length(res)])              ## DA3
 
-    initial_conditions2 <- matrix (initial_conditions2, nrow = 1)
+    initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
 
 
 
@@ -155,7 +154,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
                             rtol = 1e-10)
 
 
-  solution2 <- matrix(solution2[,-1], nrow = 2)
+  solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
 
   #########Interval3 [t1, t0]
 
@@ -207,11 +206,12 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
   # Initial conditions
   gamma <- parameter[[3]]
 
-  initial_conditions3 <- c(rep (sum (gamma*(solution2[2,][(m + 1):(m + m)])), m), ### DM1
-                           solution2[2,][(m + m + m + 1):(m + m + m + m)],        ### E
-                           sum (gamma*(solution2[2,][(m + 1):(m + m)])))          ### DA1
+  # only use second row, because the first row of solution2 is the initial state
+  initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1
+                           solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E
+                           sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1
 
-  initial_conditions3 <- matrix (initial_conditions3, nrow = 1)
+  initial_conditions3 <- matrix(initial_conditions3, nrow = 1)
 
   # Time sequence for interval [t1, t0]
   time3 <- c(t1, t0)

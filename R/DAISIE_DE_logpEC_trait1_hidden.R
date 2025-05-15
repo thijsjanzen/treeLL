@@ -14,7 +14,7 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
-DAISIE_DE_logpEC_trait1_hidden <- function (brts,
+DAISIE_DE_logpEC_trait1_hidden_old <- function (brts,
                                            missnumspec,
                                            parameter,
                                            phy,
