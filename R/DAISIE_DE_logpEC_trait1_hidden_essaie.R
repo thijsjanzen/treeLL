@@ -32,7 +32,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
   t2 <- brts[3]
   tp <- 0
   ti <- sort(brts)
-  ti <- ti[1:(length(ti)-2)]
+  ti <- ti[1:(length(ti) - 2)]
 
   #########Initial conditions [tp, t2]
   calc_init_state_hidden <- function(trait,
@@ -118,25 +118,22 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
 
   # Solve the system for interval [tp, t2]
   res <- treeLL::loglik_R_hidden(parameter,
-                         phy,
-                         traits,
-                         num_hidden_traits = num_hidden_traits,
-                         cond = "proper_cond",
-                         root_state_weight = "proper_weights",
-                         see_ancestral_states = TRUE,
-                         atol = 1e-10,
-                         rtol = 1e-10,
-                         rhs_func = loglik_hidden_rhs)
+                                 phy,
+                                 traits,
+                                 num_hidden_traits = num_hidden_traits,
+                                 see_ancestral_states = TRUE,
+                                 atol = 1e-10,
+                                 rtol = 1e-10)
 
-    m = length(parameter[[1]])
+  m = length(parameter[[1]])
 
-    initial_conditions2 <- c(res[1:m],                      ## DE
-                            (res[1:m])*res[length(res)],    ## DM2
-                             res[(m + 1):(m + m)],          ## DM3
-                             res[(m + m + 1):(m + m + m)],  ## E
-                             res[length(res)])              ## DA3
+  initial_conditions2 <- c(res[1:m],                      ## DE
+                           (res[1:m]) * res[length(res)],    ## DM2
+                           res[(m + 1):(m + m)],          ## DM3
+                           res[(m + m + 1):(m + m + m)],  ## E
+                           res[length(res)])              ## DA3
 
-    initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
+  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
 
 
 
@@ -232,4 +229,3 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
   logLkb <- log(Lk)
   return(logLkb)
 }
-

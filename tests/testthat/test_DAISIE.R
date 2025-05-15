@@ -3,8 +3,12 @@ test_that("identical R and Rcpp", {
 
   traits <- rep(0, length(phy$tip.label))
 
-  parameter <- list( c(2.546591, 0), c (2.678781, 0), c(0.009326754,0),
-                     c(1.008583, 0), c(0.000,0.000), 0 )
+  parameter <- list( c(2.546591, 0), # lambda_c
+                     c(2.678781, 0), # mu
+                     c(0.009326754,0), # gamma
+                     c(1.008583, 0),   # lambda_a
+                     c(0.000, 0.000),   # q
+                       0 ) # p
 
   brts <- c(4.000, 3.958, 3.422, 2.884, 0.459)
 
