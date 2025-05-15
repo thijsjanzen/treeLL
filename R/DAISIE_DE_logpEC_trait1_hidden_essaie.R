@@ -130,8 +130,13 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
                          rhs_func = loglik_hidden_rhs)
 
     m = length(parameter[[1]])
-    initial_conditions2 <- c(res[1:m],(res[1:m])*res[length(res)], res[(m + 1):(m + m)],
-                                 res[(m + m + 1):(m + m + m)], res[length(res)])
+
+    initial_conditions2 <- c(res[1:m],                      ## DE
+                            (res[1:m])*res[length(res)],    ## DM2
+                             res[(m + 1):(m + m)],          ## DM3
+                             res[(m + m + 1):(m + m + m)],  ## E
+                             res[length(res)])              ## DA3
+
     initial_conditions2 <- matrix (initial_conditions2, nrow = 1)
 
 
@@ -200,10 +205,11 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
 
 
   # Initial conditions
+  gamma <- parameter[[3]]
 
-  initial_conditions3 <- c( rep ( sum (gamma*(solution2[2,][(m + 1):(m + m)])), length(lambda_c)),
-                           solution2[2,][length(solution2[2,])],
-                           rep ( sum (gamma*(solution2[2,][(m + 1):(m + m)])), length(lambda_c)))
+  initial_conditions3 <- c(rep (sum (gamma*(solution2[2,][(m + 1):(m + m)])), m), ### DM1
+                           solution2[2,][(m + m + m + 1):(m + m + m + m)],        ### E
+                           sum (gamma*(solution2[2,][(m + 1):(m + m)])))          ### DA1
 
   initial_conditions3 <- matrix (initial_conditions3, nrow = 1)
 
@@ -227,38 +233,3 @@ DAISIE_DE_logpEC_trait1_hidden <- function (brts,
   return(logLkb)
 }
 
-
-
-library(DAISIE)
-library(ape)
-library(secsse)
-
-set.seed(1)
-
-
-
-parameter <- list( c(2.546591, 2.546591), c(2.678781, 2.678781), c(0.009326754, 0.009326754),
-                   c(1.008583, 1.008583), matrix(rep(0, 4), nrow = 2), 0)
-
-data("Galapagos_datalist")
-datalist <- Galapagos_datalist
-i <- 4
-phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
-traits <- sample(c(0, 1),ape::Ntip(phy),replace=TRUE)
-num_hidden_traits <- 1
-
-
-DAISIE_DE_logpEC_trait_loglik <- DAISIE_DE_logpEC_trait1_hidden(brts = datalist[[i]]$branching_times,
-                              missnumspec = datalist[[i]]$missing_species,
-                              parameter = parameter,
-                              phy,
-                              traits,
-                              num_hidden_traits,
-                              cond = "proper_cond",
-                              root_state_weight = "proper_weights",
-                              see_ancestral_states = TRUE,
-                              atol = 1e-10,
-                              rtol = 1e-10,
-                              methode = "ode45",
-                              rhs_func = loglik_hidden_rhs)
-DAISIE_DE_logpEC_trait_loglik
