@@ -72,7 +72,13 @@ default_params_doc(
   optimmethod,
   display_warning,
   take_into_account_root_edge,
-  use_normalization
+  use_normalization,
+  num_hidden_traits,
+  missnumspec,
+  brts,
+  use_R_version,
+  methode,
+  rhs_func
 )
 }
 \arguments{
@@ -306,8 +312,16 @@ no longer needs to assume a speciation event at the start of the tree)}
 \item{use_normalization}{normalize the density vector during integration,
 more accurate but slower (default = TRUE)}
 
+\item{num_hidden_traits}{number of hidden traits}
+
+\item{missnumspec}{missing number of species}
+
+\item{brts}{branching times, being: island age, colonization time, branching times}
+
 \item{use_R_version}{if TRUE (default) uses R based integration. If FALSE,
 uses Rcpp implementation (faster)}
+
+\item{methode}{used integration method, default is ode45}
 
 \item{rhs_func}{rhs function used in R implementation}
 }

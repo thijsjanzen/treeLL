@@ -11,7 +11,6 @@ loglik_R_hidden(
   num_hidden_traits,
   cond = "proper_cond",
   root_state_weight = "proper_weights",
-  setting_calculation = NULL,
   see_ancestral_states = TRUE,
   atol = 1e-08,
   rtol = 1e-07,
@@ -35,6 +34,8 @@ order of the states must be the same as the tree tips. For help, see
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
+\item{num_hidden_traits}{number of hidden traits}
+
 \item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
 \code{"proper_cond"} (default). For details, see vignette.}
 
@@ -45,9 +46,6 @@ indicates state 1 was the root state. When
 using a \code{multiPhylo} object, root_state_weight should be list where each
 entry in the list corresponds to the root_state_weight for each tree.}
 
-\item{setting_calculation}{argument used internally to speed up calculation.
-It should be left blank (default : \code{setting_calculation = NULL}).}
-
 \item{see_ancestral_states}{Boolean for whether the ancestral states should
 be shown? Defaults to \code{FALSE}.}
 
@@ -55,10 +53,12 @@ be shown? Defaults to \code{FALSE}.}
 
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
 
+\item{methode}{used integration method, default is ode45}
+
 \item{use_normalization}{normalize the density vector during integration,
 more accurate but slower (default = TRUE)}
 
-\item{rhs_func}{rhs function used in R implementation}
+\item{rhs_func}{ll function}
 }
 \description{
 Likelihood calculation including hidden traits

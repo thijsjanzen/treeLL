@@ -21,30 +21,47 @@ DAISIE_DE_logpEC_trait1_hidden_old(
 )
 }
 \arguments{
-\item{brts}{branching times}
+\item{brts}{branching times, being: island age, colonization time, branching times}
 
-\item{missnumspec}{number of missing species}
+\item{missnumspec}{missing number of species}
 
-\item{parameter}{parameters}
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
-\item{phy}{phy}
+\item{phy}{phylogenetic tree of class \code{phylo}, rooted and with
+branch lengths. Alternatively, multiple phylogenetic trees can be provided
+as the \code{multiPhylo} class.}
 
-\item{traits}{traits}
+\item{traits}{vector with trait states for each tip in the phylogeny. The
+order of the states must be the same as the tree tips. For help, see
+\code{vignette("starting_secsse", package = "secsse")}. When providing a
+\code{multiPhylo} set of multiple phylognies, traits should be a list where
+each entry in the list corresponds to the matching phylogeny on that
+position.}
 
-\item{cond}{conditioning, default = "proper_cond"}
+\item{num_hidden_traits}{number of hidden traits}
 
-\item{root_state_weight}{root weight, default = "proper_weights"}
+\item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
+\code{"proper_cond"} (default). For details, see vignette.}
 
-\item{see_ancestral_states}{recover the ancestral states}
+\item{root_state_weight}{the method to weigh the states:
+\code{"maddison_weights"}, \code{"proper_weights"} (default) or \code{"equal_weights"}.
+It can also be specified for the root state: the vector \code{c(1, 0, 0)}
+indicates state 1 was the root state. When
+using a \code{multiPhylo} object, root_state_weight should be list where each
+entry in the list corresponds to the root_state_weight for each tree.}
 
-\item{atol}{absolute tolerance}
+\item{see_ancestral_states}{Boolean for whether the ancestral states should
+be shown? Defaults to \code{FALSE}.}
 
-\item{rtol}{relative tolerance}
+\item{atol}{A numeric specifying the absolute tolerance of integration.}
 
-\item{methode}{method of integration}
+\item{rtol}{A numeric specifying the relative tolerance of integration.}
 
-\item{setting_calculation}{used in ML}
+\item{methode}{used integration method, default is ode45}
+
+\item{rhs_func}{rhs function used in R implementation}
 }
 \description{
-This function calculates something we can verify with DAISIE
+This function calculates something we can verify with DAISIE, using hidden traits
 }

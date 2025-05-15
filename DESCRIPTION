@@ -3,7 +3,7 @@ Type: Package
 Title: Bare-bones package allowing for implemenation of tree-likelihood
 Version: 0.0.1
 Date: 2025-05-02
-License: GPL (>= 3) | file LICENSE
+License: GPL (>= 3)
 Authors@R: c(
  person(given = "Thijs",
         family = "Janzen",
@@ -18,8 +18,10 @@ Authors@R: c(
 Description: Provides a back-bone architecture that allows for integrating a rhs along a tree.
 Depends: R (>= 4.2.0)
 Imports: 
- utils,
- DDD (>= 5.0),
+ DDD,
+ deSolve,
+ geiger,
+ secsse,
  ape,
  Rcpp (>= 1.0.10),
  RcppParallel,
