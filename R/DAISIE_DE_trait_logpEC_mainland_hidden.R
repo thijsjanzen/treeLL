@@ -1,6 +1,7 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
-#' This function calculates something we can verify with DAISIE
+#' this function calculates the likelihood of observing a clade on an island
+#' that coexists with its mainland ancestors.
 #' @export
 #' @param brts branching times
 #' @param missnumspec number of missing species
