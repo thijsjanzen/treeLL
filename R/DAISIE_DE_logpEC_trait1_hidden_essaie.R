@@ -5,7 +5,10 @@
 #' @param brts branching times
 #' @param missnumspec number of missing species
 #' @param parameter parameters
-#' @param phy phy
+#' @param num_observed_states number of observed traits
+#' @param num_hidden_states number of hidden traits
+#' @param trait_mainland_ancestor trait of the species at the stem
+#' @param phy phylogeny
 #' @param traits traits
 #' @param cond conditioning, default = "proper_cond"
 #' @param root_state_weight root weight, default = "proper_weights"
@@ -19,6 +22,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                                            parameter,
                                            phy,
                                            traits,
+                                           trait_mainland_ancestor = FALSE,
                                            num_hidden_traits,
                                            cond = "proper_cond",
                                            root_state_weight = "proper_weights",
@@ -110,7 +114,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   m = length(parameter[[1]])
 
   initial_conditions2 <- c(res[1:m],                      ## DE
-                           (res[1:m]) * res[length(res)],    ## DM2
+                           (res[1:m]) * res[length(res)], ## DM2
                            res[(m + 1):(m + m)],          ## DM3
                            res[(m + m + 1):(m + m + m)],  ## E
                            res[length(res)])              ## DA3
@@ -138,57 +142,76 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   #########Interval3 [t1, t0]
 
   interval3 <- function(t, state, parameter) {
-    with(as.list(c(state, parameter)), {
+      with(as.list(c(state, parameter)), {
 
-      lambdac <- parameter[[1]]
-      mu      <- parameter[[2]]
-      gamma   <- parameter[[3]]
-      lambdaa <- parameter[[4]]
-      q       <- parameter[[5]]
-      p       <- parameter[[6]]
-
-
-      n <- (length(state) - 1) / 2
+        lambdac <- parameter[[1]]
+        mu      <- parameter[[2]]
+        gamma   <- parameter[[3]]
+        lambdaa <- parameter[[4]]
+        q       <- parameter[[5]]
+        p       <- parameter[[6]]
 
 
-      dDM1    <- numeric(n)
-      dDE     <- numeric(n)
+        #n <- (length(state) - 1) / 2
+        n <- num_observed_states * num_hidden_states
+
+        dDM1    <- numeric(n)
+        dDE     <- numeric(n)
 
 
-      t_vec   <- rowSums(q)
+        t_vec   <- rowSums(q)
 
-      DM1  <- state[1:n]
-      E   <- state[(n + 1):(n + n)]
-      DA1  <- state[length(state)]
+        DM1  <- state[1:n]
+        E    <- state[(n + 1):(n + n)]
+        DA1  <- state[length(state)]
 
-      gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+        gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
+        gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
 
-      q_mult_E   <- t(q %*% E)
-      q_mult_DM1 <- t(q %*% DM1)
+        q_mult_E   <- t(q %*% E)
+        q_mult_DM1 <- t(q %*% DM1)
 
-      dDM1 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM1 +
-        (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
-        (1 - p) * q_mult_DM1 + gamma_nonself * DM1
+        dDM1 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM1 +
+          (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
+          (1 - p) * q_mult_DM1 + gamma_nonself * DM1
 
-      dE <- mu - (mu + lambdac + t_vec) * E +
-        lambdac * E * E +
-        q_mult_E
+        dE <- mu - (mu + lambdac + t_vec) * E +
+          lambdac * E * E +
+          q_mult_E
 
-      dDA1 <- -sum(gamma) * DA1 + sum(gamma * DM1)
+        dDA1 <- -sum(gamma) * DA1 + sum(gamma * DM1)
 
-      return(list(c(dDM1, dE, dDA1)))
-    })
-  }
+        return(list(c(dDM1, dE, dDA1)))
+      })
+    }
+
 
 
   # Initial conditions
   gamma <- parameter[[3]]
 
   # only use second row, because the first row of solution2 is the initial state
-  initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1
-                           solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E
-                           sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1
+  #initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1
+  #                         solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E
+  #                         sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1
+
+
+  #if the trait state of the species at the stem is unknown
+  if (trait_mainland_ancestor == "FALSE")
+  {  initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1: select DM2 in solution2
+                              solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E: select E in solution2
+                              sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1: select DA3 in solution2
+
+  }
+  #if the trait state of the species at the stem is known
+  else if(trait_mainland_ancestor == trait_mainland_ancestor)
+  {
+    initial_conditions3 <- c(rep (parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(m + 1):(m + m)])[trait_mainland_ancestor + 1], m), ### DM1: select DM2 in solution2
+                             solution2[2,][(m + m + m + 1):(m + m + m + m)],                                                                       ### E: select E in solution2
+                             parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(m + 1):(m + m)])[trait_mainland_ancestor + 1])          ### DA1: select DA3 in solution2
+
+  }
+
 
   initial_conditions3 <- matrix(initial_conditions3, nrow = 1)
 
@@ -211,3 +234,4 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   logLkb <- log(Lk)
   return(logLkb)
 }
+
