@@ -146,7 +146,7 @@ calc_init_state_hidden <- function(trait,
   # }
 
   DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sampling_fraction
-  DM3[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sampling_fraction
+  E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sampling_fraction
 
   return( c(DE, DM3, E, DA3))
   }
@@ -211,3 +211,4 @@ loglik_R_hidden <- function(parameter,
   prob_states <- matrix(prob_states, nrow = 1)
   return(prob_states)
 }
+
