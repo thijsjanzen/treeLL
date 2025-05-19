@@ -126,13 +126,26 @@ calc_init_state_hidden <- function(trait,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  for (i in 1:num_hidden_states) {
-    # assuming the traits start counting at 0 !!!!
-    DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
-  }
+
+
+  # account for missing species
+
+  number_of_species         <- length(brts) - 1
+  number_of_missing_species <- missnumspec
+
+  # calculate sampling fraction
+
+  ro <- number_of_species / (number_of_missing_species + number_of_species)
+
+  # for (i in 1:num_hidden_states) {
+  #   # assuming the traits start counting at 0 !!!!
+  #   DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
+  # }
+
+  DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
 
   return( c(DE, DM3, E, DA3))
-}
+  }
 
 
 #' Likelihood calculation including hidden traits
