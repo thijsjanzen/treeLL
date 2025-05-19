@@ -129,17 +129,6 @@ calc_init_state_hidden <- function(trait,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-
-
-  # account for missing species
-
-  number_of_species         <- length(brts) - 1
-  number_of_missing_species <- missnumspec
-
-  # calculate sampling fraction
-
-
-
   # for (i in 1:num_hidden_states) {
   #   # assuming the traits start counting at 0 !!!!
   #   DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
