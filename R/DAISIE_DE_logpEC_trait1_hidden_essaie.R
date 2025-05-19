@@ -1,12 +1,13 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
-#' This function calculates something we can verify with DAISIE
+#' this function calculate the likelihood of observing a clade with specified species trait states,
+#' and for which the estimated colonization is known.
 #' @export
 #' @param brts branching times
 #' @param missnumspec number of missing species
 #' @param parameter parameters
 #' @param num_observed_states number of observed traits
-#' @param num_hidden_states number of hidden traits
+#' @param num_hidden_traits number of hidden traits
 #' @param trait_mainland_ancestor trait of the species at the stem
 #' @param phy phylogeny
 #' @param traits traits
@@ -17,12 +18,51 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
+#' @examples
+
+#' library(DAISIE)
+#' data("Galapagos_datalist")
+#' datalist <- Galapagos_datalist
+#' i <- 4
+#' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+#' traits <- sample(c(0,1), length(phy$tip.label), replace = TRUE)
+#' parameter <- list(
+#'   c(2.546591, 1.2, 1, 0.2),
+#'   c(2.678781, 2, 1.9, 3),
+#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(1.008583, 1, 2, 1.5),
+#'   matrix(c(
+#'     0,    1,    0.5,  0,
+#'     0,    0,    0.002,0.005,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   0
+#' )
+#'
+#' DAISIE_DE_logpEC_trait1_hidden(
+#'   brts                  = datalist[[i]]$branching_times,
+#'   missnumspec           = datalist[[i]]$missing_species,
+#'   phy                   = phy,
+#'   traits                = traits,
+#'   parameter             = parameter,
+#'   num_observed_states   = 2,
+#'   num_hidden_traits     = 2,
+#'   cond                  = "proper_cond",
+#'   root_state_weight     = "proper_weights",
+#'   see_ancestral_states  = TRUE,
+#'   atol                  = 1e-10,
+#'   rtol                  = 1e-10,
+#'   methode               = "ode45",
+#'   rhs_func              = loglik_hidden_rhs
+#' )
+
 DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                                            missnumspec,
                                            parameter,
                                            phy,
                                            traits,
                                            trait_mainland_ancestor = FALSE,
+                                           num_observed_states,
                                            num_hidden_traits,
                                            cond = "proper_cond",
                                            root_state_weight = "proper_weights",
@@ -108,8 +148,8 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                                  traits,
                                  num_hidden_traits = num_hidden_traits,
                                  see_ancestral_states = TRUE,
-                                 atol = 1e-10,
-                                 rtol = 1e-10)
+                                 atol = atol,
+                                 rtol = rtol)
 
   m = length(parameter[[1]])
 
@@ -133,8 +173,8 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                             func = interval2,
                             parms = parameter,
                             method = methode,
-                            atol = 1e-10,
-                            rtol = 1e-10)
+                            atol = atol,
+                            rtol = rtol)
 
 
   solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
@@ -153,7 +193,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
 
 
         #n <- (length(state) - 1) / 2
-        n <- num_observed_states * num_hidden_states
+        n <- num_observed_states * num_hidden_traits
 
         dDM1    <- numeric(n)
         dDE     <- numeric(n)
@@ -224,8 +264,8 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                             func = interval3,
                             parms = parameter,
                             method = methode,
-                            atol = 1e-10,
-                            rtol = 1e-10)
+                            atol = rtol,
+                            rtol = rtol)
 
   solution3 <- matrix(solution3[,-1], nrow = 2)
 
