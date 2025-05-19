@@ -1,10 +1,14 @@
-#' testing fuction, for comparison with DAISIE
+#' testing function, for comparison with DAISIE
 #' @description
-#' This function calculates something we can verify with DAISIE
+#' this function calculates the likelihood of observing a singleton species on an island
+#' with the trait state `i`, either non-endemic or rendered endemic by a trait change, and
+#' for which only the estimated colonization time is unknown.
 #' @export
 #' @param brts branching times
 #' @param missnumspec number of missing species
 #' @param parameter parameters
+#' @param num_observed_states number of observed traits
+#' @param num_hidden_states number of hidden traits
 #' @param phy phy
 #' @param traits traits
 #' @param cond conditioning, default = "proper_cond"
@@ -14,11 +18,46 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
+#' @examples
+#' library(DAISIE)
+#' data("Galapagos_datalist")
+#' datalist <- Galapagos_datalist
+#' i <- 2
+#'
+#' parameter <- list(
+#'   c(2.546591, 1.2, 1, 0.2),
+#'   c(2.678781, 2, 1.9, 3),
+#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(1.008583, 1, 2, 1.5),
+#'   matrix(
+#'     c(0,   1,    0.5, 0,
+#'       0,   0,    0,   0,
+#'       0.002, 0.005, rep(0, 8)),
+#'     nrow = 4
+#'   ),
+#'   0
+#' )
+#'
+#' DAISIE_DE_trait_logpNE_col_max_hidden(
+#'   brts                  = datalist[[i]]$branching_times,
+#'   trait                 = 0,
+#'   parameter <- parameter,
+#'   num_observed_states   = 2,
+#'   num_hidden_states     = 2,
+#'   cond                  = "proper_cond",
+#'   root_state_weight     = "proper_weights",
+#'   see_ancestral_states  = TRUE,
+#'   atol                  = 1e-10,
+#'   rtol                  = 1e-10,
+#'   methode               = "ode45"
+#' )
 
-DAISIE_DE_logpNE_col_max_trait_hidden <- function(brts,
+
+DAISIE_DE_trait_logpNE_col_max_hidden <- function(brts,
                                                   trait,
                                                   parameter,
                                                   num_hidden_states,
+                                                  num_observed_states = 1,
                                                   cond = "proper_cond",
                                                   root_state_weight = "proper_weights",
                                                   see_ancestral_states = TRUE,
@@ -27,7 +66,8 @@ DAISIE_DE_logpNE_col_max_trait_hidden <- function(brts,
                                                   methode = "ode45") {
 
 
-
+  t0 <- brts[1]
+  tp <- 0
   #########Interval1 [t_p, t_0]
 
   interval1 <- function(t, state, parameter) {
@@ -82,17 +122,19 @@ DAISIE_DE_logpNE_col_max_trait_hidden <- function(brts,
     E   <- rep(0, num_unique_states)
     DA1 <- 0
 
-    for (i in 1:num_hidden_states) {
+    #for (i in 1:num_hidden_states) {
       # assuming the traits start counting at 0 !!!!
-      DM1[(1 + trait) + (i - 1) * num_hidden_states] <- 1
-    }
+#DM1[(1 + trait) + (i - 1) * num_hidden_states] <- 1
+   # }
+
+    DM1[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
 
     return( c(DM1, E, DA1))
   }
 
 
   num_unique_states <- length(parameter[[1]])
-  initial_conditions1 <-   calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
+  initial_conditions1 <- calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
 
   initial_conditions1 <- matrix(initial_conditions1, nrow = 1)
 
@@ -120,20 +162,4 @@ DAISIE_DE_logpNE_col_max_trait_hidden <- function(brts,
   return(logLkb)
 }
 
-library (DAISIE)
-data("Galapagos_datalist")
-datalist <- Galapagos_datalist
-i <- 2
-parameter <- list( c(2.546591,0), c(2.678781, 0), c(0.009326754, 0), c(1.008583, 0), matrix(rep(0,4), nrow = 2), 0)
-
-DAISIE_DE_logpNE_col_max_trait_hidden(brts = datalist[[i]]$branching_times,
-                                      trait = 0,
-                                      parameter <- parameter,
-                                      num_hidden_states = 1,
-                                      cond = "proper_cond",
-                                      root_state_weight = "proper_weights",
-                                      see_ancestral_states = TRUE,
-                                      atol = 1e-10,
-                                      rtol = 1e-10,
-                                      methode = "ode45")
 
