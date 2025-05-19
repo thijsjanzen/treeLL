@@ -1,12 +1,8 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
-#' This function calculates something we can verify with DAISIE
+#' This function compute the likelihood that all species that colonize the island
+#' have gone extinct prior to the present.
 #' @export
-#' @param brts branching times
-#' @param missnumspec number of missing species
-#' @param parameter parameters
-#' @param phy phy
-#' @param traits traits
 #' @param cond conditioning, default = "proper_cond"
 #' @param root_state_weight root weight, default = "proper_weights"
 #' @param setting_calculation used in ML
@@ -14,7 +10,8 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
-DAISIE_DE_logp0_trait <- function(parameter,
+
+DAISIE_DE_trait_logp0 <- function(parameter,
                                   cond = "proper_cond",
                                   root_state_weight = "proper_weights",
                                   see_ancestral_states = TRUE,
@@ -25,6 +22,7 @@ DAISIE_DE_logp0_trait <- function(parameter,
 
 
   #########Interval1 [t_p, t_0]
+
   interval1 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
@@ -37,6 +35,7 @@ DAISIE_DE_logp0_trait <- function(parameter,
 
 
       n <- (length(state) - 1) / 2
+      # number of unique state
 
 
       dDM1    <- numeric(n)
@@ -84,8 +83,8 @@ DAISIE_DE_logp0_trait <- function(parameter,
                             func = interval1,
                             parms = parameter,
                             method = methode,
-                            atol = 1e-10,
-                            rtol = 1e-10)
+                            atol = atol,
+                            rtol = rtol)
 
 
 
@@ -97,17 +96,4 @@ DAISIE_DE_logp0_trait <- function(parameter,
   return(logLkb)
 }
 
-library (DAISIE)
-data("Galapagos_datalist")
-datalist <- Galapagos_datalist
-i <- 3
-parameter <- list( c(2.546591,0), c(2.678781, 0), c(0.009326754, 0), c(1.008583, 0), matrix(rep(0,4), nrow = 2), 0)
-
-DAISIE_DE_logp0_trait(parameter = parameter,
-                      cond = "proper_cond",
-                      root_state_weight = "proper_weights",
-                      see_ancestral_states = TRUE,
-                      atol = 1e-10,
-                      rtol = 1e-10,
-                      methode = "ode45")
 
