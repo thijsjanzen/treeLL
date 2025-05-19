@@ -10,8 +10,36 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
+#' @examples
+# Load DAISIE package and data
+# library(DAISIE)
+# data("Galapagos_datalist")
+#
+# datalist <- Galapagos_datalist
+# parameter <- list(
+#   c(2.546591, 0),        # cladogenesis rate & zero for hidden state
+#   c(2.678781, 0),        # extinction rate & zero for hidden state
+#   c(0.009326754, 0),     # trait‐change rate & zero for hidden state
+#   c(1.008583, 0),        # anagenesis rate & zero for hidden state
+#   matrix(rep(0, 4), nrow = 2),  # transition matrix Q
+#   0                      # probability p
+# )
+#
+# # Compute log‐likelihood under the DE‐trait model
+# DAISIE_DE_trait_logp0(
+#   datalist            = datalist,
+#   parameter           = parameter,
+#   cond                = "proper_cond",
+#   root_state_weight   = "proper_weights",
+#   see_ancestral_states= TRUE,
+#   atol                = 1e-10,
+#   rtol                = 1e-10,
+#   methode             = "ode45"
+# )
 
-DAISIE_DE_trait_logp0 <- function(parameter,
+
+DAISIE_DE_trait_logp0 <- function(datalist,
+                                  parameter,
                                   cond = "proper_cond",
                                   root_state_weight = "proper_weights",
                                   see_ancestral_states = TRUE,
@@ -20,7 +48,8 @@ DAISIE_DE_trait_logp0 <- function(parameter,
                                   methode = "ode45") {
 
 
-
+  t0 <- datalist[[1]]$island_age
+  tp <- 0
   #########Interval1 [t_p, t_0]
 
   interval1 <- function(t, state, parameter) {
@@ -95,5 +124,3 @@ DAISIE_DE_trait_logp0 <- function(parameter,
   logLkb <- log(Lk)
   return(logLkb)
 }
-
-
