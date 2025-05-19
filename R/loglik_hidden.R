@@ -138,14 +138,15 @@ calc_init_state_hidden <- function(trait,
 
   # calculate sampling fraction
 
-  ro <- number_of_species / (number_of_missing_species + number_of_species)
+
 
   # for (i in 1:num_hidden_states) {
   #   # assuming the traits start counting at 0 !!!!
   #   DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
   # }
 
-  DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
+  DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sampling_fraction
+  DM3[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sampling_fraction
 
   return( c(DE, DM3, E, DA3))
   }
