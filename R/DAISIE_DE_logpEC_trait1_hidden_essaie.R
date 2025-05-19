@@ -1,5 +1,6 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
+<<<<<<< HEAD
 #' this function calculate the likelihood of observing a clade with specified species trait states,
 #' and for which the estimated colonization is known.
 #' @export
@@ -56,6 +57,11 @@
 #'   rhs_func              = loglik_hidden_rhs
 #' )
 
+=======
+#' This function calculates something we can verify with DAISIE
+#' @inheritParams default_params_doc
+#' @export
+>>>>>>> 53154ba5a6ae76467bdd67bf482dba1d26678426
 DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                                            missnumspec,
                                            parameter,

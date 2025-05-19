@@ -1,2 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^test.R
+^test_hidden_stuff.R
+^DAISIE_DE_logpEC_trait1.R
+^\.github

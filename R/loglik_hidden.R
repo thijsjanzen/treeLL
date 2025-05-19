@@ -31,17 +31,20 @@ loglik_hidden_rhs <- function(t, state, parameter) {
     q_mult_DM3 <- t(q %*% DM3)
 
 
-    dDE <- -(lambdac + mu + t_vec) * DE +
-              2 * lambdac * DE * E +
-              q_mult_DE
+    lambda_c_mu_t_vec_sum <- lambdac + mu + t_vec
+    E_sq <- E * E
 
-    dDM3 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM3 +
-      (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA3 +
+    dDE <- -(lambda_c_mu_t_vec_sum) * DE +
+      2 * lambdac * DE * E +
+      q_mult_DE
+
+    dDM3 <-  -(lambda_c_mu_t_vec_sum + gamma_nonself + lambdaa) * DM3 +
+      (mu + lambdaa * E + lambdac * E_sq + p * q_mult_E) * DA3 +
       (1 - p) * q_mult_DM3 +
       gamma_nonself * DM3
 
-    dE <- mu - (mu + lambdac + t_vec) * E +
-      lambdac * E * E +
+    dE <- mu - (lambda_c_mu_t_vec_sum) * E +
+      lambdac * E_sq +
       q_mult_E
 
     dDA3 <- -sum(gamma) * DA3 + sum(gamma * DM3)
@@ -52,7 +55,7 @@ loglik_hidden_rhs <- function(t, state, parameter) {
 
 
 #' @keywords internal
-calcThruNodes <- function(
+calcThruNodes_hidden <- function(
     ances,
     states,
     loglik,
@@ -153,6 +156,7 @@ calc_init_state_hidden <- function(trait,
 #'
 #' @inheritParams default_params_doc
 #'
+#' @param rhs_func ll function
 #' @export
 loglik_R_hidden <- function(parameter,
                             phy,
@@ -160,7 +164,6 @@ loglik_R_hidden <- function(parameter,
                             num_hidden_traits,
                             cond = "proper_cond",
                             root_state_weight = "proper_weights",
-                            setting_calculation = NULL,
                             see_ancestral_states = TRUE,
                             atol = 1e-8,
                             rtol = 1e-7,
@@ -188,16 +191,16 @@ loglik_R_hidden <- function(parameter,
   loglik <- 0
 
   for (i in 1:length(ances)) {
-    calcul <- calcThruNodes(ances = ances[i],
-                            states = states,
-                            loglik = loglik,
-                            forTime = forTime,
-                            parameter = parameter,
-                            methode = methode,
-                            phy = phy,
-                            rhs_func = rhs_func,
-                            reltol = rtol,
-                            abstol = atol)
+    calcul <- calcThruNodes_hidden(ances = ances[i],
+                                   states = states,
+                                   loglik = loglik,
+                                   forTime = forTime,
+                                   parameter = parameter,
+                                   methode = methode,
+                                   phy = phy,
+                                   rhs_func = rhs_func,
+                                   reltol = rtol,
+                                   abstol = atol)
     states <- calcul$states
     loglik <- calcul$loglik
     nodeN <- calcul$nodeN

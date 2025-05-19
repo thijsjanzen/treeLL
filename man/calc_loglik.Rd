@@ -69,6 +69,8 @@ more accurate but slower (default = TRUE)}
 \item{use_R_version}{if TRUE (default) uses R based integration. If FALSE,
 uses Rcpp implementation (faster)}
 
+\item{methode}{used integration method, default is ode45}
+
 \item{rhs_func}{rhs function used in R implementation}
 }
 \value{

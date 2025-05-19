@@ -1,19 +1,8 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
 #' This function calculates something we can verify with DAISIE
+#' @inheritParams default_params_doc
 #' @export
-#' @param brts branching times
-#' @param missnumspec number of missing species
-#' @param parameter parameters
-#' @param phy phy
-#' @param traits traits
-#' @param cond conditioning, default = "proper_cond"
-#' @param root_state_weight root weight, default = "proper_weights"
-#' @param setting_calculation used in ML
-#' @param see_ancestral_states recover the ancestral states
-#' @param atol absolute tolerance
-#' @param rtol relative tolerance
-#' @param methode method of integration
 DAISIE_DE_logpEC_trait1 <- function (brts,
                                      missnumspec,
                                      parameter,

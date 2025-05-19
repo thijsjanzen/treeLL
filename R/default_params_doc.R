@@ -166,6 +166,10 @@
 #' @param use_R_version if TRUE (default) uses R based integration. If FALSE,
 #' uses Rcpp implementation (faster)
 #' @param rhs_func rhs function used in R implementation
+#' @param methode used integration method, default is ode45
+#' @param brts branching times, being: island age, colonization time, branching times
+#' @param missnumspec missing number of species
+#' @param num_hidden_traits number of hidden traits
 #' @return Nothing
 #' @keywords internal
 #' @export
@@ -236,6 +240,12 @@ default_params_doc <- function(phy,
                                optimmethod,
                                display_warning,
                                take_into_account_root_edge,
-                               use_normalization) {
+                               use_normalization,
+                               num_hidden_traits,
+                               missnumspec,
+                               brts,
+                               use_R_version,
+                               methode,
+                               rhs_func) {
   # Nothing
 }

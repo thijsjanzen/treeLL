@@ -46,7 +46,7 @@ master_ml <- function(phy,
   ll_verbose <- ifelse(optimmethod == "subplex",
                        verbose,
                        FALSE)
-  initloglik <- secsse_loglik_choosepar(trparsopt = trparsopt,
+  initloglik <- loglik_choosepar(trparsopt = trparsopt,
                                         trparsfix = trparsfix,
                                         idparsopt = idparsopt,
                                         idparsfix = idparsfix,
@@ -74,14 +74,13 @@ master_ml <- function(phy,
   } else {
     out <- DDD::optimizer(optimmethod = optimmethod,
                           optimpars = optimpars,
-                          fun = secsse_loglik_choosepar,
+                          fun = loglik_choosepar,
                           trparsopt = trparsopt,
                           num_cycles = num_cycles,
                           idparsopt = idparsopt,
                           trparsfix = trparsfix,
                           idparsfix = idparsfix,
                           idparslist = idparslist,
-                          structure_func = structure_func,
                           phy = phy,
                           traits = traits,
                           cond = cond,
@@ -102,8 +101,7 @@ master_ml <- function(phy,
                                               trparsfix,
                                               idparsopt,
                                               idparsfix,
-                                              idparslist,
-                                              structure_func)
+                                              idparslist)
       out2 <- list(MLpars = ml_pars1,
                    ML = as.numeric(unlist(out$fvalues)),
                    conv = out$conv)
@@ -136,7 +134,7 @@ loglik_choosepar <- function(trparsopt,
   } else {
     pars1 <- secsse_transform_parameters(trparsopt, trparsfix,
                                          idparsopt, idparsfix,
-                                         idparslist, structure_func)
+                                         idparslist)
 
     loglik <- master_loglik(parameter = pars1,
                             phy = phy,
@@ -174,59 +172,6 @@ loglik_choosepar <- function(trparsopt,
 #' @inheritParams default_params_doc
 #'
 #' @return Parameter estimated and maximum likelihood
-#' @examples
-#'# Example of how to set the arguments for a ML search.
-#'library(secsse)
-#'library(DDD)
-#'set.seed(13)
-#'# Check the vignette for a better working exercise.
-#'# lambdas for 0A and 1A and 2A are the same but need to be estimated
-#'# (CTD model, see Syst Biol paper)
-#'# mus are fixed to zero,
-#'# the transition rates are constrained to be equal and fixed 0.01
-#'phylotree <- ape::rcoal(31, tip.label = 1:31)
-#'#get some traits
-#'traits <-  sample(c(0,1,2), ape::Ntip(phylotree), replace = TRUE)
-#'num_concealed_states <- 3
-#'idparslist <- cla_id_paramPos(traits,num_concealed_states)
-#'idparslist$lambdas[1,] <- c(1,1,1,2,2,2,3,3,3)
-#'idparslist[[2]][] <- 4
-#'masterBlock <- matrix(5,ncol = 3,nrow = 3,byrow = TRUE)
-#'diag(masterBlock) <- NA
-#'diff.conceal <- FALSE
-#'idparslist[[3]] <- q_doubletrans(traits,masterBlock,diff.conceal)
-#'startingpoint <- bd_ML(brts = ape::branching.times(phylotree))
-#'intGuessLamba <- startingpoint$lambda0
-#'intGuessMu <- startingpoint$mu0
-#'idparsopt <- c(1,2,3)
-#'initparsopt <- c(rep(intGuessLamba,3))
-#'idparsfix <- c(0,4,5)
-#'parsfix <- c(0,0,0.01)
-#'tol <- c(1e-04, 1e-05, 1e-07)
-#'maxiter <- 1000 * round((1.25) ^ length(idparsopt))
-#'optimmethod <- 'simplex'
-#'cond <- 'proper_cond'
-#'root_state_weight <- 'proper_weights'
-#'sampling_fraction <- c(1,1,1)
-#'model <- cla_secsse_ml(
-#'  phylotree,
-#'  traits,
-#'  num_concealed_states,
-#'  idparslist,
-#'  idparsopt,
-#'  initparsopt,
-#'  idparsfix,
-#'  parsfix,
-#'  cond,
-#'  root_state_weight,
-#'  sampling_fraction,
-#'  tol,
-#'  maxiter,
-#'  optimmethod,
-#'  num_cycles = 1,
-#'  num_threads = 1,
-#'  verbose = FALSE)
-#' # [1] -90.97626
 #' @export
 calc_ml <- function(phy,
                     traits,
