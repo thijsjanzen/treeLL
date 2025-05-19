@@ -4,12 +4,11 @@
 #' with the trait state `i`, that coexist on the island with its mainland ancestors.
 #' @export
 #' @param brts branching times
-#' @param missnumspec number of missing species
 #' @param parameter parameters
 #' @param num_observed_states number of observed traits
 #' @param num_hidden_states number of hidden traits
-#' @param phy phy
-#' @param traits traits
+#' @param trait trait of the species at the tip
+#' @param trait_mainland_ancestor trait of the mainland ancestors
 #' @param cond conditioning, default = "proper_cond"
 #' @param root_state_weight root weight, default = "proper_weights"
 #' @param setting_calculation used in ML
@@ -18,16 +17,17 @@
 #' @param rtol relative tolerance
 #' @param methode method of integration
 DAISIE_DE_trait_logpES_mainland_hidden <- function(brts,
-                                          trait,
-                                          parameter,
-                                          num_observed_states,
-                                          num_hidden_states,
-                                          cond = "proper_cond",
-                                          root_state_weight = "proper_weights",
-                                          see_ancestral_states = TRUE,
-                                          atol = 1e-10,
-                                          rtol = 1e-10,
-                                          methode = "ode45") {
+                                                  trait,
+                                                  parameter,
+                                                  num_observed_states,
+                                                  num_hidden_states,
+                                                  trait_mainland_ancestor = trait_mainland_ancestor,
+                                                  cond = "proper_cond",
+                                                  root_state_weight = "proper_weights",
+                                                  see_ancestral_states = TRUE,
+                                                  atol = 1e-10,
+                                                  rtol = 1e-10,
+                                                  methode = "ode45") {
   t0 <- brts[1]
   t1 <- brts[2]
   # number of unique state
@@ -108,13 +108,14 @@ DAISIE_DE_trait_logpES_mainland_hidden <- function(brts,
     DM2 <- rep(0, num_unique_states)
     DM3 <- rep(0, num_unique_states)
     E   <- rep(0, num_unique_states)
-    DA3 <- 1
+    DA3 <- 0
 
     #for (i in 1:num_hidden_states) {
     #assuming the traits start counting at 0 !!!!
     #DM2[(1 + trait) + (i - 1) * num_hidden_states] <- 1
     #}
     DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
+    DM3[c((num_hidden_states*trait_mainland_ancestor + 1), num_hidden_states + trait_mainland_ancestor* num_hidden_states)] <- 1
 
     return( c(DE, DM2, DM3, E, DA3))
   }
