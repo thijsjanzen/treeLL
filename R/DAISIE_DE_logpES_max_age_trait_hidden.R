@@ -48,7 +48,7 @@
 #'   rtol                  = 1e-10,
 #'   methode               = "ode45"
 #' )
-#' }
+
 
 DAISIE_DE_trait_logpES_max_age_hidden <- function(brts,
                                                   trait,
