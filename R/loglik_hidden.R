@@ -118,9 +118,9 @@ calcThruNodes_hidden <- function(
               nodeM = nodeM,
               nodeN = nodeN))
 }
-
+  # sf = sampling fraction
 #' @keywords internal
-calc_init_state_hidden <- function(trait,
+calc_init_state_hidden <- function(trait, sf,
                                    num_unique_states,
                                    num_hidden_states) {
 
@@ -134,8 +134,8 @@ calc_init_state_hidden <- function(trait,
   #   DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
   # }
 
-  DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sampling_fraction
-  E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sampling_fraction
+  DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sf
+  E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sf
 
   return( c(DE, DM3, E, DA3))
   }
@@ -166,9 +166,10 @@ loglik_R_hidden <- function(parameter,
   states <- matrix(nrow = number_of_lineages + phy$Nnode,
                    ncol = 3 * length(parameter[[1]]) + 1,
                    data = NA)
-
+ # sf = sampling fraction
   for (i in 1:length(traits)) {
     states[i, ] <- calc_init_state_hidden(traits[i],
+                                          sampling_fraction[i],
                                           length(parameter[[1]]),
                                           num_hidden_traits)
   }
