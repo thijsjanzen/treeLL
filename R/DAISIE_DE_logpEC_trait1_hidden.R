@@ -3,6 +3,9 @@
 #' This function calculates something we can verify with DAISIE, using hidden traits
 #' @inheritParams default_params_doc
 #' @export
+
+
+
 DAISIE_DE_logpEC_trait1_hidden_old <- function(brts,
                                            missnumspec,
                                            parameter,

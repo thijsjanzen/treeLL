@@ -1,6 +1,5 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
-<<<<<<< HEAD
 #' this function calculate the likelihood of observing a clade with specified species trait states,
 #' and for which the estimated colonization is known.
 #' @export
@@ -20,13 +19,14 @@
 #' @param rtol relative tolerance
 #' @param methode method of integration
 #' @examples
-
+#'
 #' library(DAISIE)
-#' data("Galapagos_datalist")
-#' datalist <- Galapagos_datalist
-#' i <- 4
+#' data("NewZealand_birds_datalist")
+#' datalist <- NewZealand_birds_datalist
+#' i <- 13
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 #' traits <- sample(c(0,1), length(phy$tip.label), replace = TRUE)
+#' sampling_fraction <- sample(c(1,1), length(phy$tip.label), replace = TRUE)
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -45,6 +45,8 @@
 #'   missnumspec           = datalist[[i]]$missing_species,
 #'   phy                   = phy,
 #'   traits                = traits,
+#'   sampling_fraction     = sampling_fraction,
+#'   trait_mainland_ancestor = FALSE,
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
 #'   num_hidden_traits     = 2,
@@ -56,17 +58,12 @@
 #'   methode               = "ode45",
 #'   rhs_func              = loglik_hidden_rhs
 #' )
-
-=======
-#' This function calculates something we can verify with DAISIE
-#' @inheritParams default_params_doc
-#' @export
->>>>>>> 53154ba5a6ae76467bdd67bf482dba1d26678426
 DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                                            missnumspec,
                                            parameter,
                                            phy,
                                            traits,
+                                           sampling_fraction,
                                            trait_mainland_ancestor = FALSE,
                                            num_observed_states,
                                            num_hidden_traits,
@@ -246,7 +243,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   if (trait_mainland_ancestor == "FALSE")
   {  initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1: select DM2 in solution2
                               solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E: select E in solution2
-                              sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1: select DA3 in solution2
+                              sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1: select DM2 in solution2
 
   }
   #if the trait state of the species at the stem is known
