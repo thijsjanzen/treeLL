@@ -42,7 +42,6 @@
 #'
 #' DAISIE_DE_logpEC_trait1_hidden(
 #'   brts                  = datalist[[i]]$branching_times,
-#'   missnumspec           = datalist[[i]]$missing_species,
 #'   phy                   = phy,
 #'   traits                = traits,
 #'   sampling_fraction     = sampling_fraction,
@@ -59,7 +58,6 @@
 #'   rhs_func              = loglik_hidden_rhs
 #' )
 DAISIE_DE_logpEC_trait1_hidden <- function(brts,
-                                           missnumspec,
                                            parameter,
                                            phy,
                                            traits,

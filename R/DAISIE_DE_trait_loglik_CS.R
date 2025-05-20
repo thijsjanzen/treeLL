@@ -61,23 +61,23 @@ DAISIE_DE_trait_loglik_CS <- function( pars1,
       if (length(brts) == 2)
         loglikelihood <- DAISIE_DE_trait_logpES_hidden (brts, trait, trait_mainland_ancestor = "FALSE", parameter, num_observed_states, num_hidden_states, cond = "proper_cond", root_state_weight = "proper_weights", see_ancestral_states = TRUE, atol = 1e-10, rtol = 1e-10, methode = "ode45")
       else
-        loglikelihood <- DAISIE_DE_logpEC_trait1_hidden (brts,missnumspec,parameter,phy,traits,sampling_fraction,num_hidden_traits,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10,methode = "ode45",rhs_func = loglik_hidden_rhs)
+        loglikelihood <- DAISIE_DE_logpEC_trait1_hidden_essaie (brts,parameter,phy,traits,sampling_fraction,num_hidden_traits,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10,methode = "ode45",rhs_func = loglik_hidden_rhs)
     } else if (stac == 3) {
       if (length(brts) == 2)
         loglikelihood <- DAISIE_DE_trait_logpES_mainland_hidden(brts, trait, trait_mainland_ancestor, parameter, num_observed_states, num_hidden_states, trait_mainland_ancestor = FALSE, cond = "proper_cond", root_state_weight = "proper_weights", see_ancestral_states = TRUE, atol = 1e-10, rtol = 1e-10, methode = "ode45")
       else
-        loglikelihood <- DAISIE_DE_trait_logpEC_mainland_hidden(brts, missnumspec, parameter, phy, traits, trait_mainland_ancestor,sampling_fraction, num_observed_states, num_hidden_states, cond = "proper_cond", root_state_weight = "proper_weights", see_ancestral_states = TRUE, atol = 1e-10, rtol = 1e-10, methode = "ode45", rhs_func = loglik_hidden_rhs)
+        loglikelihood <- DAISIE_DE_trait_logpEC_mainland_hidden(brts, parameter, phy, traits, trait_mainland_ancestor,sampling_fraction, num_observed_states, num_hidden_states, cond = "proper_cond", root_state_weight = "proper_weights", see_ancestral_states = TRUE, atol = 1e-10, rtol = 1e-10, methode = "ode45", rhs_func = loglik_hidden_rhs)
     } else if (stac == 4) {
       loglikelihood <- DAISIE_DE_trait_logpNE_hidden(brts,trait,parameter, num_observed_states,num_hidden_states,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10, methode = "ode45")
     } else if (stac == 5) {
       loglikelihood <- DAISIE_DE_trait_logpES_max_age_hidden(brts,trait,parameter,num_observed_states,num_hidden_states,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10,methode = "ode45")
     } else if (stac == 6) {
-      loglikelihood <- DAISIE_DE_trait_logpEC_max_age_hidden(brts,missnumspec,parameter, phy,traits,num_hidden_traits,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10, methode = "ode45", rhs_func = loglik_hidden_rhs)
+      loglikelihood <- DAISIE_DE_trait_logpEC_max_age_hidden(brts,parameter, phy,traits,num_hidden_traits,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10, methode = "ode45", rhs_func = loglik_hidden_rhs)
     } else if (stac == 7) {
       if (length(brts) == 2)
-        loglikelihood <- DAISIE_DE_trait_logpES_max_age_coltime_and_mainland_hidden(brts,missnumspec,pars1,methode,reltolint,abstolint)
+        loglikelihood <- DAISIE_DE_trait_logpES_max_age_coltime_and_mainland_hidden(brts,pars1,methode,reltolint,abstolint)
       else
-        loglikelihood <- DAISIE_DE_trait_logpEC_max_age_coltime_and_mainland_hidden(brts,missnumspec,pars1,methode,reltolint,abstolint)
+        loglikelihood <- DAISIE_DE_trait_logpEC_max_age_coltime_and_mainland_hidden(brts,pars1,methode,reltolint,abstolint)
     } else if (stac == 8) {
       loglikelihood <- DAISIE_DE_trait_logpNE_max_min_age_coltime_hidden(brts, trait, parameter, num_observed_states, num_hidden_states, cond = "proper_cond", root_state_weight = "proper_weights", see_ancestral_states = TRUE, atol = 1e-10, rtol = 1e-10, methode = "ode45")
     } else if (stac == 9) {

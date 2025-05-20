@@ -40,11 +40,9 @@
 #'
 #' DAISIE_DE_trait_logpEC_max_age_hidden(
 #'   brts                  = datalist[[i]]$branching_times,
-#'   missnumspec           = datalist[[i]]$missing_species,
 #'   phy                   = phy,
 #'   traits                = traits,
 #'   sampling_fraction     = sampling_fraction,
-#'   trait_mainland_ancestor = FALSE,
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
 #'   num_hidden_traits     = 2,
@@ -57,7 +55,6 @@
 #'   rhs_func              = loglik_hidden_rhs
 #' )
 DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
-                                                   missnumspec,
                                                    parameter,
                                                    phy,
                                                    traits,
