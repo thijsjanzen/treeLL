@@ -1,7 +1,7 @@
 #' testing function, for comparison with DAISIE
 #' @description
 #' this function calculates the likelihood of observing a singleton endemic species on an island
-#' with the trait state `i`, and for which only the estimated maximum age of colonization is known.
+#' with the trait state `i`, and for which only the estimated maximum and minimum ages of colonization are known.
 #' @export
 #' @param brts branching times
 #' @param parameter parameters
@@ -21,7 +21,6 @@
 #' library(DAISIE)
 #' data("Biwa_datalist")
 #' datalist <- Biwa_datalist
-#' i <- 60
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -35,8 +34,8 @@
 #'   0
 #' )
 #'
-#' DAISIE_DE_trait_logpES_max_age_hidden(
-#'   brts                  = datalist[[i]]$branching_times,
+#' DAISIE_DE_trait_logpES_max_min_age_hidden(
+#'   brts                  = c(4, 3.9999, 0.001),
 #'   trait                 = 0,
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
@@ -50,7 +49,8 @@
 #' )
 
 
-DAISIE_DE_trait_logpES_max_age_hidden <- function(brts,
+
+DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                   trait,
                                                   parameter,
                                                   num_observed_states,
@@ -63,13 +63,130 @@ DAISIE_DE_trait_logpES_max_age_hidden <- function(brts,
                                                   methode = "ode45") {
   t0   <- brts[1]
   tmax <- brts[2]
+  tmin <- brts[3]
   tp   <- 0
 
-  # unumber of unique state
-  n    <- num_observed_states * num_hidden_states
-  #########Interval1 [t_p, t_1]
+  # number of unique state
+  n <- num_observed_states * num_hidden_states
+
+  #########Interval1 [t_p, tmin]
 
   interval1 <- function(t, state, parameter) {
+    with(as.list(c(state, parameter)), {
+
+      lambdac <- parameter[[1]]
+      mu      <- parameter[[2]]
+      gamma   <- parameter[[3]]
+      lambdaa <- parameter[[4]]
+      q       <- parameter[[5]]
+      p       <- parameter[[6]]
+
+
+      # n <- (length(state) - 1) / 4
+      n <- num_observed_states * num_hidden_states
+
+      dDE     <- numeric(n)
+      dDM2    <- numeric(n)
+      dDM3    <- numeric(n)
+      dE      <- numeric(n)
+
+      t_vec   <- rowSums(q)
+
+      DE  <- state[1:n]
+      DM2 <- state[(n + 1):(n + n)]
+      DM3 <- state[(n + n + 1):(n + n + n)]
+      E   <- state[(n + n + n + 1):(n + n + n + n)]
+      DA3 <- state[length(state)]
+
+      gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
+      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+
+      q_mult_E   <- t(q %*% E)
+      q_mult_DE  <- t(q %*% DE)
+      q_mult_DM2 <- t(q %*% DM2)
+      q_mult_DM3 <- t(q %*% DM3)
+
+
+      dDE <- -(lambdac + mu + t_vec) * DE +
+        2 * lambdac * DE * E +
+        q_mult_DE
+
+
+      dDM2 <- -(lambdac + mu + gamma + lambdaa + t_vec) * DM2 +
+        (lambdaa * DE + 2 * lambdac * DE * E + p * q_mult_DE) * DA3 +
+        (1 - p) * q_mult_DM2 + gamma_nonself * DM2
+
+
+
+      dDM3 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM3 +
+        (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA3 +
+        (1 - p) * q_mult_DM3 +
+        gamma_nonself * DM3
+
+      dE <- mu - (mu + lambdac + t_vec) * E +
+        lambdac * E * E +
+        q_mult_E
+
+      dDA3 <- -sum(gamma) * DA3 + sum(gamma * DM3)
+
+      return(list(c(dDE, dDM2, dDM3, dE, dDA3)))
+    })
+  }
+
+
+  m = length(parameter[[1]])
+
+
+  calc_init_state_hidden <- function(trait,
+                                     num_unique_states,
+                                     num_hidden_states) {
+
+    DE  <- rep(0, num_unique_states)
+    DM2 <- rep(0, num_unique_states)
+    DM3 <- rep(0, num_unique_states)
+    E   <- rep(0, num_unique_states)
+    DA3 <- 1
+
+    #for (i in 1:num_hidden_states) {
+    # assuming the traits start counting at 0 !!!!
+    # DM2[(1 + trait) + (i - 1) * num_hidden_states] <- 1
+    #}
+    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
+
+    return( c(DE, DM2, DM3, E, DA3))
+  }
+
+
+
+
+
+  num_unique_states <- length(parameter[[1]])
+  initial_conditions1 <-   calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
+
+  initial_conditions1 <- matrix(initial_conditions1, nrow = 1)
+
+
+
+
+  # Time sequence for interval [tp, tmin]
+  time1 <- c(tp, tmin)
+
+  # Solve the system for interval [tp, tmin]
+  solution1 <- deSolve::ode(y = initial_conditions1,
+                            times = time1,
+                            func = interval1,
+                            parms = parameter,
+                            method = methode,
+                            atol = atol,
+                            rtol = rtol)
+
+
+  solution1 <- matrix(solution1[,-1], nrow = 2) # remove the time from the result
+
+  #########Interval2 [tmin, tmax]
+
+
+  interval2 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -141,56 +258,37 @@ DAISIE_DE_trait_logpES_max_age_hidden <- function(brts,
     })
   }
 
+  # Initial conditions
 
-  calc_init_state_hidden <- function(trait,
-                                     num_unique_states,
-                                     num_hidden_states) {
+  # only use second row, because the first row of solution2 is the initial state
+  initial_conditions2 <- c(solution1[2,][1:n],                                             ### DE: select DE in solution1
+                           rep(0, n),                                                      ### DM1: select DE in solution1
+                           solution1[2,][(n + 1):(n + n)],                         ### DM2: select DM2 in solution1
+                           solution1[2,][(n + n + 1):(n + n + n)],                 ### DM3: select DM3 in solution1
+                           solution1[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution1
+                           0,                                                              ### DA2
+                           solution1[2,][length(solution1[2,])])                           ### DA3: select DA3 in solution1
 
-    DE  <- rep(0, num_unique_states)
-    DM2 <- rep(0, num_unique_states)
-    DM1 <- rep(0, num_unique_states)
-    DM3 <- rep(0, num_unique_states)
-    E   <- rep(0, num_unique_states)
-    DA2 <- 0
-    DA3 <- 1
+  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
 
-    #for (i in 1:num_hidden_states) {
-    # assuming the traits start counting at 0 !!!!
-    # DM2[(1 + trait) + (i - 1) * num_hidden_states] <- 1
-    #}
-    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
-
-    return( c(DE, DM1, DM2, DM3, E, DA2, DA3))
-  }
-
-
-
-  num_unique_states <- n
-  initial_conditions1 <- calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
-
-  initial_conditions1 <- matrix(initial_conditions1, nrow = 1)
-
-
-
-
-  # Time sequence for interval [tp, tmax]
-  time1 <- c(tp, tmax)
+  # Time sequence for interval [tmin, tmax]
+  time1 <- c(tmin, tmax)
 
   # Solve the system for interval [tp, tmax]
-  solution1 <- deSolve::ode(y = initial_conditions1,
-                            times = time1,
-                            func = interval1,
+  solution2 <- deSolve::ode(y = initial_conditions2,
+                            times = time2,
+                            func = interval2,
                             parms = parameter,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
 
 
-  solution1 <- matrix(solution1[,-1], nrow = 2) # remove the time from the result
+  solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
 
-  #########Interval2 [tmax, t0]
+  #########Interval3 [tmax, t0]
 
-  interval2 <- function(t, state, parameter) {
+  interval3 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -238,28 +336,28 @@ DAISIE_DE_trait_logpES_max_age_hidden <- function(brts,
   # Initial conditions
 
   # only use second row, because the first row of solution2 is the initial state
-  initial_conditions2 <- c(solution1[2,][(n + n + 1):(n + n + n)],                         ### DM1: select DM2 in solution1
-                           solution1[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution1
-                           solution1[2,][length(solution1[2,]) - 1])                       ### DA1: select DA2 in solution1
+  initial_conditions3 <- c(solution2[2,][(n + n + 1):(n + n + n)],                         ### DM1: select DM2 in solution2
+                           solution2[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution2
+                           solution2[2,][length(solution2[2,]) - 1])
 
-  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
+  initial_conditions3 <- matrix(initial_conditions3, nrow = 1)
 
   # Time sequence for interval [tmax, t0]
-  time2 <- c(tmax, t0)
+  time3 <- c(tmax, t0)
 
   # Solve the system for interval [tmax, t0]
-  solution2 <- deSolve::ode(y = initial_conditions2,
-                            times = time2,
-                            func = interval2,
+  solution3 <- deSolve::ode(y = initial_conditions3,
+                            times = time3,
+                            func = interval3,
                             parms = parameter,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
 
-  solution2 <- matrix(solution2[,-1], nrow = 2)
+  solution3 <- matrix(solution3[,-1], nrow = 2)
 
   # Extract log-likelihood
-  Lk <- solution2[2,][length(solution2[2,])]
+  Lk <- solution3[2,][length(solution3[2,])]
   logLkb <- log(Lk)
   return(logLkb)
 }

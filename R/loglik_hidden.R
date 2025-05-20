@@ -120,7 +120,8 @@ calcThruNodes_hidden <- function(
 }
   # sf = sampling fraction
 #' @keywords internal
-calc_init_state_hidden <- function(trait, sf,
+calc_init_state_hidden <- function(trait,
+                                   sf,
                                    num_unique_states,
                                    num_hidden_states) {
 

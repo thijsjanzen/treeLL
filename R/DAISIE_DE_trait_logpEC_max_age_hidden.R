@@ -17,6 +17,45 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
+#'
+#' library(DAISIE)
+#' data("NewZealand_birds_datalist")
+#' datalist <- NewZealand_birds_datalist
+#' i <- 23
+#' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+#' traits <- sample(c(0,1), length(phy$tip.label), replace = TRUE)
+#' sampling_fraction <- sample(c(1,1), length(phy$tip.label), replace = TRUE)
+#' parameter <- list(
+#'   c(2.546591, 1.2, 1, 0.2),
+#'   c(2.678781, 2, 1.9, 3),
+#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(1.008583, 1, 2, 1.5),
+#'   matrix(c(
+#'     0,    1,    0.5,  0,
+#'     0,    0,    0.002,0.005,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   0
+#' )
+#'
+#' DAISIE_DE_trait_logpEC_max_age_hidden(
+#'   brts                  = datalist[[i]]$branching_times,
+#'   missnumspec           = datalist[[i]]$missing_species,
+#'   phy                   = phy,
+#'   traits                = traits,
+#'   sampling_fraction     = sampling_fraction,
+#'   trait_mainland_ancestor = FALSE,
+#'   parameter             = parameter,
+#'   num_observed_states   = 2,
+#'   num_hidden_traits     = 2,
+#'   cond                  = "proper_cond",
+#'   root_state_weight     = "proper_weights",
+#'   see_ancestral_states  = TRUE,
+#'   atol                  = 1e-10,
+#'   rtol                  = 1e-10,
+#'   methode               = "ode45",
+#'   rhs_func              = loglik_hidden_rhs
+#' )
 DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
                                                    missnumspec,
                                                    parameter,
@@ -127,9 +166,9 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
 
   initial_conditions2 <- c(res[1:n],                                              ## DE
                            rep(0,n),                                              ## DM1
-                           (res[1:n]) * res[length(res) - 1],                     ## DM2
-                           res[(n + n + n + 1):(n + n + n + n)],                  ## DM3
-                           res[(n + n + n + n + 1):(n + n + n + n + n)],          ## E
+                           (res[1:n]) * res[length(res)],                         ## DM2
+                           res[(n + 1):(n + n)],                                  ## DM3
+                           res[(n + n + 1):(n + n + n)],                          ## E
                            0,                                                     ## DA2
                            res[length(res)])                                      ## DA3
 

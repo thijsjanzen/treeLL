@@ -23,7 +23,8 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
                                            parameter,
                                            phy,
                                            traits,
-                                           trait_mainland_ancestor = trait_mainland_ancestor,
+                                           trait_mainland_ancestor,
+                                           sampling_fraction,
                                            num_observed_states,
                                            num_hidden_states,
                                            cond = "proper_cond",
@@ -198,7 +199,7 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
   if (trait_mainland_ancestor == "FALSE")
   {  initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1: select DM2 in solution2
                               solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E: select E in solution2
-                              sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1: select DA3 in solution2
+                              sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1: select DM2 in solution2
 
   }
   #if the trait state of the species at the stem is known

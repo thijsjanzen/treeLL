@@ -16,41 +16,41 @@
 #' @param rtol relative tolerance
 #' @param methode method of integration
 #' @examples
-# # load package and data
-# library(DAISIE)
-# data("Galapagos_datalist")
-# datalist <- Galapagos_datalist
-#
-#
-# i <- 3
-# parameter <- list(
-#   c(2.546591, 1.2, 1, 0.2),
-#   c(2.678781, 2, 1.9, 3),
-#   c(0.009326754, 0.003, 0.002, 0.2),
-#   c(1.008583, 1, 2, 1.5),
-#   matrix(c(0, 1, 0.5, 0,
-#            0, 0, 0.002, 0.005,
-#            rep(0, 8)),
-#          nrow = 4),
-#   0
-# )
-#
-#
-# # compute likelihood under trait + hidden NE model
-# DAISIE_DE_trait_logpNE_hidden(
-#   brts                    = datalist[[i]]$branching_times,
-#   trait                   = 0,
-#   trait_mainland_ancestor = FALSE,
-#   parameter               = parameter,
-#   num_observed_states     = 2,
-#   num_hidden_states       = 2,
-#   cond                    = "proper_cond",
-#   root_state_weight       = "proper_weights",
-#   see_ancestral_states    = TRUE,
-#   atol                    = 1e-10,
-#   rtol                    = 1e-10,
-#   methode                 = "ode45"
-# )
+#' #load package and data
+#' library(DAISIE)
+#' data("Galapagos_datalist")
+#' datalist <- Galapagos_datalist
+#'
+#'
+#' i <- 3
+#' parameter <- list(
+#'   c(2.546591, 1.2, 1, 0.2),
+#'   c(2.678781, 2, 1.9, 3),
+#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(1.008583, 1, 2, 1.5),
+#'   matrix(c(0, 1, 0.5, 0,
+#'            0, 0, 0.002, 0.005,
+#'            rep(0, 8)),
+#'          nrow = 4),
+#'   0
+#' )
+#'
+#'
+#' #compute likelihood under trait + hidden NE model
+#' DAISIE_DE_trait_logpNE_hidden(
+#'   brts                    = datalist[[i]]$branching_times,
+#'   trait                   = 0,
+#'   trait_mainland_ancestor = FALSE,
+#'   parameter               = parameter,
+#'   num_observed_states     = 2,
+#'   num_hidden_states       = 2,
+#'   cond                    = "proper_cond",
+#'   root_state_weight       = "proper_weights",
+#'   see_ancestral_states    = TRUE,
+#'   atol                    = 1e-10,
+#'   rtol                    = 1e-10,
+#'   methode                 = "ode45"
+#' )
 
 
 
@@ -241,7 +241,7 @@ DAISIE_DE_trait_logpNE_hidden <- function(brts,
   {
     initial_conditions2 <- c(rep( sum(gamma * (solution1[2,][(n + 1):(n + n)])), n), ### DM1: select DM2 in solution1
                              solution1[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution1
-                             sum(gamma * (solution1[2,][(n + 1):(n + n)])))          ### DA1: select DA3 in solution1
+                             sum(gamma * (solution1[2,][(n + 1):(n + n)])))          ### DA1: select DM2 in solution1
 
   }
   #if the trait state of the species at the stem is known
@@ -249,7 +249,7 @@ DAISIE_DE_trait_logpNE_hidden <- function(brts,
   {
     initial_conditions2 <- c(rep (parameter[[3]][trait_mainland_ancestor + 1] * (solution1[2,][(n + 1):(n + n)])[trait_mainland_ancestor + 1], n), ### DM1: select DM2 in solution1
                              solution1[2,][(n + n + n + 1):(n + n + n + n)],                                                                       ### E: select E in solution1
-                             parameter[[3]][trait_mainland_ancestor + 1] * (solution1[2,][(n + 1):(n + n)])[trait_mainland_ancestor + 1])          ### DA1: select DA3 in solution1
+                             parameter[[3]][trait_mainland_ancestor + 1] * (solution1[2,][(n + 1):(n + n)])[trait_mainland_ancestor + 1])          ### DA1: select DM2 in solution1
 
   }
 
@@ -268,7 +268,7 @@ DAISIE_DE_trait_logpNE_hidden <- function(brts,
                             atol = atol,
                             rtol = rtol)
 
-  solution2 <- matrix(solution2[,-1], nrow = 2)
+  solution2 <- matrix(solution2[,-1], nrow = 2)  # remove the time from the result
 
   # Extract log-likelihood
   Lk <- solution2[2,][length(solution2[2,])]

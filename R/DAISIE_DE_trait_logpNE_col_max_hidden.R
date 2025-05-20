@@ -29,12 +29,10 @@
 #'   c(2.678781, 2, 1.9, 3),
 #'   c(0.009326754, 0.003, 0.002, 0.2),
 #'   c(1.008583, 1, 2, 1.5),
-#'   matrix(
-#'     c(0,   1,    0.5, 0,
-#'       0,   0,    0,   0,
-#'       0.002, 0.005, rep(0, 8)),
-#'     nrow = 4
-#'   ),
+#'   matrix(c(0, 1, 0.5, 0,
+#'            0, 0, 0.002, 0.005,
+#'            rep(0, 8)),
+#'          nrow = 4),
 #'   0
 #' )
 #'
@@ -149,8 +147,8 @@ DAISIE_DE_trait_logpNE_col_max_hidden <- function(brts,
                             func = interval1,
                             parms = parameter,
                             method = methode,
-                            atol = 1e-10,
-                            rtol = 1e-10)
+                            atol = atol,
+                            rtol = rtol)
 
 
 
