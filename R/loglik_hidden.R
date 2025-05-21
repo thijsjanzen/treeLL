@@ -152,6 +152,7 @@ calc_init_state_hidden <- function(trait,
 loglik_R_hidden <- function(parameter,
                             phy,
                             traits,
+                            sampling_fraction,
                             num_hidden_traits,
                             cond = "proper_cond",
                             root_state_weight = "proper_weights",
@@ -176,7 +177,7 @@ loglik_R_hidden <- function(parameter,
   }
 
   phy$node.label <- NULL
-  split_times <- sort(event_times(phy), decreasing = FALSE)
+  split_times <- sort(secsse::event_times(phy), decreasing = FALSE)
   ances <- as.numeric(names(split_times))
   forTime <- cbind(phy$edge, phy$edge.length)
 
