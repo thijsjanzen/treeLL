@@ -59,7 +59,7 @@ DAISIE_DE_trait_loglik_CS <- function( pars1,
       loglikelihood <- DAISIE_DE_trait_logpNE_max_age_hidden(brts,trait,parameter,num_observed_states,num_hidden_states,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10,methode = "ode45")
     } else if (stac == 2) {
       if (length(brts) == 2)
-        loglikelihood <- DAISIE_DE_trait_logpES_hidden (brts, trait, trait_mainland_ancestor = "FALSE", parameter, num_observed_states, num_hidden_states, cond = "proper_cond", root_state_weight = "proper_weights", see_ancestral_states = TRUE, atol = 1e-10, rtol = 1e-10, methode = "ode45")
+        loglikelihood <- DAISIE_DE_trait_logpES_hidden (brts, trait, trait_mainland_ancestor, parameter, num_observed_states, num_hidden_states, cond = "proper_cond", root_state_weight = "proper_weights", see_ancestral_states = TRUE, atol = 1e-10, rtol = 1e-10, methode = "ode45")
       else
         loglikelihood <- DAISIE_DE_logpEC_trait1_hidden_essaie (brts,parameter,phy,traits,sampling_fraction,num_hidden_traits,cond = "proper_cond",root_state_weight = "proper_weights",see_ancestral_states = TRUE,atol = 1e-10,rtol = 1e-10,methode = "ode45",rhs_func = loglik_hidden_rhs)
     } else if (stac == 3) {

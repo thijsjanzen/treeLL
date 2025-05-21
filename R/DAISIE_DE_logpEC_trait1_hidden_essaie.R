@@ -180,9 +180,9 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
 
   solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
 
-  #########Interval3 [t1, t0]
+  #########Interval4 [t1, t0]
 
-  interval3 <- function(t, state, parameter) {
+  interval4 <- function(t, state, parameter) {
       with(as.list(c(state, parameter)), {
 
         lambdac <- parameter[[1]]
@@ -232,14 +232,14 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   gamma <- parameter[[3]]
 
   # only use second row, because the first row of solution2 is the initial state
-  #initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1
+  #initial_conditions4 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1
   #                         solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E
   #                         sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1
 
 
   #if the trait state of the species at the stem is unknown
   if (trait_mainland_ancestor == "FALSE")
-  {  initial_conditions3 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1: select DM2 in solution2
+  {  initial_conditions4 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1: select DM2 in solution2
                               solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E: select E in solution2
                               sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1: select DM2 in solution2
 
@@ -247,31 +247,31 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   #if the trait state of the species at the stem is known
   else if(trait_mainland_ancestor == trait_mainland_ancestor)
   {
-    initial_conditions3 <- c(rep (parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(m + 1):(m + m)])[trait_mainland_ancestor + 1], m), ### DM1: select DM2 in solution2
+    initial_conditions4 <- c(rep (parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(m + 1):(m + m)])[trait_mainland_ancestor + 1], m), ### DM1: select DM2 in solution2
                              solution2[2,][(m + m + m + 1):(m + m + m + m)],                                                                       ### E: select E in solution2
                              parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(m + 1):(m + m)])[trait_mainland_ancestor + 1])          ### DA1: select DA3 in solution2
 
   }
 
 
-  initial_conditions3 <- matrix(initial_conditions3, nrow = 1)
+  initial_conditions4 <- matrix(initial_conditions4, nrow = 1)
 
   # Time sequence for interval [t1, t0]
-  time3 <- c(t1, t0)
+  time4 <- c(t1, t0)
 
   # Solve the system for interval [t1, t0]
-  solution3 <- deSolve::ode(y = initial_conditions3,
-                            times = time3,
-                            func = interval3,
+  solution4 <- deSolve::ode(y = initial_conditions4,
+                            times = time4,
+                            func = interval4,
                             parms = parameter,
                             method = methode,
                             atol = rtol,
                             rtol = rtol)
 
-  solution3 <- matrix(solution3[,-1], nrow = 2)
+  solution4 <- matrix(solution4[,-1], nrow = 2)
 
   # Extract log-likelihood
-  Lk <- solution3[2,][length(solution3[2,])]
+  Lk <- solution4[2,][length(solution4[2,])]
   logLkb <- log(Lk)
   return(logLkb)
 }

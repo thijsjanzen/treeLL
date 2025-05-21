@@ -33,9 +33,9 @@ DAISIE_DE_trait_logpES_mainland_hidden <- function(brts,
   # number of unique state
   n <- num_observed_states * num_hidden_states
 
-  #########Interval1 [t_p, t_1]
+  #########interval2 [t_p, t_1]
 
-  interval1 <- function(t, state, parameter) {
+  interval2 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -125,31 +125,31 @@ DAISIE_DE_trait_logpES_mainland_hidden <- function(brts,
 
 
   num_unique_states <- length(parameter[[1]])
-  initial_conditions1 <-   calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
+  initial_conditions2 <-   calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
 
-  initial_conditions1 <- matrix(initial_conditions1, nrow = 1)
+  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
 
 
 
 
   # Time sequence for interval [tp, t1]
-  time1 <- c(tp, t1)
+  time2 <- c(tp, t1)
 
   # Solve the system for interval [tp, t1]
-  solution1 <- deSolve::ode(y = initial_conditions1,
-                            times = time1,
-                            func = interval1,
+  solution2 <- deSolve::ode(y = initial_conditions2,
+                            times = time2,
+                            func = interval2,
                             parms = parameter,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
 
 
-  solution1 <- matrix(solution1[,-1], nrow = 2) # remove the time from the result
+  solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
 
-  #########Interval2 [t1, t0]
+  #########interval4 [t1, t0]
 
-  interval2 <- function(t, state, parameter) {
+  interval4 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -197,44 +197,44 @@ DAISIE_DE_trait_logpES_mainland_hidden <- function(brts,
   # Initial conditions
   gamma <- parameter[[3]]
 
-  # only use second row, because the first row of solution2 is the initial state
+  # only use second row, because the first row of solution4 is the initial state
 
   #if the trait state of the species at the stem is unknown
   if (trait_mainland_ancestor == "FALSE")
   {
-    initial_conditions2 <- c(rep( sum(gamma * (solution1[2,][(n + 1):(n + n)])), n), ### DM1: select DM2 in solution1
-                             solution1[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution1
-                             sum(gamma * (solution1[2,][(n + 1):(n + n)])))          ### DA1: select DA3 in solution1
+    initial_conditions4 <- c(rep( sum(gamma * (solution2[2,][(n + 1):(n + n)])), n), ### DM1: select DM2 in solution2
+                             solution2[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution2
+                             sum(gamma * (solution2[2,][(n + 1):(n + n)])))          ### DA1: select DA3 in solution2
 
   }
   #if the trait state of the species at the stem is known
   else if(trait_mainland_ancestor == trait_mainland_ancestor)
   {
-    initial_conditions2 <- c(rep (parameter[[3]][trait_mainland_ancestor + 1] * (solution1[2,][(n + 1):(n + n)])[trait_mainland_ancestor + 1], n), ### DM1: select DM2 in solution1
-                             solution1[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution1
-                             parameter[[3]][trait_mainland_ancestor + 1] * (solution1[2,][(n + 1):(n + n)])[trait_mainland_ancestor + 1])          ### DA1: select DA3 in solution1
+    initial_conditions4 <- c(rep (parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(n + 1):(n + n)])[trait_mainland_ancestor + 1], n), ### DM1: select DM2 in solution2
+                             solution2[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution2
+                             parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(n + 1):(n + n)])[trait_mainland_ancestor + 1])          ### DA1: select DA3 in solution2
 
   }
 
 
-  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
+  initial_conditions4 <- matrix(initial_conditions4, nrow = 1)
 
   # Time sequence for interval [t1, t0]
-  time2 <- c(t1, t0)
+  time4 <- c(t1, t0)
 
   # Solve the system for interval [t1, t0]
-  solution2 <- deSolve::ode(y = initial_conditions2,
-                            times = time2,
-                            func = interval2,
+  solution4 <- deSolve::ode(y = initial_conditions4,
+                            times = time4,
+                            func = interval4,
                             parms = parameter,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
 
-  solution2 <- matrix(solution2[,-1], nrow = 2)
+  solution4 <- matrix(solution4[,-1], nrow = 2)
 
   # Extract log-likelihood
-  Lk <- solution2[2,][length(solution2[2,])]
+  Lk <- solution4[2,][length(solution4[2,])]
   logLkb <- log(Lk)
   return(logLkb)
 }

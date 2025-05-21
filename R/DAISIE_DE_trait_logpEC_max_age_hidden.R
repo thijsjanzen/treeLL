@@ -74,9 +74,9 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
   # number of unique state
   n <- num_observed_states*num_hidden_states
 
-  #########Interval2 [t_2, tmax]
+  #########interval3 [t_2, tmax]
 
-  interval2 <- function(t, state, parameter) {
+  interval3 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -161,7 +161,7 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
 
 
 
-  initial_conditions2 <- c(res[1:n],                                              ## DE
+  initial_conditions3 <- c(res[1:n],                                              ## DE
                            rep(0,n),                                              ## DM1
                            (res[1:n]) * res[length(res)],                         ## DM2
                            res[(n + 1):(n + n)],                                  ## DM3
@@ -169,29 +169,29 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
                            0,                                                     ## DA2
                            res[length(res)])                                      ## DA3
 
-  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
+  initial_conditions3 <- matrix(initial_conditions3, nrow = 1)
 
 
 
 
   # Time sequence for interval [t2, tmax]
-  time2 <- c(t2, tmax)
+  time3 <- c(t2, tmax)
 
   # Solve the system for interval [t2, tmax]
-  solution2 <- deSolve::ode(y = initial_conditions2,
-                            times = time2,
-                            func = interval2,
+  solution3 <- deSolve::ode(y = initial_conditions3,
+                            times = time3,
+                            func = interval3,
                             parms = parameter,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
 
 
-  solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
+  solution3 <- matrix(solution3[,-1], nrow = 2) # remove the time from the result
 
-  #########Interval3 [tmax, t0]
+  #########interval4 [tmax, t0]
 
-  interval3 <- function(t, state, parameter) {
+  interval4 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -239,30 +239,30 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
   # Initial conditions
 
 
-  # only use second row, because the first row of solution2 is the initial state
-  initial_conditions3 <- c(solution2[2,][(n + 1):(n + n)],                                 ### DM1: select DM2 in solution1
-                           solution2[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution1
-                           solution2[2,][length(solution2[2,]) - 1])                       ### DA1: select DA2 in solution1
+  # only use second row, because the first row of solution3 is the initial state
+ initial_conditions4_max <- c(solution3[2,][(n + 1):(n + n)],                                 ### DM1: select DM2 in solution1
+                           solution3[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution1
+                           solution3[2,][length(solution3[2,]) - 1])                       ### DA1: select DA2 in solution1
 
 
-  initial_conditions3 <- matrix(initial_conditions3, nrow = 1)
+ initial_conditions4_max <- matrix(initial_conditions4, nrow = 1)
 
   # Time sequence for interval [tmax, t0]
-  time3 <- c(tmax, t0)
+  time4 <- c(tmax, t0)
 
   # Solve the system for interval [tmax, t0]
-  solution3 <- deSolve::ode(y = initial_conditions3,
-                            times = time3,
-                            func = interval3,
+  solution4 <- deSolve::ode(y =initial_conditions4_max,
+                            times = time4,
+                            func = interval4,
                             parms = parameter,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
 
-  solution3 <- matrix(solution3[,-1], nrow = 2)
+  solution4 <- matrix(solution4[,-1], nrow = 2)
 
   # Extract log-likelihood
-  Lk <- solution3[2,][length(solution3[2,])]
+  Lk <- solution4[2,][length(solution4[2,])]
   logLkb <- log(Lk)
   return(logLkb)
 }

@@ -66,9 +66,9 @@ DAISIE_DE_trait_logpNE_col_max_hidden <- function(brts,
 
   t0 <- brts[1]
   tp <- 0
-  #########Interval1 [t_p, t_0]
+  #########interval4 [t_p, t_0]
 
-  interval1 <- function(t, state, parameter) {
+  interval4 <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -132,19 +132,19 @@ DAISIE_DE_trait_logpNE_col_max_hidden <- function(brts,
 
 
   num_unique_states <- length(parameter[[1]])
-  initial_conditions1 <- calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
+  initial_conditions4 <- calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
 
-  initial_conditions1 <- matrix(initial_conditions1, nrow = 1)
+  initial_conditions4 <- matrix(initial_conditions4, nrow = 1)
 
 
 
   # Time sequence for interval [tp, t0]
-  time1 <- c(tp, t0)
+  time4 <- c(tp, t0)
 
   # Solve the system for interval [tp, t1]
-  solution1 <- deSolve::ode(y = initial_conditions1,
-                            times = time1,
-                            func = interval1,
+  solution4 <- deSolve::ode(y = initial_conditions4,
+                            times = time4,
+                            func = interval4,
                             parms = parameter,
                             method = methode,
                             atol = atol,
@@ -152,10 +152,10 @@ DAISIE_DE_trait_logpNE_col_max_hidden <- function(brts,
 
 
 
-  solution1 <- matrix(solution1[,-1], nrow = 2)
+  solution4 <- matrix(solution4[,-1], nrow = 2)
 
   # Extract log-likelihood
-  Lk <- solution1[2,][length(solution1[2,])]
+  Lk <- solution4[2,][length(solution4[2,])]
   logLkb <- log(Lk)
   return(logLkb)
 }
