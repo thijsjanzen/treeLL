@@ -1,7 +1,7 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
-#' this function calculates the likelihood of observing a clade on an island
-#' that coexists with its mainland ancestors.
+#' this function calculate the likelihood of observing a clade with specified species trait states,
+#' and for which the estimated colonization is known.
 #' @export
 #' @param brts branching times
 #' @param missnumspec number of missing species
@@ -9,7 +9,7 @@
 #' @param num_observed_states number of observed traits
 #' @param num_hidden_states number of hidden traits
 #' @param trait_mainland_ancestor trait of the species at the stem
-#' @param phy phy
+#' @param phy phylogeny
 #' @param traits traits
 #' @param cond conditioning, default = "proper_cond"
 #' @param root_state_weight root weight, default = "proper_weights"
@@ -18,13 +18,55 @@
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
-DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
-                                           missnumspec,
+#' @examples
+#' library(secsse)
+#' library(DAISIE)
+#' data("NewZealand_birds_datalist")
+#' datalist <- NewZealand_birds_datalist
+#' i <- 13
+#' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+#' traits <- sample(c(0,0), length(phy$tip.label), replace = TRUE)
+#' sampling_fraction <- sample(c(1,1), length(phy$tip.label), replace = TRUE)
+#'
+#' parameter <- list(
+#'   c(2.546591, 1.2, 1, 0.2),
+#'   c(2.678781, 2, 1.9, 3),
+#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(1.008583, 1, 2, 1.5),
+#'   matrix(c(
+#'     0,    1,    0.5,  0,
+#'     0,    0,    0.002,0.005,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   0
+#' )
+#'
+#' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+#'
+#' DAISIE_DE_trait_logpEC_hidden(
+#'   brts                  = datalist[[i]]$branching_times,
+#'   phy                   = phy,
+#'   traits                = traits,
+#'   sampling_fraction     = sampling_fraction,
+#'   trait_mainland_ancestor = FALSE,
+#'   parameter             = parameter,
+#'   num_observed_states   = 1,
+#'   num_hidden_states     = 1,
+#'   cond                  = "proper_cond",
+#'   root_state_weight     = "proper_weights",
+#'   see_ancestral_states  = TRUE,
+#'   atol                  = 1e-10,
+#'   rtol                  = 1e-10,
+#'   methode               = "ode45",
+#'   rhs_func              = loglik_hidden_rhs
+#' )
+
+DAISIE_DE_trait_logpEC_hidden <- function(brts,
                                            parameter,
                                            phy,
                                            traits,
-                                           trait_mainland_ancestor,
                                            sampling_fraction,
+                                           trait_mainland_ancestor = FALSE,
                                            num_observed_states,
                                            num_hidden_states,
                                            cond = "proper_cond",
@@ -33,14 +75,12 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
                                            atol = 1e-10,
                                            rtol = 1e-10,
                                            methode = "ode45",
-                                           rhs_func = loglik_hidden_rhs_mainland()) {
+                                           rhs_func = loglik_hidden_rhs) {
   t0 <- brts[1]
   t1 <- brts[2]
   t2 <- brts[3]
   tp <- 0
 
-  # number of unique state
-  n  <- num_observed_states * num_hidden_states
 
   #########Interval2 [t_2, t_1]
 
@@ -55,7 +95,7 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
       p       <- parameter[[6]]
 
 
-      n <- num_observed_states*num_hidden_states
+      n <- (length(state) - 1) / 4
 
       dDE     <- numeric(n)
       dDM2    <- numeric(n)
@@ -114,19 +154,21 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
 
 
   # Solve the system for interval [tp, t2]
-  res <- treeLL::loglik_R_hidden_mainland(parameter,
+  res <- loglik_R_hidden(parameter,
                                  phy,
                                  traits,
-                                 num_hidden_traits = num_hidden_traits,
+                                 sampling_fraction,
+                                 num_hidden_states = num_hidden_states,
                                  see_ancestral_states = TRUE,
                                  atol = atol,
                                  rtol = rtol)
 
+  m = length(parameter[[1]])
 
-  initial_conditions2 <- c(res[1:n],                      ## DE
-                           (res[1:n]) * res[length(res)], ## DM2
-                           res[(n + 1):(n + n)],          ## DM3
-                           res[(n + n + 1):(n + n + n)],  ## E
+  initial_conditions2 <- c(res[1:m],                      ## DE
+                           (res[1:m]) * res[length(res)], ## DM2
+                           res[(m + 1):(m + m)],          ## DM3
+                           res[(m + m + 1):(m + m + m)],  ## E
                            res[length(res)])              ## DA3
 
   initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
@@ -149,58 +191,58 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
 
   solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
 
-  #########interval4 [t1, t0]
+  #########Interval4 [t1, t0]
 
   interval4 <- function(t, state, parameter) {
-    with(as.list(c(state, parameter)), {
+      with(as.list(c(state, parameter)), {
 
-      lambdac <- parameter[[1]]
-      mu      <- parameter[[2]]
-      gamma   <- parameter[[3]]
-      lambdaa <- parameter[[4]]
-      q       <- parameter[[5]]
-      p       <- parameter[[6]]
-
-
-      #n <- (length(state) - 1) / 2
-      n <- num_observed_states * num_hidden_states
-
-      dDM1    <- numeric(n)
-      dDE     <- numeric(n)
+        lambdac <- parameter[[1]]
+        mu      <- parameter[[2]]
+        gamma   <- parameter[[3]]
+        lambdaa <- parameter[[4]]
+        q       <- parameter[[5]]
+        p       <- parameter[[6]]
 
 
-      t_vec   <- rowSums(q)
+        #n <- (length(state) - 1) / 2
+        n <- num_observed_states * num_hidden_states
 
-      DM1  <- state[1:n]
-      E    <- state[(n + 1):(n + n)]
-      DA1  <- state[length(state)]
+        dDM1    <- numeric(n)
+        dDE     <- numeric(n)
 
-      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
 
-      if (nrow(gamma_matrix) == 1) {
-        # when there's only one row, there is no “self” element to subtract
-        gamma_nonself <- 0
-      } else {
-        # for n > 1, subtract the diagonal (self‐effects) as before
-        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
-      }
+        t_vec   <- rowSums(q)
 
-      q_mult_E   <- t(q %*% E)
-      q_mult_DM1 <- t(q %*% DM1)
+        DM1  <- state[1:n]
+        E    <- state[(n + 1):(n + n)]
+        DA1  <- state[length(state)]
 
-      dDM1 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM1 +
-        (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
-        (1 - p) * q_mult_DM1 + gamma_nonself * DM1
+        gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
 
-      dE <- mu - (mu + lambdac + t_vec) * E +
-        lambdac * E * E +
-        q_mult_E
+        if (nrow(gamma_matrix) == 1) {
+          # when there's only one row, there is no “self” element to subtract
+          gamma_nonself <- 0
+        } else {
+          # for n > 1, subtract the diagonal (self‐effects) as before
+          gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+        }
 
-      dDA1 <- -sum(gamma) * DA1 + sum(gamma * DM1)
+        q_mult_E   <- t(q %*% E)
+        q_mult_DM1 <- t(q %*% DM1)
 
-      return(list(c(dDM1, dE, dDA1)))
-    })
-  }
+        dDM1 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM1 +
+          (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
+          (1 - p) * q_mult_DM1 + gamma_nonself * DM1
+
+        dE <- mu - (mu + lambdac + t_vec) * E +
+          lambdac * E * E +
+          q_mult_E
+
+        dDA1 <- -sum(gamma) * DA1 + sum(gamma * DM1)
+
+        return(list(c(dDM1, dE, dDA1)))
+      })
+    }
 
 
 
@@ -208,6 +250,10 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
   gamma <- parameter[[3]]
 
   # only use second row, because the first row of solution2 is the initial state
+  #initial_conditions4 <- c(rep( sum(gamma * (solution2[2,][(m + 1):(m + m)])), m), ### DM1
+  #                         solution2[2,][(m + m + m + 1):(m + m + m + m)],         ### E
+  #                         sum(gamma * (solution2[2,][(m + 1):(m + m)])))          ### DA1
+
 
   #if the trait state of the species at the stem is unknown
   if (trait_mainland_ancestor == "FALSE")
@@ -226,6 +272,7 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
 
   }
 
+
   initial_conditions4 <- matrix(initial_conditions4, nrow = 1)
 
   # Time sequence for interval [t1, t0]
@@ -237,7 +284,7 @@ DAISIE_DE_trait_logpEC_mainland_hidden <- function(brts,
                             func = interval4,
                             parms = parameter,
                             method = methode,
-                            atol = atol,
+                            atol = rtol,
                             rtol = rtol)
 
   solution4 <- matrix(solution4[,-1], nrow = 2)

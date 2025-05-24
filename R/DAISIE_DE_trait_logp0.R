@@ -3,10 +3,6 @@
 #' This function compute the likelihood that all species that colonize the island
 #' have gone extinct prior to the present.
 #' @export
-#' @param cond conditioning, default = "proper_cond"
-#' @param root_state_weight root weight, default = "proper_weights"
-#' @param setting_calculation used in ML
-#' @param see_ancestral_states recover the ancestral states
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
@@ -15,40 +11,39 @@
 #' library(DAISIE)
 #' data("Galapagos_datalist")
 #'
-#' datalist <- Galapagos_datalist
 #' parameter <- list(
-#'   c(2.546591, 0),        # cladogenesis rate & zero for hidden state
-#'   c(2.678781, 0),        # extinction rate & zero for hidden state
-#'   c(0.009326754, 0),     # trait‐change rate & zero for hidden state
-#'   c(1.008583, 0),        # anagenesis rate & zero for hidden state
-#'   matrix(rep(0, 4), nrow = 2),  # transition matrix Q
-#'   0                      # probability p
+#'   c(2.546591, 1.2, 1, 0.2),
+#'   c(2.678781, 2, 1.9, 3),
+#'   c(0.009326754, 0.003, 0.002, 0.2),
+#'   c(1.008583, 1, 2, 1.5),
+#'   matrix(c(
+#'     0,    1,    0.5,  0,
+#'     0,    0,    0.002,0.005,
+#'     rep(0, 8)
+#'   ), nrow = 4),
+#'   0
 #' )
+#'
+#' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 #'
 #' # Compute log‐likelihood under the DE‐trait model
 #' DAISIE_DE_trait_logp0(
-#'   datalist            = datalist,
+#'   brts            = datalist[[1]]$island_age,
 #'   parameter           = parameter,
-#'   cond                = "proper_cond",
-#'   root_state_weight   = "proper_weights",
-#'   see_ancestral_states= TRUE,
 #'   atol                = 1e-10,
 #'   rtol                = 1e-10,
 #'   methode             = "ode45"
 #' )
 
 
-DAISIE_DE_trait_logp0 <- function(datalist,
+DAISIE_DE_trait_logp0 <- function(brts,
                                   parameter,
-                                  cond = "proper_cond",
-                                  root_state_weight = "proper_weights",
-                                  see_ancestral_states = TRUE,
                                   atol = 1e-10,
                                   rtol = 1e-10,
                                   methode = "ode45") {
 
 
-  t0 <- datalist[[1]]$island_age
+  t0 <- brts[1]
   tp <- 0
   #########interval4 [t_p, t_0]
 
@@ -77,8 +72,15 @@ DAISIE_DE_trait_logp0 <- function(datalist,
       E    <- state[(n + 1):(n + n)]
       DA1  <- state[length(state)]
 
-      gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
+
+      if (nrow(gamma_matrix) == 1) {
+        # when there's only one row, there is no “self” element to subtract
+        gamma_nonself <- 0
+      } else {
+        # for n > 1, subtract the diagonal (self‐effects) as before
+        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+      }
 
       q_mult_E   <- t(q %*% E)
       q_mult_DM1 <- t(q %*% DM1)

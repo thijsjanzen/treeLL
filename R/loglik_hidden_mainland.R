@@ -1,5 +1,5 @@
 #' @keywords internal
-loglik_hidden_rhs <- function(t, state, parameter) {
+loglik_hidden_rhs_mainland <- function(t, state, parameter) {
   with(as.list(c(state, parameter)), {
 
     lambdac <- parameter[[1]]
@@ -125,9 +125,9 @@ calcThruNodes_hidden <- function(
               nodeM = nodeM,
               nodeN = nodeN))
 }
-  # sf = sampling fraction
+# sf = sampling fraction
 #' @keywords internal
-calc_init_state_hidden <- function(trait,
+calc_init_state_hidden_mainland <- function(trait,
                                    sf,
                                    num_unique_states,
                                    num_hidden_states) {
@@ -146,7 +146,7 @@ calc_init_state_hidden <- function(trait,
   E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sf
 
   return( c(DE, DM3, E, DA3))
-  }
+}
 
 
 #' Likelihood calculation including hidden traits
@@ -156,7 +156,7 @@ calc_init_state_hidden <- function(trait,
 #'
 #' @param rhs_func ll function
 #' @export
-loglik_R_hidden <- function(parameter,
+loglik_R_hidden_mainland <- function(parameter,
                             phy,
                             traits,
                             sampling_fraction,
@@ -168,16 +168,16 @@ loglik_R_hidden <- function(parameter,
                             rtol = 1e-7,
                             methode = "ode45",
                             use_normalization = TRUE,
-                            rhs_func = loglik_hidden_rhs) {
+                            rhs_func = loglik_hidden_rhs_mainland) {
 
   number_of_lineages <- length(phy$tip.label)
   num_unique_states <- length(parameter[[1]])
   states <- matrix(nrow = number_of_lineages + phy$Nnode,
                    ncol = 3 * length(parameter[[1]]) + 1,
                    data = NA)
- # sf = sampling fraction
+  # sf = sampling fraction
   for (i in 1:length(traits)) {
-    states[i, ] <- calc_init_state_hidden(traits[i],
+    states[i, ] <- calc_init_state_hidden_mainland(traits[i],
                                           sampling_fraction[i],
                                           num_unique_states,
                                           num_hidden_states)

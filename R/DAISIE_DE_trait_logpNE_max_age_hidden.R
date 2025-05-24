@@ -8,11 +8,7 @@
 #' @param parameter parameters
 #' @param num_observed_states number of observed traits
 #' @param num_hidden_states number of hidden traits
-#' @param trait trait
-#' @param cond conditioning, default = "proper_cond"
-#' @param root_state_weight root weight, default = "proper_weights"
-#' @param setting_calculation used in ML
-#' @param see_ancestral_states recover the ancestral states
+#' @param trait trait of the species at the tip
 #' @param atol absolute tolerance
 #' @param rtol relative tolerance
 #' @param methode method of integration
@@ -23,17 +19,22 @@
 #' datalist <- Galapagos_datalist
 #'
 #' i <- 2
+#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
 #'   c(0.009326754, 0.003, 0.002, 0.2),
 #'   c(1.008583, 1, 2, 1.5),
-#'   matrix(c(0, 1, 0.5, 0,
-#'            0, 0, 0.002, 0.005,
-#'            rep(0, 8)),
-#'          nrow = 4),
+#'   matrix(c(
+#'     0,    1,    0.5,  0,
+#'     0,    0,    0.002,0.005,
+#'     rep(0, 8)
+#'   ), nrow = 4),
 #'   0
 #' )
+#'
+#' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+#'
 #'
 #' DAISIE_DE_trait_logpNE_max_age_hidden(
 #'   brts                  = datalist[[i]]$branching_times,
@@ -98,8 +99,15 @@ DAISIE_DE_trait_logpNE_max_age_hidden <- function(brts,
       DA2 <- state[length(state) - 1]
       DA3 <- state[length(state)]
 
-      gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
+
+      if (nrow(gamma_matrix) == 1) {
+        # when there's only one row, there is no “self” element to subtract
+        gamma_nonself <- 0
+      } else {
+        # for n > 1, subtract the diagonal (self‐effects) as before
+        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+      }
 
       q_mult_E   <- t(q %*% E)
       q_mult_DE  <- t(q %*% DE)
@@ -214,8 +222,15 @@ DAISIE_DE_trait_logpNE_max_age_hidden <- function(brts,
       E    <- state[(n + 1):(n + n)]
       DA1  <- state[length(state)]
 
-      gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
+
+      if (nrow(gamma_matrix) == 1) {
+        # when there's only one row, there is no “self” element to subtract
+        gamma_nonself <- 0
+      } else {
+        # for n > 1, subtract the diagonal (self‐effects) as before
+        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+      }
 
       q_mult_E   <- t(q %*% E)
       q_mult_DM1 <- t(q %*% DM1)

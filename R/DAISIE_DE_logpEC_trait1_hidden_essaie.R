@@ -7,7 +7,7 @@
 #' @param missnumspec number of missing species
 #' @param parameter parameters
 #' @param num_observed_states number of observed traits
-#' @param num_hidden_traits number of hidden traits
+#' @param num_hidden_states number of hidden traits
 #' @param trait_mainland_ancestor trait of the species at the stem
 #' @param phy phylogeny
 #' @param traits traits
@@ -27,6 +27,7 @@
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 #' traits <- sample(c(0,1), length(phy$tip.label), replace = TRUE)
 #' sampling_fraction <- sample(c(1,1), length(phy$tip.label), replace = TRUE)
+#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -40,6 +41,8 @@
 #'   0
 #' )
 #'
+#' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+#'
 #' DAISIE_DE_logpEC_trait1_hidden(
 #'   brts                  = datalist[[i]]$branching_times,
 #'   phy                   = phy,
@@ -47,8 +50,8 @@
 #'   sampling_fraction     = sampling_fraction,
 #'   trait_mainland_ancestor = FALSE,
 #'   parameter             = parameter,
-#'   num_observed_states   = 2,
-#'   num_hidden_traits     = 2,
+#'   num_observed_states   = 1,
+#'   num_hidden_states     = 1,
 #'   cond                  = "proper_cond",
 #'   root_state_weight     = "proper_weights",
 #'   see_ancestral_states  = TRUE,
@@ -57,6 +60,7 @@
 #'   methode               = "ode45",
 #'   rhs_func              = loglik_hidden_rhs
 #' )
+
 DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                                            parameter,
                                            phy,
@@ -64,7 +68,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
                                            sampling_fraction,
                                            trait_mainland_ancestor = FALSE,
                                            num_observed_states,
-                                           num_hidden_traits,
+                                           num_hidden_states,
                                            cond = "proper_cond",
                                            root_state_weight = "proper_weights",
                                            see_ancestral_states = TRUE,
@@ -76,8 +80,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   t1 <- brts[2]
   t2 <- brts[3]
   tp <- 0
-  ti <- sort(brts)
-  ti <- ti[1:(length(ti) - 2)]
+
 
   #########Interval2 [t_2, t_1]
 
@@ -107,8 +110,15 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
       E   <- state[(n + n + n + 1):(n + n + n + n)]
       DA3 <- state[length(state)]
 
-      gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
+
+      if (nrow(gamma_matrix) == 1) {
+        # when there's only one row, there is no “self” element to subtract
+        gamma_nonself <- 0
+      } else {
+        # for n > 1, subtract the diagonal (self‐effects) as before
+        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+      }
 
       q_mult_E   <- t(q %*% E)
       q_mult_DE  <- t(q %*% DE)
@@ -144,10 +154,11 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
 
 
   # Solve the system for interval [tp, t2]
-  res <- treeLL::loglik_R_hidden(parameter,
+  res <- loglik_R_hidden(parameter,
                                  phy,
                                  traits,
-                                 num_hidden_traits = num_hidden_traits,
+                                 sampling_fraction,
+                                 num_hidden_states = num_hidden_states,
                                  see_ancestral_states = TRUE,
                                  atol = atol,
                                  rtol = rtol)
@@ -194,7 +205,7 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
 
 
         #n <- (length(state) - 1) / 2
-        n <- num_observed_states * num_hidden_traits
+        n <- num_observed_states * num_hidden_states
 
         dDM1    <- numeric(n)
         dDE     <- numeric(n)
@@ -206,8 +217,15 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
         E    <- state[(n + 1):(n + n)]
         DA1  <- state[length(state)]
 
-        gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-        gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+        gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
+
+        if (nrow(gamma_matrix) == 1) {
+          # when there's only one row, there is no “self” element to subtract
+          gamma_nonself <- 0
+        } else {
+          # for n > 1, subtract the diagonal (self‐effects) as before
+          gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+        }
 
         q_mult_E   <- t(q %*% E)
         q_mult_DM1 <- t(q %*% DM1)
@@ -247,9 +265,10 @@ DAISIE_DE_logpEC_trait1_hidden <- function(brts,
   #if the trait state of the species at the stem is known
   else if(trait_mainland_ancestor == trait_mainland_ancestor)
   {
-    initial_conditions4 <- c(rep (parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(m + 1):(m + m)])[trait_mainland_ancestor + 1], m), ### DM1: select DM2 in solution2
-                             solution2[2,][(m + m + m + 1):(m + m + m + m)],                                                                       ### E: select E in solution2
-                             parameter[[3]][trait_mainland_ancestor + 1] * (solution2[2,][(m + 1):(m + m)])[trait_mainland_ancestor + 1])          ### DA1: select DA3 in solution2
+    pos <- c((num_hidden_states*trait_mainland_ancestor + 1), num_hidden_states + trait_mainland_ancestor* num_hidden_states)
+    initial_conditions4 <- c(rep (sum(parameter[[3]][pos] * (solution2[2,][(n + 1):(n + n)])[pos])/2,n ), ### DM1: select DM2 in solution2
+                             solution2[2,][(n + n + n + 1):(n + n + n + n)],                                                                       ### E: select E in solution2
+                             sum(parameter[[3]][pos] * (solution2[2,][(n + 1):(n + n)])[pos]/2))          ### DA1: select DM2 in solution2
 
   }
 

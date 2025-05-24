@@ -1,133 +1,137 @@
-#' testing fuction, for comparison with DAISIE
+#' Testing function for comparison with DAISIE
+#'
 #' @description
-#' this function calculate the likelihood of observing a clade with specified species trait states,
-#' for which the estimated maximum age of colonization is known.
+#' This function calculates the likelihood of observing a clade with specified species trait states,
+#' given known colonization time. It is designed for comparison with DAISIE-based models.
+#'
+#' @param brts Branching times.
+#' @param missnumspec Number of missing species.
+#' @param parameter List of model parameters.
+#' @param num_observed_states Number of observed trait states.
+#' @param num_hidden_traits Number of hidden trait states.
+#' @param trait_mainland_ancestor Trait state of the species at the stem (mainland ancestor).
+#' @param phy Phylogeny (class 'phylo').
+#' @param traits Vector of trait states for the tips.
+#' @param cond Conditioning scheme (default = "proper_cond").
+#' @param root_state_weight Root state weighting method (default = "proper_weights").
+#' @param setting_calculation Argument used in ML optimization routines.
+#' @param see_ancestral_states Logical; whether to return ancestral state reconstructions.
+#' @param atol Absolute tolerance for numerical integration.
+#' @param rtol Relative tolerance for numerical integration.
+#' @param methode Numerical integration method (e.g., "ode45").
+#'
 #' @export
-#' @param brts branching times
-#' @param missnumspec number of missing species
-#' @param parameter parameters
-#' @param num_observed_states number of observed traits
-#' @param num_hidden_states number of hidden traits
-#' @param phy phy
-#' @param traits traits
-#' @param cond conditioning, default = "proper_cond"
-#' @param root_state_weight root weight, default = "proper_weights"
-#' @param setting_calculation used in ML
-#' @param see_ancestral_states recover the ancestral states
-#' @param atol absolute tolerance
-#' @param rtol relative tolerance
-#' @param methode method of integration
 #'
+#' @examples
 #' library(DAISIE)
-#' data("NewZealand_birds_datalist")
-#' datalist <- NewZealand_birds_datalist
-#' i <- 23
+#' library(secsse)
+#' data("Galapagos_datalist")
+#' datalist <- Galapagos_datalist
+#'
+#' i <- 4
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
-#' traits <- sample(c(0,1), length(phy$tip.label), replace = TRUE)
-#' sampling_fraction <- sample(c(1,1), length(phy$tip.label), replace = TRUE)
+#'
+#' traits <- sample(c(0, 0), length(phy$tip.label), replace = TRUE)
+#' sampling_fraction <- sample(c(1, 1), length(phy$tip.label), replace = TRUE)
+#'
 #' parameter <- list(
-#'   c(2.546591, 1.2, 1, 0.2),
-#'   c(2.678781, 2, 1.9, 3),
-#'   c(0.009326754, 0.003, 0.002, 0.2),
-#'   c(1.008583, 1, 2, 1.5),
-#'   matrix(c(
-#'     0,    1,    0.5,  0,
-#'     0,    0,    0.002,0.005,
-#'     rep(0, 8)
-#'   ), nrow = 4),
-#'   0
+#'   c(2.546591, 0),                      # Cladogenesis rate + hidden
+#'   c(2.678781, 0),                      # Extinction rate + hidden
+#'   c(0.009326754, 0),                   # Trait-change rate + hidden
+#'   c(1.008583, 0),                      # Anagenesis rate + hidden
+#'   matrix(rep(0, 4), nrow = 2),         # Transition matrix Q (2x2 zeros)
+#'   0                                    # Probability p
 #' )
 #'
-#' DAISIE_DE_trait_logpEC_max_age_hidden(
-#'   brts                  = datalist[[i]]$branching_times,
-#'   phy                   = phy,
-#'   traits                = traits,
-#'   sampling_fraction     = sampling_fraction,
-#'   parameter             = parameter,
-#'   num_observed_states   = 2,
-#'   num_hidden_traits     = 2,
-#'   cond                  = "proper_cond",
-#'   root_state_weight     = "proper_weights",
-#'   see_ancestral_states  = TRUE,
-#'   atol                  = 1e-10,
-#'   rtol                  = 1e-10,
-#'   methode               = "ode45",
-#'   rhs_func              = loglik_hidden_rhs
+#' DAISIE_DE_trait_logpEC(
+#'   brts                    = datalist[[i]]$branching_times,
+#'   phy                     = phy,
+#'   traits                  = traits,
+#'   status                  = 2,
+#'   sampling_fraction       = sampling_fraction,
+#'   parameter               = parameter,
+#'   num_observed_states     = 2,
+#'   num_hidden_traits       = 1,
+#'   cond                    = "proper_cond",
+#'   root_state_weight       = "proper_weights",
+#'   see_ancestral_states    = TRUE,
+#'   atol                    = 1e-10,
+#'   rtol                    = 1e-10,
+#'   methode                 = "ode45",
+#'   rhs_func                = loglik_hidden_rhs,
+#'   get_initial_conditions2 = get_initial_conditions2,
+#'   get_initial_conditions4 = get_initial_conditions4,
+#'   func_for_solution       = func_for_solution
 #' )
-DAISIE_DE_trait_logpEC_max_age_hidden_example <- function(brts,
-                                                  parameter,
-                                                  phy,
-                                                  traits,
-                                                  num_hidden_traits,
-                                                  type = "max_age_hidden", # this is new
-                                                  cond = "proper_cond",
-                                                  root_state_weight = "proper_weights",
-                                                  see_ancestral_states = TRUE,
-                                                  atol = 1e-10,
-                                                  rtol = 1e-10,
-                                                  methode = "ode45",
-                                                  rhs_func = loglik_hidden_rhs) {
+
+
+
+DAISIE_DE_trait_logpEC <- function(
+                                  brts,
+                                  parameter,
+                                  phy,
+                                  traits,
+                                  num_hidden_traits,
+                                  num_observed_states,
+                                  trait_mainland_ancestor = FALSE,
+                                  status,
+                                  sampling_fraction,
+                                  type = "max_age_hidden", # new argument
+                                  cond = "proper_cond",
+                                  root_state_weight = "proper_weights",
+                                  see_ancestral_states = TRUE,
+                                  atol = 1e-10,
+                                  rtol = 1e-10,
+                                  methode = "ode45",
+                                  rhs_func = loglik_hidden_rhs,
+                                  get_initial_conditions2,
+                                  get_initial_conditions4,
+                                  func_for_solution
+                              ) {
+  # Unpack times from brts
   t0   <- brts[1]
   tmax <- brts[2]
   t2   <- brts[3]
   tp   <- 0
 
-  # number of unique state
-  n <- num_observed_states * num_hidden_states
+  # Number of states in the system
+  num_states <- num_observed_states * num_hidden_traits
 
-  # Solve the system for interval [tp, t2]
-  res <- treeLL::loglik_R_hidden(parameter,
-                                 phy,
-                                 traits,
-                                 num_hidden_traits = num_hidden_traits,
-                                 see_ancestral_states = TRUE,
-                                 atol = atol,
-                                 rtol = rtol)
+  # Solve for interval [tp, t2] (stem phase)
+  res <- loglik_R_hidden(
+    parameter = parameter,
+    phy = phy,
+    traits = traits,
+    sampling_fraction = sampling_fraction,
+    num_hidden_traits = num_hidden_traits,
+    see_ancestral_states = see_ancestral_states,
+    atol = atol,
+    rtol = rtol
+  )
 
-  initial_conditions2 <- get_initial_conditions2(type, res)  # TODO: this needs to be defined
+  # Select interval functions depending on model status
+  if (status == 2 || status == 3) {
+    interval2 <- get_func_interval("interval2")
+    interval3 <- get_func_interval("interval3")
+  }
 
-  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
+  # Initial conditions at start of crown phase
+  initial_conditions2 <- get_initial_conditions2(status, res)
 
-  # Time sequence for interval [t2, tmax]
+  # Solve for interval [t2, tmax] (crown to max age)
   time2 <- c(t2, tmax)
+  solution2 <- func_for_solution(status, trait_mainland_ancestor, "interval2")
 
-  # Solve the system for interval [t2, tmax]
+  # Solve for interval [tmax, t0] (after max age to present)
+  interval4 <- get_func_interval("interval4")
+  initial_conditions4 <- get_initial_conditions4(status, solution2, trait_mainland_ancestor)
 
-  func_for_solution2 <- interval2      # TODO: make interval1, interval2, interval3 and interval4 in separate R file
-  if (type == "max_age_hidden") func_for_solution2 <- interval3
+  time4 <- c(tmax, t0)
+  solution4 <- func_for_solution(status, trait_mainland_ancestor, "interval4")
 
-  solution2 <- deSolve::ode(y = initial_conditions2,
-                            times = time2,
-                            func = func_for_solution2,
-                            parms = parameter,
-                            method = methode,
-                            atol = atol,
-                            rtol = rtol)
-
-
-  solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
-
-  #########Interval3 [tmax, t0]
-
-  initial_conditions3 <- get_initial_conditions3(type, solution2) # TODO: define this function
-
-  # Time sequence for interval [tmax, t0]
-  time3 <- c(tmax, t0)
-
-  # Solve the system for interval [tmax, t0]
-  solution3 <- deSolve::ode(y = initial_conditions3,
-                            times = time3,
-                            func = interval4,
-                            parms = parameter,
-                            method = methode,
-                            atol = atol,
-                            rtol = rtol)
-
-  solution3 <- matrix(solution3[,-1], nrow = 2)
-
-  # Extract log-likelihood
-  Lk <- solution3[2,][length(solution3[2,])]
+  # Extract log-likelihood from final solution
+  Lk <- solution4[2, length(solution4[2, ])]
   logLkb <- log(Lk)
+
   return(logLkb)
 }
-

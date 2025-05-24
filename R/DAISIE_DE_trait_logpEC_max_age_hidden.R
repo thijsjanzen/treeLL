@@ -1,30 +1,36 @@
-#' testing fuction, for comparison with DAISIE
-#' @description
-#' this function calculate the likelihood of observing a clade with specified species trait states,
-#' for which the estimated maximum age of colonization is known.
-#' @export
-#' @param brts branching times
-#' @param missnumspec number of missing species
-#' @param parameter parameters
-#' @param num_observed_states number of observed traits
-#' @param num_hidden_states number of hidden traits
-#' @param phy phy
-#' @param traits traits
-#' @param cond conditioning, default = "proper_cond"
-#' @param root_state_weight root weight, default = "proper_weights"
-#' @param setting_calculation used in ML
-#' @param see_ancestral_states recover the ancestral states
-#' @param atol absolute tolerance
-#' @param rtol relative tolerance
-#' @param methode method of integration
+#' Testing function for comparison with DAISIE
 #'
+#' @description
+#' This function calculates the likelihood of observing a clade with specified species trait states,
+#' for which the estimated maximum age of colonization is known.
+#'
+#' @param brts Branching times.
+#' @param missnumspec Number of missing species.
+#' @param parameter Model parameters.
+#' @param num_observed_states Number of observed trait states.
+#' @param num_hidden_states Number of hidden trait states.
+#' @param phy Phylogeny (of class `phylo`).
+#' @param traits Trait states for the species.
+#' @param cond Conditioning scheme (default = "proper_cond").
+#' @param root_state_weight Root state weighting method (default = "proper_weights").
+#' @param setting_calculation Setting used in maximum likelihood estimation.
+#' @param see_ancestral_states Logical; whether to recover ancestral states.
+#' @param atol Absolute tolerance for ODE integration.
+#' @param rtol Relative tolerance for ODE integration.
+#' @param methode Method used for numerical integration (e.g., "ode45").
+#'
+#' @export
+#'
+#' @examples
 #' library(DAISIE)
 #' data("NewZealand_birds_datalist")
 #' datalist <- NewZealand_birds_datalist
 #' i <- 23
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
-#' traits <- sample(c(0,1), length(phy$tip.label), replace = TRUE)
-#' sampling_fraction <- sample(c(1,1), length(phy$tip.label), replace = TRUE)
+#' traits <- sample(c(0, 1), length(phy$tip.label), replace = TRUE)
+#' sampling_fraction <- sample(c(1, 1), length(phy$tip.label), replace = TRUE)
+#'
+#'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -38,6 +44,8 @@
 #'   0
 #' )
 #'
+#' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+#'
 #' DAISIE_DE_trait_logpEC_max_age_hidden(
 #'   brts                  = datalist[[i]]$branching_times,
 #'   phy                   = phy,
@@ -45,7 +53,7 @@
 #'   sampling_fraction     = sampling_fraction,
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
-#'   num_hidden_traits     = 2,
+#'   num_hidden_states     = 2,
 #'   cond                  = "proper_cond",
 #'   root_state_weight     = "proper_weights",
 #'   see_ancestral_states  = TRUE,
@@ -54,11 +62,14 @@
 #'   methode               = "ode45",
 #'   rhs_func              = loglik_hidden_rhs
 #' )
+
 DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
                                                    parameter,
                                                    phy,
                                                    traits,
-                                                   num_hidden_traits,
+                                                   num_observed_states,
+                                                   num_hidden_states,
+                                                   sampling_fraction,
                                                    cond = "proper_cond",
                                                    root_state_weight = "proper_weights",
                                                    see_ancestral_states = TRUE,
@@ -106,8 +117,15 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
       DA2 <- state[length(state) - 1]
       DA3 <- state[length(state)]
 
-      gamma_matrix  <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
+
+      if (nrow(gamma_matrix) == 1) {
+        # when there's only one row, there is no “self” element to subtract
+        gamma_nonself <- 0
+      } else {
+        # for n > 1, subtract the diagonal (self‐effects) as before
+        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+      }
 
       q_mult_E   <- t(q %*% E)
       q_mult_DE  <- t(q %*% DE)
@@ -154,7 +172,8 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
   res <- treeLL::loglik_R_hidden(parameter,
                                  phy,
                                  traits,
-                                 num_hidden_traits = num_hidden_traits,
+                                 sampling_fraction,
+                                 num_hidden_states = num_hidden_states,
                                  see_ancestral_states = TRUE,
                                  atol = atol,
                                  rtol = rtol)
@@ -215,8 +234,15 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
       E   <- state[(n + 1):(n + n)]
       DA1  <- state[length(state)]
 
-      gamma_matrix <- matrix(gamma, nrow = n, ncol = length(gamma), byrow = TRUE)
-      gamma_nonself <- rowSums(gamma_matrix - diag(gamma))
+      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
+
+      if (nrow(gamma_matrix) == 1) {
+        # when there's only one row, there is no “self” element to subtract
+        gamma_nonself <- 0
+      } else {
+        # for n > 1, subtract the diagonal (self‐effects) as before
+        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+      }
 
       q_mult_E   <- t(q %*% E)
       q_mult_DM1 <- t(q %*% DM1)
@@ -240,12 +266,12 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
 
 
   # only use second row, because the first row of solution3 is the initial state
- initial_conditions4_max <- c(solution3[2,][(n + 1):(n + n)],                                 ### DM1: select DM2 in solution1
+ initial_conditions4_max <- c(solution3[2,][(n + 1):(n + n)],                                 ### DM1: select DM1 in solution1
                            solution3[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution1
                            solution3[2,][length(solution3[2,]) - 1])                       ### DA1: select DA2 in solution1
 
 
- initial_conditions4_max <- matrix(initial_conditions4, nrow = 1)
+ initial_conditions4_max <- matrix(initial_conditions4_max, nrow = 1)
 
   # Time sequence for interval [tmax, t0]
   time4 <- c(tmax, t0)
