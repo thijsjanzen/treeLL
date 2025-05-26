@@ -137,14 +137,11 @@ calc_init_state_hidden_mainland <- function(trait,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  # for (i in 1:num_hidden_states) {
-  #   # assuming the traits start counting at 0 !!!!
-  #   DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
-  # }
+
 
   DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sf
   E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sf
-
+  DM3[c((num_hidden_states*trait_mainland_ancestor + 1), num_hidden_states + trait_mainland_ancestor* num_hidden_states)] <- 1
   return( c(DE, DM3, E, DA3))
 }
 
@@ -161,6 +158,7 @@ loglik_R_hidden_mainland <- function(parameter,
                             traits,
                             sampling_fraction,
                             num_hidden_states,
+                            trait_mainland_ancestor,
                             cond = "proper_cond",
                             root_state_weight = "proper_weights",
                             see_ancestral_states = TRUE,

@@ -38,9 +38,6 @@
 #'   parameter             = parameter,
 #'   num_observed_states   = 2,
 #'   num_hidden_states     = 2,
-#'   cond                  = "proper_cond",
-#'   root_state_weight     = "proper_weights",
-#'   see_ancestral_states  = TRUE,
 #'   atol                  = 1e-10,
 #'   rtol                  = 1e-10,
 #'   methode               = "ode45"
@@ -50,13 +47,11 @@
 
 DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                   trait,
+                                                  sf = 1,
                                                   parameter,
                                                   sf = 1,
                                                   num_observed_states,
                                                   num_hidden_states,
-                                                  cond = "proper_cond",
-                                                  root_state_weight = "proper_weights",
-                                                  see_ancestral_states = TRUE,
                                                   atol = 1e-10,
                                                   rtol = 1e-10,
                                                   methode = "ode45") {

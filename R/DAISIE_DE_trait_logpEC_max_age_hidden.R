@@ -169,7 +169,7 @@ DAISIE_DE_trait_logpEC_max_age_hidden <- function(brts,
 
 
   # Solve the system for interval [tp, t2]
-  res <- treeLL::loglik_R_hidden(parameter,
+  res <- loglik_R_hidden(parameter,
                                  phy,
                                  traits,
                                  sampling_fraction,

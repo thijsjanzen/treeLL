@@ -21,7 +21,7 @@
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
 #'
-#' i <- 3
+#' i <- 2
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
 #'
@@ -44,10 +44,10 @@
 #' DAISIE_DE_trait_logpNE(
 #'   brts                    = brts,
 #'   trait                  = trait,
-#'   status                  = 4,
+#'   status                  = 1,
 #'   parameter               = parameter,
-#'   num_observed_states     = 1,
-#'   num_hidden_states       = 1,
+#'   num_observed_states     = 2,
+#'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45",
@@ -67,8 +67,8 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                    num_observed_states,
                                    num_hidden_states,
                                    parameter,
-                                   atol  = 1e-10,
-                                   rtol  = 1e-10,
+                                   atol  = 1e-15,
+                                   rtol  = 1e-15,
                                    methode                 = "ode45",
                                    get_initial_conditions2 = get_initial_conditions2,
                                    get_initial_conditions3 = get_initial_conditions3,

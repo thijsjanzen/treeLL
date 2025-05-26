@@ -33,14 +33,14 @@
 #'   ), nrow = 4),
 #'   0
 #' )
-#'
+#' trait <- 0
 #' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 #'
 #'
 #' #compute likelihood under trait + hidden NE model
 #' DAISIE_DE_trait_logpNE_hidden(
 #'   brts                    = datalist[[i]]$branching_times,
-#'   trait                   = 0,
+#'   trait                   = trait,
 #'   trait_mainland_ancestor = FALSE,
 #'   parameter               = parameter,
 #'   num_observed_states     = 2,

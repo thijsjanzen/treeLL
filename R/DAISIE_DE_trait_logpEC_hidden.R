@@ -23,7 +23,7 @@
 #' library(DAISIE)
 #' data("NewZealand_birds_datalist")
 #' datalist <- NewZealand_birds_datalist
-#' i <- 13
+#' i <- 28
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 #' traits <- sample(c(0,0), length(phy$tip.label), replace = TRUE)
 #' sampling_fraction <- sample(c(1,1), length(phy$tip.label), replace = TRUE)
@@ -41,7 +41,7 @@
 #'   0
 #' )
 #'
-#' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+#' parameter <- list(0.1255591, 0.1910084, 0.004697986, 0.326698, matrix(c(0), nrow = 1), 0 )
 #'
 #' DAISIE_DE_trait_logpEC_hidden(
 #'   brts                  = datalist[[i]]$branching_times,
@@ -50,8 +50,8 @@
 #'   sampling_fraction     = sampling_fraction,
 #'   trait_mainland_ancestor = FALSE,
 #'   parameter             = parameter,
-#'   num_observed_states   = 1,
-#'   num_hidden_states     = 1,
+#'   num_observed_states   = 2,
+#'   num_hidden_states     = 2,
 #'   cond                  = "proper_cond",
 #'   root_state_weight     = "proper_weights",
 #'   see_ancestral_states  = TRUE,
