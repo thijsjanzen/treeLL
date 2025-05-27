@@ -27,7 +27,7 @@ get_initial_conditions4 <- function(status, solution, parameter, trait_mainland_
   {
     initial_conditions4 <- c(solution[2,][(n + 1):(n + n)],                                 ### DM1: select DM1 in solution1
                              solution[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution1
-                             solution[2,][length(solution[2,]) - 1])                       ### DA1: select DA2 in solution1
+                             solution[2,][length(solution[2,]) - 1])                        ### DA1: select DA2 in solution1
 
   }
 
@@ -36,7 +36,7 @@ get_initial_conditions4 <- function(status, solution, parameter, trait_mainland_
   {
     initial_conditions4 <- c(solution[2,][(n + 1):(n + n)],                                 ### DM1: select DM2 in solution3
                              solution[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution3
-                             solution[2,][length(solution[2,]) - 1])                       ### DA1: select DA2 in solution3
+                             solution[2,][length(solution[2,]) - 1])                        ### DA1: select DA2 in solution3
 
   }
   return(matrix(initial_conditions4, nrow = 1))

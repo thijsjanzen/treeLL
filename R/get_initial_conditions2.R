@@ -1,4 +1,4 @@
-get_initial_conditions2 <- function(status, res, trait, num_observed_states, num_hidden_states)
+get_initial_conditions2_EC <- function(status, res, trait, num_observed_states, num_hidden_states)
 
 {
   n <- num_observed_states * num_hidden_states

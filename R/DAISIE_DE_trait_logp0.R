@@ -40,13 +40,13 @@
 
 DAISIE_DE_trait_logp0 <- function(datalist,
                                   parameter,
-                                  num_observed_states,
-                                  num_hidden_states,
                                   atol = 1e-10,
                                   rtol = 1e-10,
+                                  num_observed_states,
+                                  num_hidden_states,
                                   methode = "ode45") {
 
-
+  n <- num_observed_states * num_hidden_states
   t0 <- datalist[[1]]$island_age
   tp <- 0
   #########interval4 [t_p, t_0]
