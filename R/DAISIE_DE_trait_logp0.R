@@ -28,22 +28,26 @@
 #'
 #' # Compute log‐likelihood under the DE‐trait model
 #' DAISIE_DE_trait_logp0(
-#'   brts            = datalist[[1]]$island_age,
+#'   datalist            = datalist,
 #'   parameter           = parameter,
+#'   num_observed_states     = 2,
+#'   num_hidden_states       = 2,
 #'   atol                = 1e-10,
 #'   rtol                = 1e-10,
 #'   methode             = "ode45"
 #' )
 
 
-DAISIE_DE_trait_logp0 <- function(brts,
+DAISIE_DE_trait_logp0 <- function(datalist,
                                   parameter,
+                                  num_observed_states,
+                                  num_hidden_states,
                                   atol = 1e-10,
                                   rtol = 1e-10,
                                   methode = "ode45") {
 
 
-  t0 <- brts[1]
+  t0 <- datalist[[1]]$island_age
   tp <- 0
   #########interval4 [t_p, t_0]
 
@@ -58,7 +62,7 @@ DAISIE_DE_trait_logp0 <- function(brts,
       p       <- parameter[[6]]
 
 
-      n <- (length(state) - 1) / 2
+      n <- num_observed_states * num_hidden_states
       # number of unique state
 
 
@@ -99,8 +103,8 @@ DAISIE_DE_trait_logp0 <- function(brts,
     })
   }
 
-  initial_conditions40 <- c(rep(0, num_unique_states), ### DM1
-                           rep(0, num_unique_states), ### E
+  initial_conditions40 <- c(rep(0, n), ### DM1
+                           rep(0, n), ### E
                            1)                         ### DA1
 
 
