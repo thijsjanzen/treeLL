@@ -28,16 +28,17 @@
 #'   ), nrow = 4),
 #'   0
 #' )
-#'
+#' status <- 8
 #' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 #'
 #'
 #' DAISIE_DE_trait_logpNE_max_min_age_hidden(
 #'   brts                  = c(4, 3.999, 0.0001),
 #'   trait                 = 0,
+#'   status                = 8,
 #'   parameter             = parameter,
-#'   num_observed_states   = 2,
-#'   num_hidden_states     = 2,
+#'   num_observed_states   = 1,
+#'   num_hidden_states     = 1,
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
 #'   methode               = "ode45"
@@ -45,6 +46,7 @@
 
 DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
                                                       trait,
+                                                      status,
                                                       parameter,
                                                       num_observed_states,
                                                       num_hidden_states,
@@ -64,10 +66,14 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
   m = length(parameter[[1]])
 
   # TODO: is this the same as get_initial_conditions(interval = interval2)?
-  initial_conditions2 <- get_initial_conditions2(status = 4,
-                                                 num_observed_states,
-                                                 num_hidden_states,
-                                                 trait = trait)
+  initial_conditions2 <- get_initial_conditions2(status = status,
+                                                 res = res,
+                                                 num_observed_states = num_observed_states,
+                                                 num_hidden_states = num_hidden_states,
+                                                 trait = trait,
+                                                 brts = brts,
+                                                 sf = sf,
+                                                 trait_mainland_ancestor = trait_mainland_ancestor)
 
 
 
