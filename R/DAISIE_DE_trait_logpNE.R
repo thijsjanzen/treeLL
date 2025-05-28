@@ -91,9 +91,12 @@ DAISIE_DE_trait_logpNE <- function(brts,
   if (status == 4) {
     initial_conditions2 <- get_initial_conditions2(status = status,
                                                    res = res,
-                                                   trait = trait,
+                                                   trait = traits,
                                                    num_observed_states = num_observed_states,
-                                                   num_hidden_states = num_hidden_states)
+                                                   num_hidden_states = num_hidden_states,
+                                                   brts = brts,
+                                                   sf = sampling_fraction,
+                                                   trait_mainland_ancestor = trait_mainland_ancestor)
     solution2 <- solve_branch(interval_func = interval2,
                               initial_conditions = initial_conditions2,
                               time = time2,
