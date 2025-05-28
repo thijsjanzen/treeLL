@@ -50,11 +50,7 @@
 #'   num_hidden_states       = 1,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
-#'   methode                 = "ode45",
-#'   get_initial_conditions2 = get_initial_conditions2,
-#'   get_initial_conditions3 = get_initial_conditions3,
-#'   get_initial_conditions4 = get_initial_conditions4,
-#'   func_for_solution       = func_for_solution
+#'   methode                 = "ode45"
 #' )
 DAISIE_DE_trait_logpNE <- function(brts,
                                    status,

@@ -165,7 +165,7 @@ loglik_R_tree <- function(parameter,
                             sampling_fraction,
                             num_hidden_states,
                             mainland = FALSE,
-                            trait_mainland_ancestor,
+                            trait_mainland_ancestor = NULL,
                             atol = 1e-8,
                             rtol = 1e-7,
                             methode = "ode45",
@@ -178,10 +178,10 @@ loglik_R_tree <- function(parameter,
                    data = NA)
  # sf = sampling fraction
   for (i in 1:length(traits)) {
-    states[i, ] <- calc_init_state_hidden(traits[i],
-                                          sampling_fraction[ traits[i] ],
-                                          num_unique_states,
-                                          num_hidden_states,
+    states[i, ] <- calc_init_state_hidden(trait = traits[i],
+                                          sf = sampling_fraction[ 1 + traits[i] ],
+                                          num_unique_states = num_unique_states,
+                                          num_hidden_states = num_hidden_states,
                                           mainland = mainland,
                                           trait_mainland_ancestor = trait_mainland_ancestor)
   }

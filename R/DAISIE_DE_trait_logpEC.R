@@ -62,8 +62,6 @@
 #'   rtol                    = 1e-10,
 #'   methode                 = "ode45")
 #' )
-
-
 DAISIE_DE_trait_logpEC <- function(
     brts,
     parameter,

@@ -64,7 +64,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   m = length(parameter[[1]])
 
 
-  ## TODO: can't we call 'get_initial_conditions' here? //NO, because brts > 2
+  ## SOLVED: can't we call 'get_initial_conditions' here? //NO, because brts > 2
   num_unique_states <- length(parameter[[1]])
   DE  <- rep(0, num_unique_states)
   DM2 <- rep(0, num_unique_states)
