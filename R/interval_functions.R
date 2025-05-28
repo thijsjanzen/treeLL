@@ -8,7 +8,7 @@ interval2 <- function(t, state, parameter) {
     q       <- parameter[[5]]
     p       <- parameter[[6]]
 
-    n <- num_observed_states * num_hidden_states
+    n <- (length(state) - 1) / 4
 
     dDE     <- numeric(n)
     dDM2    <- numeric(n)
@@ -70,7 +70,7 @@ interval3 <- function(t, state, parameter) {
     q       <- parameter[[5]]
     p       <- parameter[[6]]
 
-    n <- num_observed_states * num_hidden_states
+    n <- (length(state) - 2) / 5
 
     dDE     <- numeric(n)
     dDM1    <- numeric(n)
@@ -142,7 +142,7 @@ interval4 <- function(t, state, parameter) {
     q       <- parameter[[5]]
     p       <- parameter[[6]]
 
-    n <- num_observed_states * num_hidden_states
+    n <- (length(state) - 1) / 2
 
     dDM1 <- numeric(n)
     dDE  <- numeric(n)

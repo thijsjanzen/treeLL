@@ -60,13 +60,7 @@
 #'   num_hidden_states       = 2,
 #'   atol                    = 1e-10,
 #'   rtol                    = 1e-10,
-#'   methode                 = "ode45",
-#'   rhs_func                = loglik_hidden_rhs,
-#'   get_initial_conditions2 = get_initial_conditions2,
-#'   get_initial_conditions3 = get_initial_conditions3,
-#'   get_initial_conditions4 = get_initial_conditions4,
-#'   func_for_solution       = func_for_solution,
-#'   get_func_interval       = get_func_interval
+#'   methode                 = "ode45")
 #' )
 
 
