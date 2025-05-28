@@ -176,15 +176,10 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 
     vec_loglikelihood <- c(vec_loglikelihood, loglikelihood)
     DAISIE:::print_parameters_and_loglik(
-      pars = c(stac, parameter ),
+      pars = c(stac, parameter[[1]]),
       loglik = loglikelihood,
       verbose = pars2[4],
-      parnames = c("parameter[[1]][1]",
-                      "parameter[[2]][1]",
-                      "parameter[[3]][1]",
-                      "parameter[[4]][1]",
-                      "parameter[[5]][1]",
-                      "parameter[[6]][1]"),
+      parnames = c("lambda^c", "mu1", "mu2", "gamma", "lambda^a", "prob_init_pres"),
       type = 'clade_loglik'
     )
 
@@ -211,6 +206,7 @@ parameter <- list(
     rep(0, 8)
    ), nrow = 4),
   0)
+
 pars2 <- c(200, 1, 1, 1)
 parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 
