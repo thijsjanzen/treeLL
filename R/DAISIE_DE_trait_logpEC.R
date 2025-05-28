@@ -70,8 +70,6 @@
 #' )
 
 
-
-
 DAISIE_DE_trait_logpEC <- function(
     brts,
     parameter,
@@ -82,15 +80,8 @@ DAISIE_DE_trait_logpEC <- function(
     trait_mainland_ancestor = FALSE,
     status,
     sampling_fraction,
-    see_ancestral_states = TRUE,
     atol = 1e-10,
     rtol = 1e-10,
-    func_for_solution,
-    get_initial_conditions2,
-    get_initial_conditions3,
-    get_initial_conditions4,
-    rhs_func = loglik_hidden_rhs,
-    get_func_interval,
     methode = "ode45"
 ) {
   # Unpack times from brts
@@ -102,50 +93,85 @@ DAISIE_DE_trait_logpEC <- function(
 
   # Time intervals
 
-  time2 <<- c(t2, t1)
-  time3 <<- c(t2, tmax)
-  time4 <<- c(tmax, t0)
+  time2 <- c(t2, t1)
+  time3 <- c(t2, tmax)
+  time4 <- c(tmax, t0)
 
   # Number of states in the system
-  num_observed_states <<- num_observed_states
-  num_hidden_states <<- num_hidden_states
-  n <<- num_observed_states * num_hidden_states
-  parameter <<- parameter
-  methode <<- methode
-  atol <<- atol
-  rtol <<- rtol
+  n <- num_observed_states * num_hidden_states
 
   # Solve for interval [tp, t2] (stem phase)
-  res <- loglik_R_hidden(
+  res <- loglik_R_tree(
     parameter = parameter,
     phy = phy,
     traits = traits,
     sampling_fraction = sampling_fraction,
     num_hidden_states = num_hidden_states,
-    see_ancestral_states = see_ancestral_states,
     atol = atol,
     rtol = rtol
   )
 
   # Run appropriate sequence of intervals
   if ((status == 2 || status == 3) && length(brts) > 2) {
-    interval2 <- get_func_interval(interval = "interval2")
-    initial_conditions2 <<- get_initial_conditions2(status = status, res = res, trait = trait, num_observed_states = num_observed_states, num_hidden_states = num_hidden_states)
-    solution2 <- func_for_solution(interval =  "interval2", initial_conditions = initial_conditions2, time = time2, parameter = parameter, methode = methode, atol = atol, rtol =  rtol)
 
-    interval4 <- get_func_interval("interval4")
-    initial_conditions4 <<- get_initial_conditions4(status = status, solution = solution2, parameter = parameter, trait_mainland_ancestor = trait_mainland_ancestor, num_observed_states = num_observed_states, num_hidden_states = num_hidden_states)
-    solution4 <- func_for_solution(interval ="interval4", initial_conditions = initial_conditions4, time = time4, parameter = parameter, methode = methode, atol = atol, rtol = rtol)
+    initial_conditions2 <- get_initial_conditions2(status = status,
+                                                   res = res,
+                                                   trait = traits,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
+
+    solution2 <- solve_branch(interval_func = interval2,
+                              initial_conditions = initial_conditions2,
+                              time = time2,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol =  rtol)
+
+    initial_conditions4 <- get_initial_conditions4(status = status,
+                                                   solution = solution2,
+                                                   parameter = parameter,
+                                                   trait_mainland_ancestor = trait_mainland_ancestor,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
+
+    solution4 <- solve_branch(interval = interval4,
+                              initial_conditions = initial_conditions4,
+                              time = time4,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol)
   }
 
   if (status == 6) {
-    interval3 <- get_func_interval(interval ="interval3")
-    initial_conditions3 <<- get_initial_conditions3(status = status, res = res, num_observed_states = num_observed_states, num_hidden_states = num_hidden_states, trait = trait)
-    solution3 <- func_for_solution(interval ="interval3", initial_conditions = initial_conditions3, time = time3, parameter = parameter, methode = methode, atol = atol, rtol = rtol)
+    initial_conditions3 <- get_initial_conditions3(status = status,
+                                                   res = res,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states,
+                                                   trait = traits)
+    solution3 <- solve_branch(interval_func = interval3,
+                              initial_conditions = initial_conditions3,
+                              time = time3,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol)
 
-    interval4 <- get_func_interval(interval = "interval4")
-    initial_conditions4 <<- get_initial_conditions4(status = status, solution = solution3, parameter = parameter, trait_mainland_ancestor = trait_mainland_ancestor, num_observed_states = num_observed_states, num_hidden_states = num_hidden_states)
-    solution4 <- func_for_solution(interval ="interval4", initial_conditions = initial_conditions4, time = time4, parameter = parameter, methode = methode, atol = atol, rtol = rtol)
+
+    initial_conditions4 <- get_initial_conditions4(status = status,
+                                                   solution = solution3,
+                                                   parameter = parameter,
+                                                   trait_mainland_ancestor = trait_mainland_ancestor,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
+    solution4 <- solve_branch(interval_func = interval4,
+                              initial_conditions = initial_conditions4,
+                              time = time4,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol)
   }
 
   # Extract log-likelihood from final solution

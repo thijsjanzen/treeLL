@@ -14,11 +14,7 @@ DAISIE_DE_trait_logpNE(
   parameter,
   atol = 1e-15,
   rtol = 1e-15,
-  methode = "ode45",
-  get_initial_conditions2 = get_initial_conditions2,
-  get_initial_conditions3 = get_initial_conditions3,
-  get_initial_conditions4 = get_initial_conditions4,
-  func_for_solution = func_for_solution
+  methode = "ode45"
 )
 }
 \arguments{
@@ -74,10 +70,10 @@ parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow =
 DAISIE_DE_trait_logpNE(
   brts                    = brts,
   trait                  = trait,
-  status                  = 1,
+  status                  = 4,
   parameter               = parameter,
-  num_observed_states     = 2,
-  num_hidden_states       = 2,
+  num_observed_states     = 1,
+  num_hidden_states       = 1,
   atol                    = 1e-15,
   rtol                    = 1e-15,
   methode                 = "ode45",

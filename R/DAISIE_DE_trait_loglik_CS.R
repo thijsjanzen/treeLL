@@ -192,36 +192,3 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   loglik <- sum(vec_loglikelihood) + loglik
   return(loglik)
 }
-
-
-load("C:/Users/P306709/Desktop/chapter3/Canary_angiosperms_HW.RData")
-
-
-#datalist <- data_list[[366]]
-i <- 3
-
-parameter <- list(
-   c(2.546591, 1.2, 1, 0.2),
-   c(2.678781, 2, 1.9, 3),
-   c(0.009326754, 0.003, 0.002, 0.2),
-   c(1.008583, 1, 2, 1.5),
-   matrix(c(
-     0,    1,    0.5,  0,
-     0,    0,    0.002,0.005,
-    rep(0, 8)
-   ), nrow = 4),
-  0)
-pars2 <- c(200, 1, 1, 1)
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
-
-DAISIE_DE_trait_loglik_CS (parameter,
-                           datalist = data_list[1:10],
-                           methode = "lsodes",
-                           atol = 1e-10,
-                           rtol = 1e-10,
-                           num_observed_states = 2,
-                           num_hidden_states = 2,
-                           get_initial_conditions2 = get_initial_conditions2,
-                           get_initial_conditions3 = get_initial_conditions3,
-                           get_initial_conditions4 = get_initial_conditions4,
-                           func_for_solution       = func_for_solution)

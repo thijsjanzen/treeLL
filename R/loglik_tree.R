@@ -156,7 +156,7 @@ calc_init_state_hidden <- function(trait,
 #'
 #' @param rhs_func ll function
 #' @export
-loglik_R_hidden <- function(parameter,
+loglik_R_tree <- function(parameter,
                             phy,
                             traits,
                             sampling_fraction,
@@ -217,7 +217,7 @@ loglik_R_hidden <- function(parameter,
 #'
 #' @param rhs_func ll function
 #' @export
-loglik_cpp_hidden <- function(parameter,
+loglik_cpp_tree <- function(parameter,
                               phy,
                               traits,
                             sampling_fraction,

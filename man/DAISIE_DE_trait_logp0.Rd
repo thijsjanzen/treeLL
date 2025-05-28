@@ -5,10 +5,12 @@
 \title{testing fuction, for comparison with DAISIE}
 \usage{
 DAISIE_DE_trait_logp0(
-  brts,
+  datalist,
   parameter,
   atol = 1e-10,
   rtol = 1e-10,
+  num_observed_states,
+  num_hidden_states,
   methode = "ode45"
 )
 }
@@ -45,8 +47,10 @@ parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow =
 
 # Compute log‐likelihood under the DE‐trait model
 DAISIE_DE_trait_logp0(
-  brts            = datalist[[1]]$island_age,
+  datalist            = datalist,
   parameter           = parameter,
+  num_observed_states     = 2,
+  num_hidden_states       = 2,
   atol                = 1e-10,
   rtol                = 1e-10,
   methode             = "ode45"

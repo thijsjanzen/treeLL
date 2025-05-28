@@ -69,11 +69,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                    parameter,
                                    atol  = 1e-15,
                                    rtol  = 1e-15,
-                                   methode                 = "ode45",
-                                   get_initial_conditions2 = get_initial_conditions2,
-                                   get_initial_conditions3 = get_initial_conditions3,
-                                   get_initial_conditions4 = get_initial_conditions4,
-                                   func_for_solution       = func_for_solution) {
+                                   methode                 = "ode45") {
 
   # Unpack times from brts
   t0   <- brts[1]
@@ -85,41 +81,70 @@ DAISIE_DE_trait_logpNE <- function(brts,
 
   # Time intervals
 
-  time2 <<- c(tp, t1)
-  time3 <<- c(tp, tmax)
-  time4 <<- c(tmax, t0)
-
-  # Number of states in the system
-  num_observed_states <<- num_observed_states
-  num_hidden_states <<- num_hidden_states
-  n <<- num_observed_states * num_hidden_states
-  parameter <<- parameter
-  methode <<- methode
-  atol <<- atol
-  rtol <<- rtol
+  time2 <- c(tp, t1)
+  time3 <- c(tp, tmax)
+  time4 <- c(tmax, t0)
 
   # Solve for interval [tp, t2] (stem phase)
 
-
   # Run appropriate sequence of intervals
   if (status == 4) {
-    interval2 <- get_func_interval(interval = "interval2")
-    initial_conditions2 <<- get_initial_conditions2(status = status, res = res, trait = trait, num_observed_states = num_observed_states, num_hidden_states = num_hidden_states)
-    solution2 <- func_for_solution(interval = "interval2",initial_conditions = initial_conditions2, time = time2, parameter = parameter, methode = methode, atol = atol, rtol = rtol)
+    initial_conditions2 <- get_initial_conditions2(status = status,
+                                                   res = res,
+                                                   trait = trait,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
+    solution2 <- solve_branch(interval_func = interval2,
+                              initial_conditions = initial_conditions2,
+                              time = time2,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol)
 
-    interval4 <- get_func_interval(interval = "interval4")
-    initial_conditions4 <<- get_initial_conditions4(status = status, solution = solution2, parameter = parameter, trait_mainland_ancestor = trait_mainland_ancestor, num_observed_states = num_observed_states, num_hidden_states = num_hidden_states)
-    solution4 <- func_for_solution(interval = "interval4", initial_conditions = initial_conditions4, time = time4, parameter = parameter, methode = methode, atol = atol, rtol = rtol)
+
+    initial_conditions4 <- get_initial_conditions4(status = status,
+                                                   solution = solution2,
+                                                   parameter = parameter,
+                                                   trait_mainland_ancestor = trait_mainland_ancestor,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
+    solution4 <- solve_branch(interval_func = interval4,
+                              initial_conditions = initial_conditions4,
+                              time = time4,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol)
   }
 
   if (status == 1) {
-    interval3 <- get_func_interval(interval = "interval3")
-    initial_conditions3 <<- get_initial_conditions3(status = status, res = res,  num_observed_states = num_observed_states, num_hidden_states = num_hidden_states, trait = trait)
-    solution3 <- func_for_solution("interval3", initial_conditions = initial_conditions3, time = time3, parameter = parameter, methode = methode, atol = atol, rtol = rtol)
+    initial_conditions3 <- get_initial_conditions3(status = status,
+                                                   res = res,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states,
+                                                   trait = trait)
+    solution3 <- solve_branch(interval_func = interval3,
+                              initial_conditions = initial_conditions3,
+                              time = time3,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol)
 
-    interval4 <- get_func_interval(interval = "interval4")
-    initial_conditions4 <<- get_initial_conditions4(status = status, solution = solution3, parameter = parameter, trait_mainland_ancestor = trait_mainland_ancestor,  num_observed_states = num_observed_states, num_hidden_states = num_hidden_states)
-    solution4 <- func_for_solution(interval ="interval4", initial_conditions = initial_conditions4, time = time4, parameter = parameter, methode = methode, atol = atol, rtol = rtol)
+    initial_conditions4 <- get_initial_conditions4(status = status,
+                                                   solution = solution3,
+                                                   parameter = parameter,
+                                                   trait_mainland_ancestor = trait_mainland_ancestor,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
+    solution4 <- solve_branch(interval_func = interval4,
+                              initial_conditions = initial_conditions4,
+                              time = time4,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol)
   }
 
   # Extract log-likelihood from final solution
