@@ -51,7 +51,7 @@ DAISIE_DE_trait_logp0 <- function(datalist,
   tp <- 0
   #########interval4 [t_p, t_0]
 
-  interval4 <- function(t, state, parameter) {
+  interval4_local <- function(t, state, parameter) {
     with(as.list(c(state, parameter)), {
 
       lambdac <- parameter[[1]]
@@ -115,13 +115,11 @@ DAISIE_DE_trait_logp0 <- function(datalist,
   # Solve the system for interval [tp, t1]
   solution4 <- deSolve::ode(y = initial_conditions40,
                             times = time4,
-                            func = interval4,
+                            func = interval4_local,
                             parms = parameter,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
-
-
 
   solution4 <- matrix(solution4[,-1], nrow = 2)
 

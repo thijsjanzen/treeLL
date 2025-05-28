@@ -44,13 +44,13 @@
 #' )
 
 DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
-                                                  trait,
-                                                  parameter,
-                                                  num_observed_states,
-                                                  num_hidden_states,
-                                                  atol = 1e-10,
-                                                  rtol = 1e-10,
-                                                  methode = "ode45") {
+                                                      trait,
+                                                      parameter,
+                                                      num_observed_states,
+                                                      num_hidden_states,
+                                                      atol = 1e-10,
+                                                      rtol = 1e-10,
+                                                      methode = "ode45") {
   t0   <- brts[1]
   tmax <- brts[2]
   tmin <- brts[3]
@@ -61,37 +61,19 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
 
   #########interval2 [t_p, tmin]
 
-  interval2 <- get_func_interval(interval ="interval2")
-
-
   m = length(parameter[[1]])
 
-
-  calc_init_state_hidden <- function(trait,
-                                     num_unique_states,
-                                     num_hidden_states) {
-
-    DE  <- rep(0, num_unique_states)
-    DM2 <- rep(0, num_unique_states)
-    DM3 <- rep(0, num_unique_states)
-    E   <- rep(0, num_unique_states)
-    DA3 <- 1
-
-    #for (i in 1:num_hidden_states) {
-    # assuming the traits start counting at 0 !!!!
-    # DM2[(1 + trait) + (i - 1) * num_hidden_states] <- 1
-    #}
-    DM2[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
-
-    return( c(DE, DM2, DM3, E, DA3))
-  }
-
-
-
-
-
+  # TODO: is this the same as get_initial_conditions(interval = interval2)?
   num_unique_states <- length(parameter[[1]])
-  initial_conditions2 <-   calc_init_state_hidden(trait, num_unique_states, num_hidden_states)
+  DE  <- rep(0, num_unique_states)
+  DM2 <- rep(0, num_unique_states)
+  DM3 <- rep(0, num_unique_states)
+  E   <- rep(0, num_unique_states)
+  DA3 <- 1
+
+  DM2[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
+
+  initial_conditions2 <- c(DE, DM2, DM3, E, DA3)
 
   initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
 
@@ -110,24 +92,20 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
                             atol = atol,
                             rtol = rtol)
 
-
   solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
 
   #########interval3 [tmin, tmax]
-
-
-  interval3 <- get_func_interval(interval ="interval3")
 
   # Initial conditions
 
   # only use second row, because the first row of solution2 is the initial state
   initial_conditions3_max_min <- c(solution2[2,][1:n],
-                           rep(0, n),       ### DE: select DE in solution2
-                           solution2[2,][(n + 1):(n + n)],         ### DM2: select DM2 in solution2
-                           solution2[2,][(n + n + 1):(n + n + n)],         ### DM3: select DM3 in solution2
-                           solution2[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution2
-                           0,
-                           solution2[2,][length(solution2[2,])])                       ### DA3: select DA3 in solution2
+                                   rep(0, n),       ### DE: select DE in solution2
+                                   solution2[2,][(n + 1):(n + n)],         ### DM2: select DM2 in solution2
+                                   solution2[2,][(n + n + 1):(n + n + n)],         ### DM3: select DM3 in solution2
+                                   solution2[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution2
+                                   0,
+                                   solution2[2,][length(solution2[2,])])                       ### DA3: select DA3 in solution2
 
   initial_conditions3_max_min <- matrix(initial_conditions3_max_min, nrow = 1)
 
@@ -148,15 +126,12 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
 
   #########interval4 [tmax, t0]
 
-  interval4 <- get_func_interval(interval ="interval4")
-
-
   # Initial conditions
 
   # only use second row, because the first row of solution3 is the initial state
   initial_conditions4_max_min <- c(solution3[2,][(n + 1):(n + n)],                                 ### DM1: select DM2 in solution3
-                           solution3[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution3
-                           solution3[2,][length(solution3[2,]) - 1])                       ### DA1: select DA2 in solution3
+                                   solution3[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution3
+                                   solution3[2,][length(solution3[2,]) - 1])                       ### DA1: select DA2 in solution3
 
   initial_conditions4_max_min <- matrix(initial_conditions4_max_min, nrow = 1)
 

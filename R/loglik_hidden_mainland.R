@@ -141,7 +141,8 @@ calc_init_state_hidden_mainland <- function(trait,
 
   DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sf
   E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sf
-  DM3[c((num_hidden_states*trait_mainland_ancestor + 1), num_hidden_states + trait_mainland_ancestor* num_hidden_states)] <- 1
+  DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
+        num_hidden_states + trait_mainland_ancestor* num_hidden_states)] <- 1
   return( c(DE, DM3, E, DA3))
 }
 

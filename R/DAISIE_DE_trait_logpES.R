@@ -59,10 +59,6 @@
 #'   get_initial_conditions3 = get_initial_conditions3,
 #'   func_for_solution       = func_for_solution
 #' )
-
-
-
-
 DAISIE_DE_trait_logpES <- function(brts,
                                    status,
                                    trait,

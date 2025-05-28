@@ -142,8 +142,8 @@ calc_init_state_hidden <- function(trait,
   #   DE[(1 + trait) + (i - 1) * num_hidden_states] <- 1
   # }
 
-  DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sf
-  E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sf
+  DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
+  E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
 
   return( c(DE, DM3, E, DA3))
   }
