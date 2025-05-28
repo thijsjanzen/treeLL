@@ -76,6 +76,14 @@ DAISIE_DE_trait_logpEC <- function(
     rtol = 1e-10,
     methode = "ode45"
 ) {
+
+  check_arguments(brts, parameter, phy, traits, num_observed_states,
+                  num_hidden_states, status, sampling_fraction)
+
+  if (length(brts) < 3) {
+    stop("need at least three branching times")
+  }
+
   # Unpack times from brts
   t0   <- brts[1]
   tmax <- brts[2]

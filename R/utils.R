@@ -1135,3 +1135,42 @@ get_rates <- function(lambda_list, all_states, lambda_order) {
   to_plot$focal_rate <- factor(to_plot$focal_rate, levels = all_states)
   return(to_plot)
 }
+
+#' @keywords internal
+check_arguments <- function(brts = NULL,
+                            parameter = NULL,
+                            phy = NULL,
+                            traits = NULL,
+                            num_observed_states = NULL,
+                            num_hidden_states = NULL,
+                            status = NULL,
+                            sampling_fraction = NULL) {
+
+  if (is.null(brts)) {
+    stop("brts not provided")
+  }
+  if (is.null(parameter)) {
+    stop("parameters not provided at all")
+  }
+  if (!is.list(parameter)) {
+    stop("parameters need to be provided as a list")
+  }
+  if (is.null(phy)) {
+    stop("phy not provided")
+  }
+  if (is.null(traits)) {
+    stop("traits not provided")
+  }
+  if (is.null(num_observed_states)) {
+    stop("number of observed states not provided")
+  }
+  if (is.null(num_hidden_states)) {
+    stop("number of hidden states not provided")
+  }
+  if (is.null(status)) {
+    stop("status not provided")
+  }
+  if (is.null(sampling_fraction)) {
+    stop("sampling_fraction not provided")
+  }
+}

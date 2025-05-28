@@ -63,6 +63,9 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                    rtol  = 1e-15,
                                    methode                 = "ode45") {
 
+  check_arguments(brts, parameter, phy = 1, trait, num_observed_states,
+                  num_hidden_states, status, sampling_fraction = 1)
+
   # Unpack times from brts
   t0   <- brts[1]
   tmax <- brts[2]
