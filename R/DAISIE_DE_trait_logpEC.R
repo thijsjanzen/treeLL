@@ -27,7 +27,7 @@
 #' library(secsse)
 #' data("Galapagos_datalist")
 #' datalist <- Galapagos_datalist
-#' i <- 4
+#' i <- 5
 #' phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 #' brts <- datalist[[i]]$branching_times
 #' traits <- sample(c(0, 0), length(brts), replace = TRUE)
@@ -56,12 +56,12 @@
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
-#'   num_observed_states     = 2,
-#'   num_hidden_states       = 2,
+#'   num_observed_states     = 1,
+#'   num_hidden_states       = 1,
 #'   atol                    = 1e-10,
 #'   rtol                    = 1e-10,
 #'   methode                 = "ode45")
-#' )
+
 DAISIE_DE_trait_logpEC <- function(
     brts,
     parameter,
@@ -90,7 +90,7 @@ DAISIE_DE_trait_logpEC <- function(
   time4 <- c(tmax, t0)
 
   # Number of states in the system
-  n <- num_observed_states * num_hidden_states
+  #n <- num_observed_states * num_hidden_states
 
   # Solve for interval [tp, t2] (stem phase)
   res <- loglik_R_tree(
