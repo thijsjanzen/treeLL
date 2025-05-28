@@ -160,16 +160,16 @@ calc_init_state_hidden <- function(trait,
 #' @param rhs_func ll function
 #' @export
 loglik_R_tree <- function(parameter,
-                            phy,
-                            traits,
-                            sampling_fraction,
-                            num_hidden_states,
-                            mainland = FALSE,
-                            trait_mainland_ancestor = NULL,
-                            atol = 1e-8,
-                            rtol = 1e-7,
-                            methode = "ode45",
-                            rhs_func = loglik_hidden_rhs) {
+                          phy,
+                          traits,
+                          sampling_fraction,
+                          num_hidden_states,
+                          mainland = FALSE,
+                          trait_mainland_ancestor = NULL,
+                          atol = 1e-8,
+                          rtol = 1e-7,
+                          methode = "ode45",
+                          rhs_func = loglik_hidden_rhs) {
 
   number_of_lineages <- length(phy$tip.label)
   num_unique_states <- length(parameter[[1]])
@@ -230,7 +230,7 @@ loglik_cpp_tree <- function(parameter,
                             sampling_fraction,
                             num_hidden_states,
                             mainland = FALSE,
-                            trait_mainland_ancestor,
+                            trait_mainland_ancestor = NULL,
                             atol = 1e-8,
                             rtol = 1e-7,
                             method = "odeint::bulirsch_stoer",
@@ -245,7 +245,7 @@ loglik_cpp_tree <- function(parameter,
   # sf = sampling fraction
   for (i in 1:length(traits)) {
     states[i, ] <- calc_init_state_hidden(traits[i],
-                                          sampling_fraction[ traits[i] ],
+                                          sampling_fraction[ 1 + traits[i] ],
                                           num_unique_states,
                                           num_hidden_states,
                                           mainland = mainland,
