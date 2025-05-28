@@ -10,6 +10,8 @@ loglik_cpp_tree(
   traits,
   sampling_fraction,
   num_hidden_states,
+  mainland = FALSE,
+  trait_mainland_ancestor,
   atol = 1e-08,
   rtol = 1e-07,
   method = "odeint::bulirsch_stoer",
@@ -36,6 +38,10 @@ position.}
 trait state. It must have as many elements as there are trait states. When
 using a \code{multiPhylo} object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
+
+\item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 

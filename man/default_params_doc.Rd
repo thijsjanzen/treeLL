@@ -324,6 +324,10 @@ uses Rcpp implementation (faster)}
 \item{methode}{used integration method, default is ode45}
 
 \item{rhs_func}{rhs function used in R implementation}
+
+\item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 }
 \value{
 Nothing

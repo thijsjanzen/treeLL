@@ -64,7 +64,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   m = length(parameter[[1]])
 
 
-  ## TODO: can't we call 'get_initial_conditions' here?
+  ## TODO: can't we call 'get_initial_conditions' here? //NO, because brts > 2
   num_unique_states <- length(parameter[[1]])
   DE  <- rep(0, num_unique_states)
   DM2 <- rep(0, num_unique_states)
@@ -72,8 +72,8 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  DE[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- sf
-  E[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1 - sf
+  DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
+  E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
 
   initial_conditions2 <- c(DE, DM2, DM3, E, DA3)
 

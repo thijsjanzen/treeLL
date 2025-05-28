@@ -91,12 +91,11 @@ DAISIE_DE_trait_logpES <- function(brts,
     # Run appropriate sequence of intervals
     if ((status == 2 || status == 3) && length(brts) == 2) {
       initial_conditions2 <- get_initial_conditions2(status = status,
-                                                     res = res,
-                                                     trait = traits,
                                                      num_observed_states = num_observed_states,
                                                      num_hidden_states = num_hidden_states,
+                                                     trait = trait,
                                                      brts = brts,
-                                                     sf = sampling_fraction,
+                                                     sf = sf,
                                                      trait_mainland_ancestor = trait_mainland_ancestor)
 
       solution2 <- solve_branch(interval_func = interval2,
@@ -125,7 +124,6 @@ DAISIE_DE_trait_logpES <- function(brts,
 
     if (status == 5) {
       initial_conditions3 <- get_initial_conditions3(status = status,
-                                                     res = res,
                                                      num_observed_states = num_observed_states,
                                                      num_hidden_states = num_hidden_states,
                                                      trait = trait)

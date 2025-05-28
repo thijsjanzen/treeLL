@@ -170,6 +170,8 @@
 #' @param brts branching times, being: island age, colonization time, branching times
 #' @param missnumspec missing number of species
 #' @param num_hidden_traits number of hidden traits
+#' @param mainland if TRUE, adjust initial conditions for mainland dynamics
+#' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the mainland ancestor
 #' @return Nothing
 #' @keywords internal
 #' @export

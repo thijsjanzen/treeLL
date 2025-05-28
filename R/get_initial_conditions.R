@@ -31,11 +31,11 @@ get_initial_conditions2 <- function(status,
   }
   else if (status == 2 && length(brts) == 2) {
     DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
-    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- sf
+    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sf
   }
   else if (status == 3 && length(brts) == 2 ) {
     DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
-    E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
+    E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
     DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   }

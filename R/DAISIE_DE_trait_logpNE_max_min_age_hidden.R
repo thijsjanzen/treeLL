@@ -64,19 +64,10 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
   m = length(parameter[[1]])
 
   # TODO: is this the same as get_initial_conditions(interval = interval2)?
-  num_unique_states <- length(parameter[[1]])
-  DE  <- rep(0, num_unique_states)
-  DM2 <- rep(0, num_unique_states)
-  DM3 <- rep(0, num_unique_states)
-  E   <- rep(0, num_unique_states)
-  DA3 <- 1
-
-  DM2[c((num_hidden_states*trait + 1), num_hidden_states + trait* num_hidden_states)] <- 1
-
-  initial_conditions2 <- c(DE, DM2, DM3, E, DA3)
-
-  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
-
+  initial_conditions2 <- get_initial_conditions2(status = 4,
+                                                 num_observed_states,
+                                                 num_hidden_states,
+                                                 trait = trait)
 
 
 

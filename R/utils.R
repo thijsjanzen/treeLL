@@ -651,13 +651,6 @@ secsse_transform_parameters <- function(trparsopt,
     return(pars1)
 }
 
-condition_root_edge <- function(mergeBranch2,
-                                nodeM) {
-  # note that we don't do maddison conditioning here.
-
-}
-
-
 #' @keywords internal
 condition <- function(cond,
                       mergeBranch2,
