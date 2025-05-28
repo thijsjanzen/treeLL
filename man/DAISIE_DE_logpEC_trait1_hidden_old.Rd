@@ -10,6 +10,7 @@ DAISIE_DE_logpEC_trait1_hidden_old(
   parameter,
   phy,
   traits,
+  sampling_fraction,
   num_hidden_traits,
   cond = "proper_cond",
   root_state_weight = "proper_weights",
@@ -38,6 +39,11 @@ order of the states must be the same as the tree tips. For help, see
 \code{multiPhylo} set of multiple phylognies, traits should be a list where
 each entry in the list corresponds to the matching phylogeny on that
 position.}
+
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a \code{multiPhylo} object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{num_hidden_traits}{number of hidden traits}
 

@@ -161,13 +161,9 @@ loglik_R_hidden <- function(parameter,
                             traits,
                             sampling_fraction,
                             num_hidden_states,
-                            cond = "proper_cond",
-                            root_state_weight = "proper_weights",
-                            see_ancestral_states = TRUE,
                             atol = 1e-8,
                             rtol = 1e-7,
                             methode = "ode45",
-                            use_normalization = TRUE,
                             rhs_func = loglik_hidden_rhs) {
 
   number_of_lineages <- length(phy$tip.label)
@@ -178,7 +174,7 @@ loglik_R_hidden <- function(parameter,
  # sf = sampling fraction
   for (i in 1:length(traits)) {
     states[i, ] <- calc_init_state_hidden(traits[i],
-                                          sampling_fraction[i],
+                                          sampling_fraction[ traits[i] ],
                                           num_unique_states,
                                           num_hidden_states)
   }
@@ -207,6 +203,75 @@ loglik_R_hidden <- function(parameter,
   }
 
   prob_states <- calcul$combined_state
+  prob_states <- matrix(prob_states, nrow = 1)
+  return(prob_states)
+}
+
+
+
+
+#' Likelihood calculation including hidden traits
+#' @title Using hidden traits
+#'
+#' @inheritParams default_params_doc
+#'
+#' @param rhs_func ll function
+#' @export
+loglik_cpp_hidden <- function(parameter,
+                              phy,
+                              traits,
+                            sampling_fraction,
+                            num_hidden_states,
+                            atol = 1e-8,
+                            rtol = 1e-7,
+                            method = "odeint::bulirsch_stoer",
+                            use_normalization = TRUE,
+                            num_threads = 1) {
+
+  number_of_lineages <- length(phy$tip.label)
+  num_unique_states <- length(parameter[[1]])
+  states <- matrix(nrow = number_of_lineages + phy$Nnode,
+                   ncol = 3 * length(parameter[[1]]) + 1,
+                   data = NA)
+  # sf = sampling fraction
+  for (i in 1:length(traits)) {
+    states[i, ] <- calc_init_state_hidden(traits[i],
+                                          sampling_fraction[ traits[i] ],
+                                          num_unique_states,
+                                          num_hidden_states)
+  }
+
+  phy$node.label <- NULL
+  split_times <- sort(secsse::event_times(phy), decreasing = FALSE)
+  ances <- as.numeric(names(split_times))
+  forTime <- cbind(phy$edge, phy$edge.length)
+
+  lambda_c <- parameter[[1]]
+  mus      <- parameter[[2]]
+  gammas   <- parameter[[3]]
+  lambda_a <- parameter[[4]]
+  q_matrix       <- parameter[[5]]
+  p_value       <- parameter[[6]]
+
+  RcppParallel::setThreadOptions(numThreads = num_threads)
+
+  calcul <- calc_ll_cpp(ances = ances,
+                        states = states,
+                        forTime = forTime,
+                        lambda_cs = lambda_c,
+                        lambda_as = lambda_a,
+                        mus = mus,
+                        gammas = gammas,
+                        qs = q_matrix,
+                        p = p_value,
+                        method = method,
+                        atol = atol,
+                        rtol = rtol,
+                        see_states = TRUE,
+                        use_normalization = use_normalization)
+
+
+  prob_states <- calcul$merge_branch
   prob_states <- matrix(prob_states, nrow = 1)
   return(prob_states)
 }

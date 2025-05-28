@@ -78,7 +78,7 @@ Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances,
                        const Rcpp::NumericVector& lambda_as,
                        const Rcpp::NumericVector& mus,
                        const Rcpp::NumericVector& gammas,
-                       const Rcpp::NumericVector& qs,
+                       const Rcpp::NumericMatrix& qs,
                        const double& p,
                        const std::string& method,
                        double atol,
@@ -86,6 +86,14 @@ Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances,
                        bool see_states,
                        bool use_normalization) {
 
-  return calc_ll(std::make_unique<loglik::ode_tree>(lambda_cs, lambda_as, mus, gammas, qs, p),
+  size_t num_unique_states = (states.ncol() - 1) / 3;
+
+  return calc_ll(std::make_unique<loglik::interval1>(lambda_cs,
+                                                     lambda_as,
+                                                     mus,
+                                                     gammas,
+                                                     qs,
+                                                     p,
+                                                     num_unique_states),
                  ances, states, forTime, method, atol, rtol, see_states, use_normalization);
 }

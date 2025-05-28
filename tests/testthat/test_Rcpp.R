@@ -27,12 +27,6 @@ test_that("identical R and Rcpp", {
                        use_R_version = TRUE)
 
 
-  res_Rcpp <- calc_loglik(parameter = parameters,
-                          phy = phy,
-                          traits = traits,
-                          see_ancestral_states = TRUE,
-                          use_R_version = FALSE)
-
   # testthat::expect_true(all.equal(res_R, res_Rcpp))
 
   parameters[[5]] <- matrix(0, 2, 2)
@@ -42,7 +36,7 @@ test_that("identical R and Rcpp", {
   res_hidden <- loglik_R_hidden(parameter = parameters,
                                 phy = phy,
                                 traits = traits,
-                                num_hidden_traits = 1,
+                                num_hidden_states = 1,
                                 see_ancestral_states = TRUE)
 
   testthat::expect_true(all.equal(as.vector(res_R), as.vector(res_hidden)))

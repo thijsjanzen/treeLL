@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <vector>
 
-
+#include "sq_matrix.h"
 
 namespace loglik {
 
@@ -21,109 +21,138 @@ using rvector = RcppParallel::RVector<T>;
 template <typename T>
 using rmatrix = RcppParallel::RMatrix<T>;
 
-
-template <typename T>
-class vector_view_t {
-public:
-  vector_view_t(T* data, size_t n) : first_(data), n_(n) {};
-
-  size_t size() const noexcept { return n_; }
-  T* begin() noexcept { return first_; }
-  T* end() noexcept { return first_ + n_; }
-  T& operator[](size_t i) { return *(first_ + i); }
-  void advance(size_t s) noexcept { first_ += s; }
-
-private:
-  T* first_ = nullptr;
-  size_t n_ = 0;
-};
-
-class ode_tree {
-
-  enum states {DE_0, DE_1, DM3_0, DM3_1, E_0, E_1, DA_3, num_states};
+class interval1 {
 
   const rvector<const double> lc_; // cladogenesis rates
   const rvector<const double> m_; //  extinction rates
-  const rvector<const double> g_; //  colonization rates
+
   const rvector<const double> la_; // anagenesis rates
-  const rvector<const double> q_; // transition rates
+  const sq_matrix q_; // transition rates
   const double p_;
 
-  // mu_0, mu_1
-  // lambda_c_0, lambda_c_1
-  // lambda_a_0, lambda_a_1
-  // gamma_0, gamma_1
-  // p
-  // q_01, q_10
+  const size_t n_; // number of unique states
+
+  const std::vector<double> t_vec;
+
+
+  const sq_matrix g_mat_; //  colonization rates
+  const rvector<const double> g_;
 
 public:
 
   // constructor
-  ode_tree(const Rcpp::NumericVector& lc,
-          const Rcpp::NumericVector& la,
-          const Rcpp::NumericVector& m,
-          const Rcpp::NumericVector& g,
-          const Rcpp::NumericVector& q,
-          const double p)
-    : lc_(lc), m_(m), g_(g), la_(la), q_(q), p_(p) {
+  interval1(const Rcpp::NumericVector& lc,
+            const Rcpp::NumericVector& la,
+            const Rcpp::NumericVector& m,
+            const Rcpp::NumericVector& g,
+            const Rcpp::NumericMatrix& q,
+            const double p,
+            const size_t n)
+    : lc_(lc),
+      m_(m),
+      la_(la),
+      q_(q),
+      p_(p),
+      n_(n),
+      t_vec(q_.row_sums()),
+      g_mat_(g, n_),
+      g_(g) {
   }
 
-  size_t size() const noexcept { return num_states; }
+  size_t size() const noexcept {
+    // (DE + DM3 + E) * n + DA3
+    return 3 * n_ + 1;
+  }
 
   void mergebranch(const std::vector<double>& N,
                    const std::vector<double>& M,
                    std::vector<double>& out) const {
 
-    // substitute the code below with your own node-merging code
-    size_t s = num_states;
-    out.resize(s);
+    /*
+     out[DE_0]  = lc_[0] * N[DE_0] * M[DE_0];
+     out[DE_1]  = lc_[1] * N[DE_1] * M[DE_1];
 
-    out[DE_0]  = lc_[0] * N[DE_0] * M[DE_0];
-    out[DE_1]  = lc_[1] * N[DE_1] * M[DE_1];
+     out[DM3_0] = N[DM3_0];
+     out[DM3_1] = N[DM3_1];
 
-    out[DM3_0] = N[DM3_0];
-    out[DM3_1] = N[DM3_1];
+     out[E_0]   = N[E_0];
+     out[E_1]   = N[E_1];
+     out[DA_3]  = N[DA_3];
+     */
 
-    out[E_0]   = N[E_0];
-    out[E_1]   = N[E_1];
-    out[DA_3]  = N[DA_3];
+    out = N;
+
+    for (size_t i = 0; i < n_; ++i) {
+      // out[DE_0]  = lc_[0] * N[DE_0] * M[DE_0]
+      out[i] = lc_[i] * N[i] * M[i];
+    }
   }
 
   // this is the dx/dt calculation // true rhs that gets integrated
   // along the branches
   void operator()(const std::vector<double>& x,
-                std::vector<double>& dxdt,
-                const double /* t */) const
+                  std::vector<double>& dxdt,
+                  const double /* t */) const
   {
     // substitute with your own code below:
 
     // vector x is:
     // [
-    // DE_0, DE_1
-    // DM3_0, DM3_1
-    // E_0, E_1
+    // DE_0, DE_1, ... , DE_n
+    // DM3_0, DM3_1, ..., DM3_n
+    // E_0, E_1, ..., E_n
     // DA3
     // ]
 
-    dxdt[DE_0]  = -(lc_[0] + m_[0] + q_[0]) * x[DE_0] + 2 * lc_[0] * x[DE_0] * x[E_0] + q_[0] * x[DE_1];
+    auto DA3 = x.back();
+    auto gamma_nonself = g_mat_.non_self();
 
-    dxdt[DE_1]  = -(lc_[1] + m_[1] + q_[1]) * x[DE_1] + 2 * lc_[1] * x[DE_1] * x[E_1] + q_[1] * x[DE_0];
+    auto DE  = vector_view_t<const double>(x.data() , n_);
+    auto DM3 = vector_view_t<const double>(x.data() + n_, n_);
+    auto E   = vector_view_t<const double>(x.data() + n_ + n_, n_);
 
-    dxdt[DM3_0] = -(la_[0] + lc_[0] + m_[0] + g_[1] + q_[0]) * x[DM3_0]
-                  + (la_[0] * x[E_0]  + lc_[0] * x[E_0] * x[E_0] + m_[0] + p_ * q_[0] * x[E_1]) * x[DA_3]
-                  + (1 - p_) * q_[0] * x[DM3_1] + g_[1] * x[DM3_1];
+    auto q_mult_E   = q_ * E;
+    auto q_mult_DE  = q_ * DE;
+    auto q_mult_DM3 = q_ * DM3;
 
-    dxdt[DM3_1] = -(lc_[1] + la_[1] + m_[1] + g_[0] + q_[1]) * x[DM3_1]
-                  + (la_[1] * x[E_1]  + lc_[1] * x[E_1] * x[E_1] + m_[1] + p_ * q_[1] * x[E_0]) * x[DA_3]
-                  + (1 - p_) * q_[1] * x[DM3_0] + g_[0] * x[DM3_0];
+    auto g_row_sums = g_mat_.row_sums();
 
+    double s_g_DM3 = 0.0;
 
-    dxdt[E_0]   = m_[0] - (lc_[0] + m_[0] + q_[0]) * x[E_0] +  lc_[0] * x[E_0] * x[E_0] + q_[0] * x[E_1];
+    for (size_t i = 0; i < n_; ++i) {
+      auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
 
+      // DE
+      dxdt[i] = -(lambda_c_mu_t_vec_sum) * DE[i] +
+                  2 * lc_[i] * DE[i] * E[i] +
+                  q_mult_DE[i];
+      // DM3
+      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + gamma_nonself[i] + la_[i]) * DM3[i] +
+                  (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+                  (1 - p_) * q_mult_DM3[i] +
+                  gamma_nonself[i] * DM3[i];
+      // E
+      dxdt[i + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
+                       lc_[i] * E[i] * E[i] +
+                       q_mult_E[i];
 
-    dxdt[E_1]   = m_[1] - (lc_[1] + m_[1] + q_[1]) * x[E_1] +  lc_[1] * x[E_1] * x[E_1] + q_[1] * x[E_0];
+      s_g_DM3 += g_[i] * DM3[i];
+    }
 
-    dxdt[DA_3]  = -(g_[0] + g_[1]) * x[DA_3] + g_[0] * x[DM3_0] + g_[1] * x[DM3_1];
+    // DA3
+    auto a = std::accumulate(g_.begin(), g_.end(), 0.0);
+    dxdt.back() = -a * DA3 + s_g_DM3;
+   // dxdt.back() = -g_.sum() * DA3 + s_g_DM3;
+
+   /*
+   for (size_t i = 0; i < n_; ++i) {
+     std::cerr << g_[i] << " " << DM3[i] << "\n";
+   }
+   std::cerr << a << " " << s_g_DM3 << "\n";
+   std::cerr << "\n";*/
   }
 };
+
+
+
 } // namespace secsse

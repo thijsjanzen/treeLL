@@ -11,7 +11,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // calc_ll_cpp
-Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances, const Rcpp::NumericMatrix& states, const Rcpp::NumericMatrix& forTime, const Rcpp::NumericVector& lambda_cs, const Rcpp::NumericVector& lambda_as, const Rcpp::NumericVector& mus, const Rcpp::NumericVector& gammas, const Rcpp::NumericVector& qs, const double& p, const std::string& method, double atol, double rtol, bool see_states, bool use_normalization);
+Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances, const Rcpp::NumericMatrix& states, const Rcpp::NumericMatrix& forTime, const Rcpp::NumericVector& lambda_cs, const Rcpp::NumericVector& lambda_as, const Rcpp::NumericVector& mus, const Rcpp::NumericVector& gammas, const Rcpp::NumericMatrix& qs, const double& p, const std::string& method, double atol, double rtol, bool see_states, bool use_normalization);
 RcppExport SEXP _treeLL_calc_ll_cpp(SEXP ancesSEXP, SEXP statesSEXP, SEXP forTimeSEXP, SEXP lambda_csSEXP, SEXP lambda_asSEXP, SEXP musSEXP, SEXP gammasSEXP, SEXP qsSEXP, SEXP pSEXP, SEXP methodSEXP, SEXP atolSEXP, SEXP rtolSEXP, SEXP see_statesSEXP, SEXP use_normalizationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -23,7 +23,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type lambda_as(lambda_asSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type mus(musSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type gammas(gammasSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type qs(qsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type qs(qsSEXP);
     Rcpp::traits::input_parameter< const double& >::type p(pSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
     Rcpp::traits::input_parameter< double >::type atol(atolSEXP);
@@ -34,9 +34,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// matrix_mult
+Rcpp::NumericVector matrix_mult(const Rcpp::NumericMatrix& m_R, const Rcpp::NumericVector& v_R);
+RcppExport SEXP _treeLL_matrix_mult(SEXP m_RSEXP, SEXP v_RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type m_R(m_RSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type v_R(v_RSEXP);
+    rcpp_result_gen = Rcpp::wrap(matrix_mult(m_R, v_R));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_treeLL_calc_ll_cpp", (DL_FUNC) &_treeLL_calc_ll_cpp, 14},
+    {"_treeLL_matrix_mult", (DL_FUNC) &_treeLL_matrix_mult, 2},
     {NULL, NULL, 0}
 };
 
