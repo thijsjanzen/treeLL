@@ -44,7 +44,7 @@
 #' DAISIE_DE_trait_logpNE(
 #'   brts                    = brts,
 #'   trait                  = trait,
-#'   status                  = 4,
+#'   status                  = 1,
 #'   parameter               = parameter,
 #'   num_observed_states     = 1,
 #'   num_hidden_states       = 1,

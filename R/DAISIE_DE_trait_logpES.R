@@ -79,7 +79,7 @@ DAISIE_DE_trait_logpES <- function(brts,
     time4 <- c(tmax, t0)
 
     # Number of states in the system
-    n <- num_observed_states * num_hidden_states
+    #n <- num_observed_states * num_hidden_states
 
     # Solve for interval [tp, t2] (stem phase)
 
