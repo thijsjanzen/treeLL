@@ -1,6 +1,12 @@
 require(treeLL)
 data("Galapagos_datalist", package = "DAISIE")
 datalist <- Galapagos_datalist
+for (i in 2:length(datalist)) {
+  datalist[[i]]$traits <- sample(c(0, 1), size = length(datalist[[i]]$branching_times),
+                                 replace = TRUE)
+  datalist[[i]]$sampling_fraction <- rep(1, 2)
+  datalist[[i]]$phylogeny <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+}
 
 parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 
@@ -56,10 +62,37 @@ idparslist[[5]][2, 1] <- 8 # B -> A
 idparslist[[5]][3, 4] <- 7 # A -> B
 idparslist[[5]][4, 3] <- 8 # B -> A
 
+idparslist[[6]] <- 0 #p
+
 idparsopt <- sort(unique(unlist(idparslist)))
 idparsopt <- idparsopt[idparsopt > 0]
 
-initvals <- runif(length(idparsopt))
+initvals <- c(2.546591, 2.678781, 0.009326754, 1.008583, runif(4))
+
+# first, let's test we have an init ll
+initparsopt <- initvals
+parsfix <- c(0)
+trparsopt <- initparsopt / (1 + initparsopt)
+trparsopt[which(initparsopt == Inf)] <- 1
+trparsfix <- parsfix / (1 + parsfix)
+trparsfix[which(parsfix == Inf)] <- 1
+
+initloglik <- treeLL::loglik_choosepar(trparsopt = trparsopt,
+                               trparsfix = trparsfix,
+                               idparsopt = idparsopt,
+                               idparsfix = c(0),
+                               idparslist = idparslist,
+                               datalist = datalist,
+                               num_observed_states = num_observed_states,
+                               num_hidden_states = num_hidden_states,
+                               cond = 1,
+                               atol = 1e-9,
+                               rtol = 1e-9,
+                               methode = "ode45",
+                               verbose = TRUE)
+
+
+initloglik
 
 ml_res <- treeLL::calc_ml(  datalist,
                             num_observed_states = 2,

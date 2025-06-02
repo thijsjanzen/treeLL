@@ -548,7 +548,7 @@ update_values_transform <- function(trpars,
                                     idpars,
                                     parvals) {
     for (i in seq_along(idpars)) {
-        for (j in 1:3) {
+        for (j in 1:6) {
             id <- which(idparslist[[j]] == idpars[i])
             trpars[[j]][id] <- parvals[i]
         }
@@ -566,7 +566,7 @@ transform_params_normal <- function(idparslist,
                                     idparsfuncdefpar,
                                     trparfuncdefpar) {
     trpars1 <- idparslist
-    for (j in 1:3) {
+    for (j in 1:6) {
         trpars1[[j]][] <- NA
     }
     if (length(idparsfix) != 0) {
@@ -588,8 +588,9 @@ transform_params_normal <- function(idparslist,
                                            idparsfuncdefpar,
                                            trparfuncdefpar)
     }
+
     pars1 <- list()
-    for (j in 1:3) {
+    for (j in 1:6) {
         pars1[[j]] <- trpars1[[j]] / (1 - trpars1[[j]])
     }
     return(pars1)

@@ -101,7 +101,8 @@ DAISIE_DE_trait_logpEC <- function(
   #n <- num_observed_states * num_hidden_states
 
   # Solve for interval [tp, t2] (stem phase)
-  res <- loglik_R_tree(
+  #res <- loglik_R_tree(
+  res <- loglik_cpp_tree(
     parameter = parameter,
     phy = phy,
     traits = traits,

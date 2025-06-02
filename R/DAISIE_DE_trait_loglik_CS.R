@@ -9,9 +9,12 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        rtol = 1e-15,
                                        num_observed_states,
                                        num_hidden_states,
-                                       cond = 1)
+                                       cond = 1,
+                                       verbose = FALSE)
 
 {
+  logcond <- 0 # default value gives no effect
+
   if (length(parameter) == 6) {
     logp0 <- DAISIE_DE_trait_logp0(datalist = datalist,
                                    parameter = parameter,
@@ -156,7 +159,9 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 
     vec_loglikelihood[i - 1] <- loglikelihood
   }
-
+  if (verbose) {
+    cat(vec_loglikelihood, "\n")
+  }
   loglik <- sum(vec_loglikelihood) + loglik
   return(loglik)
 }

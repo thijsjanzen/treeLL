@@ -34,22 +34,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// matrix_mult
-Rcpp::NumericVector matrix_mult(const Rcpp::NumericMatrix& m_R, const Rcpp::NumericVector& v_R);
-RcppExport SEXP _treeLL_matrix_mult(SEXP m_RSEXP, SEXP v_RSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type m_R(m_RSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type v_R(v_RSEXP);
-    rcpp_result_gen = Rcpp::wrap(matrix_mult(m_R, v_R));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_treeLL_calc_ll_cpp", (DL_FUNC) &_treeLL_calc_ll_cpp, 14},
-    {"_treeLL_matrix_mult", (DL_FUNC) &_treeLL_matrix_mult, 2},
     {NULL, NULL, 0}
 };
 

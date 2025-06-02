@@ -35,9 +35,6 @@ calc_ml <- function(datalist,
 
   optimpars <- c(tol, maxiter, verbose)
 
-  ll_verbose <- ifelse(optimmethod == "subplex",
-                       verbose,
-                       FALSE)
   initloglik <- loglik_choosepar(trparsopt = trparsopt,
                                  trparsfix = trparsfix,
                                  idparsopt = idparsopt,
@@ -93,7 +90,10 @@ calc_ml <- function(datalist,
   return(out2)
 }
 
-#' @keywords internal
+#' @description
+#' temporary export for testing
+#'
+#' @export
 loglik_choosepar <- function(trparsopt,
                              trparsfix,
                              idparsopt,
@@ -125,7 +125,8 @@ loglik_choosepar <- function(trparsopt,
                                         rtol = rtol,
                                         num_observed_states = num_observed_states,
                                         num_hidden_states = num_hidden_states,
-                                        cond = cond)
+                                        cond = cond,
+                                        verbose = verbose)
 
     if (is.nan(loglik) || is.na(loglik)) {
       warning("There are parameter values used which cause

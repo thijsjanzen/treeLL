@@ -5,7 +5,3 @@ calc_ll_cpp <- function(ances, states, forTime, lambda_cs, lambda_as, mus, gamma
     .Call(`_treeLL_calc_ll_cpp`, ances, states, forTime, lambda_cs, lambda_as, mus, gammas, qs, p, method, atol, rtol, see_states, use_normalization)
 }
 
-matrix_mult <- function(m_R, v_R) {
-    .Call(`_treeLL_matrix_mult`, m_R, v_R)
-}
-
