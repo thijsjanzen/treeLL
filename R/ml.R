@@ -134,9 +134,9 @@ loglik_choosepar <- function(trparsopt,
       loglik <- -Inf
     }
   }
-  if (verbose) {
-    out_print <- c(trparsopt / (1 - trparsopt), loglik)
-    message(paste(out_print, collapse = " "))
-  }
+  #if (verbose) {
+  #  out_print <- c(trparsopt / (1 - trparsopt), loglik)
+  #  message(paste(out_print, collapse = " "))
+  #}
   return(loglik)
 }
