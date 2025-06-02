@@ -59,7 +59,7 @@ library(DAISIE)
 library(secsse)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
-i <- 4
+i <- 5
 phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 brts <- datalist[[i]]$branching_times
 traits <- sample(c(0, 0), length(brts), replace = TRUE)
@@ -92,12 +92,5 @@ DAISIE_DE_trait_logpEC(
   num_hidden_states       = 2,
   atol                    = 1e-10,
   rtol                    = 1e-10,
-  methode                 = "ode45",
-  rhs_func                = loglik_hidden_rhs,
-  get_initial_conditions2 = get_initial_conditions2,
-  get_initial_conditions3 = get_initial_conditions3,
-  get_initial_conditions4 = get_initial_conditions4,
-  func_for_solution       = func_for_solution,
-  get_func_interval       = get_func_interval
-)
+  methode                 = "ode45")
 }

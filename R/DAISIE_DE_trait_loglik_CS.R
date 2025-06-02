@@ -1,3 +1,7 @@
+#' apply loglikelihood to a dataset
+#' @description umbrella function
+#' @inheritParams default_params_doc
+#' @export
 DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        datalist,
                                        methode = "lsodes",
@@ -32,7 +36,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   }
 
   loglik <- loglik - logcond
-  vec_loglikelihood <- c()
+  vec_loglikelihood <- rep(NA, length(datalist) - 1) # first entry is not data
 
   for (i in 2:length(datalist)) {
 
@@ -57,7 +61,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               rtol  = rtol,
                                               methode = methode)
     } else if (stac %in% c(2, 5)) {
-      if (length(brts) == 2)
+      if (length(brts) == 2) {
         loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
                                                 status = stac,
                                                 trait = trait,
@@ -69,7 +73,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode)
-      else
+     } else {
         loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
                                                 parameter = parameter,
                                                 phy = phy,
@@ -82,9 +86,9 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode)
-
+     }
     } else if (stac == 3) {
-      if (length(brts) == 2)
+      if (length(brts) == 2) {
         loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
                                                 status = stac,
                                                 trait = trait,
@@ -96,7 +100,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode)
-      else
+     } else {
         loglikelihood <- DAISIE_DE_trait_logpEC( brts = brts,
                                                  parameter = parameter,
                                                  phy = phy,
@@ -109,6 +113,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                  atol  = atol,
                                                  rtol  = rtol,
                                                  methode = methode)
+     }
     }
     else if (stac == 6) {
       loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
@@ -125,18 +130,17 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               methode = methode)
     }
      else if (stac == 8) {
-      loglikelihood <- DAISIE_DE_trait_logpNE_max_min_age_coltime_hidden(brts = brts,
-                                                                         trait = trait,
-                                                                         sf = sampling_fraction,
-                                                                         status = stac,
-                                                                         parameter = parameter,
-                                                                         num_observed_states = num_observed_states,
-                                                                         num_hidden_states = num_hidden_states,
-                                                                         atol  = atol,
-                                                                         rtol  = rtol,
-                                                                         methode = "ode45")
+      loglikelihood <- DAISIE_DE_trait_logpNE_max_min_age_hidden(brts = brts,
+                                                                 trait = trait,
+                                                                 status = stac,
+                                                                 parameter = parameter,
+                                                                 num_observed_states = num_observed_states,
+                                                                 num_hidden_states = num_hidden_states,
+                                                                 atol  = atol,
+                                                                 rtol  = rtol,
+                                                                 methode = "ode45")
     } else if (stac == 9) {
-      loglikelihood <- DAISIE_DE_trait_logpES_max_min_age_coltime_hidden(brts = brts,
+      loglikelihood <- DAISIE_DE_trait_logpES_max_min_age_hidden(brts = brts,
                                                                          trait = trait,
                                                                          sf = sampling_fraction,
                                                                          status = stac,
@@ -150,10 +154,9 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
       stop("Unknown stac value: ", stac)
     }
 
-    vec_loglikelihood <- c(vec_loglikelihood, loglikelihood)
-
-
+    vec_loglikelihood[i - 1] <- loglikelihood
   }
+
   loglik <- sum(vec_loglikelihood) + loglik
   return(loglik)
 }

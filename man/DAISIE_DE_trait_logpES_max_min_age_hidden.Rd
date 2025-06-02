@@ -7,6 +7,7 @@
 DAISIE_DE_trait_logpES_max_min_age_hidden(
   brts,
   trait,
+  status,
   sf = 1,
   parameter,
   num_observed_states,
@@ -61,9 +62,10 @@ parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow =
 DAISIE_DE_trait_logpES_max_min_age_hidden(
   brts                  = c(4, 3.9999, 0.001),
   trait                 = 0,
+  status                = 9,
   parameter             = parameter,
-  num_observed_states   = 2,
-  num_hidden_states     = 2,
+  num_observed_states   = 1,
+  num_hidden_states     = 1,
   atol                  = 1e-10,
   rtol                  = 1e-10,
   methode               = "ode45"

@@ -1,0 +1,63 @@
+require(treeLL)
+data("Galapagos_datalist", package = "DAISIE")
+datalist <- Galapagos_datalist
+
+parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+
+res1 <-  DAISIE_DE_trait_logp0(
+  datalist            = datalist,
+  parameter           = parameter,
+  num_observed_states     = 1,
+  num_hidden_states       = 1,
+  atol                = 1e-10,
+  rtol                = 1e-10,
+  methode             = "lsodes"
+)
+res1
+
+# but now we want to optimize
+
+idparslist <- list()
+num_observed_states <- 2
+num_hidden_states <- 2
+
+# we need in the idparslist the following
+# lambda_c
+# mu
+# gamma
+# lambda_a
+# q
+
+# let's first do a Constant Rates model
+idparslist[[1]] <- c(1, 1, 1, 1) # lambda_c
+idparslist[[2]] <- c(2, 2, 2, 2) # mu
+idparslist[[3]] <- c(3, 3, 3, 3) # gamma
+idparslist[[4]] <- c(4, 4, 4, 4) # lambda_a
+
+idparslist[[5]] <- matrix(0, 4, 4)
+# observed state transitions
+idparslist[[5]][1, 3] <- 5 # 0 -> 1
+idparslist[[5]][2, 4] <- 5 # 0 -> 1
+idparslist[[5]][3, 1] <- 6 # 1 -> 0
+idparslist[[5]][4, 2] <- 6 # 1 -> 0
+colnames(idparslist[[5]]) <- c("0A", "0B", "1A", "1B")
+rownames(idparslist[[5]]) <- colnames(idparslist[[5]])
+# hidden state transitions
+idparslist[[5]][1, 2] <- 7 # A -> B
+idparslist[[5]][2, 1] <- 8 # B -> A
+idparslist[[5]][3, 4] <- 7 # A -> B
+idparslist[[5]][4, 3] <- 8 # B -> A
+
+idparsopt <- sort(unique(unlist(idparslist)))
+idparsopt <- idparsopt[idparsopt > 0]
+
+initvals <- runif(length(idparsopt))
+
+ml_res <- treeLL::calc_ml(  datalist,
+                            num_observed_states = 2,
+                            num_hidden_states = 2,
+                            idparslist = idparslist,
+                            idparsopt = idparsopt,
+                            initparsopt = initvals,
+                            idparsfix = c(0),
+                            parsfix = c(0))

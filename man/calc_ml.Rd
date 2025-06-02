@@ -2,42 +2,29 @@
 % Please edit documentation in R/ml.R
 \name{calc_ml}
 \alias{calc_ml}
-\title{Maximum likehood estimation for (SecSSE)}
+\title{apply maximum likelihood to a dataset}
 \usage{
 calc_ml(
-  phy,
-  traits,
+  datalist,
+  num_observed_states,
+  num_hidden_states,
   idparslist,
   idparsopt,
   initparsopt,
   idparsfix,
   parsfix,
   cond = "proper_cond",
-  root_state_weight = "proper_weights",
   tol = c(1e-04, 1e-05, 1e-07),
   maxiter = 1000 * round((1.25)^length(idparsopt)),
   optimmethod = "simplex",
+  methode = "ode45",
   num_cycles = 1,
   verbose = FALSE,
-  num_threads = 1,
   atol = 1e-08,
-  rtol = 1e-07,
-  method = "odeint::bulirsch_stoer",
-  use_normalization = TRUE
+  rtol = 1e-07
 )
 }
 \arguments{
-\item{phy}{phylogenetic tree of class \code{phylo}, rooted and with
-branch lengths. Alternatively, multiple phylogenetic trees can be provided
-as the \code{multiPhylo} class.}
-
-\item{traits}{vector with trait states for each tip in the phylogeny. The
-order of the states must be the same as the tree tips. For help, see
-\code{vignette("starting_secsse", package = "secsse")}. When providing a
-\code{multiPhylo} set of multiple phylognies, traits should be a list where
-each entry in the list corresponds to the matching phylogeny on that
-position.}
-
 \item{idparslist}{overview of parameters and their values.}
 
 \item{idparsopt}{a numeric vector with the ID of parameters to be estimated.}
@@ -52,13 +39,6 @@ to be estimated.}
 \item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
 \code{"proper_cond"} (default). For details, see vignette.}
 
-\item{root_state_weight}{the method to weigh the states:
-\code{"maddison_weights"}, \code{"proper_weights"} (default) or \code{"equal_weights"}.
-It can also be specified for the root state: the vector \code{c(1, 0, 0)}
-indicates state 1 was the root state. When
-using a \code{multiPhylo} object, root_state_weight should be list where each
-entry in the list corresponds to the root_state_weight for each tree.}
-
 \item{tol}{A numeric vector with the maximum tolerance of the optimization
 algorithm. Default is \code{c(1e-04, 1e-05, 1e-05)}.}
 
@@ -70,6 +50,8 @@ algorithm. Default is \code{c(1e-04, 1e-05, 1e-05)}.}
 \code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in \link{DDD}, while subplex
 is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
 
+\item{methode}{used integration method, default is ode45}
+
 \item{num_cycles}{Number of cycles of the optimization. When set to \code{Inf},
 the optimization will be repeated until the result is, within the
 tolerance, equal to the starting values, with a maximum of 10 cycles.}
@@ -78,24 +60,11 @@ tolerance, equal to the starting values, with a maximum of 10 cycles.}
 \code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
 \code{FALSE}, optimizer output will be shown.}
 
-\item{num_threads}{number of threads to be used. Default is one thread.}
-
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
-
-\item{method}{integration method used, available are:
-\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
-\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
-\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
-
-\item{use_normalization}{normalize the density vector during integration,
-more accurate but slower (default = TRUE)}
-}
-\value{
-Parameter estimated and maximum likelihood
 }
 \description{
-Maximum likehood estimation under Several examined and concealed
-States-dependent Speciation and Extinction (SecSSE) with cladogenetic option
+ml function
 }
+\keyword{export}

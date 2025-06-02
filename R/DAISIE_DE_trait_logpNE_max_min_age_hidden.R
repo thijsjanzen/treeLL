@@ -65,15 +65,11 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
 
   m = length(parameter[[1]])
 
-  # TODO: is this the same as get_initial_conditions(interval = interval2)?
   initial_conditions2 <- get_initial_conditions2(status = status,
-                                                 res = res,
                                                  num_observed_states = num_observed_states,
                                                  num_hidden_states = num_hidden_states,
                                                  trait = trait,
-                                                 brts = brts,
-                                                 sf = sf,
-                                                 trait_mainland_ancestor = trait_mainland_ancestor)
+                                                 brts = brts)
 
 
 

@@ -11,7 +11,7 @@ loglik_R_tree(
   sampling_fraction,
   num_hidden_states,
   mainland = FALSE,
-  trait_mainland_ancestor,
+  trait_mainland_ancestor = NULL,
   atol = 1e-08,
   rtol = 1e-07,
   methode = "ode45",

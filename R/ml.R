@@ -1,38 +1,30 @@
-#' @keywords internal
-master_ml <- function(phy,
-                      traits,
+#' apply maximum likelihood to a dataset
+#' @description ml function
+#' @inheritParams default_params_doc
+#' @keywords export
+calc_ml <- function(datalist,
+                      num_observed_states,
+                      num_hidden_states,
                       idparslist,
                       idparsopt,
                       initparsopt,
                       idparsfix,
                       parsfix,
                       cond = "proper_cond",
-                      root_state_weight = "proper_weights",
                       tol = c(1e-04, 1e-05, 1e-07),
                       maxiter = 1000 * round((1.25) ^ length(idparsopt)),
                       optimmethod = "simplex",
+                      methode = "ode45",
                       num_cycles = 1,
                       verbose = FALSE,
-                      num_threads = 1,
                       atol = 1e-8,
-                      rtol = 1e-7,
-                      method = "odeint::bulirsch_stoer",
-                      use_normalization = TRUE) {
-
-
+                      rtol = 1e-7
+                      ) {
   if (identical(as.numeric(sort(c(idparsopt, idparsfix))),
                 as.numeric(sort(unique(unlist(idparslist))))) == FALSE) {
     stop("All elements in idparslist must be included in either
              idparsopt or idparsfix ")
   }
-
-
-  check_ml_conditions(traits,
-                      idparslist,
-                      initparsopt,
-                      idparsopt,
-                      idparsfix,
-                      parsfix)
 
   see_ancestral_states <- FALSE
 
@@ -47,23 +39,18 @@ master_ml <- function(phy,
                        verbose,
                        FALSE)
   initloglik <- loglik_choosepar(trparsopt = trparsopt,
-                                        trparsfix = trparsfix,
-                                        idparsopt = idparsopt,
-                                        idparsfix = idparsfix,
-                                        idparslist = idparslist,
-                                        phy = phy,
-                                        traits = traits,
-                                        cond = cond,
-                                        root_state_weight = root_state_weight,
-                                         see_ancestral_states =
-                                          see_ancestral_states,
-                                        num_threads = num_threads,
-                                        atol = atol,
-                                        rtol = rtol,
-                                        method = method,
-                                        display_warning = FALSE,
-                                        verbose = ll_verbose,
-                                        use_normalization = use_normalization)
+                                 trparsfix = trparsfix,
+                                 idparsopt = idparsopt,
+                                 idparsfix = idparsfix,
+                                 idparslist = idparslist,
+                                 datalist = datalist,
+                                 num_observed_states = num_observed_states,
+                                 num_hidden_states = num_hidden_states,
+                                 cond = cond,
+                                 atol = atol,
+                                 rtol = rtol,
+                                 methode = methode,
+                                 verbose = verbose)
   # Function here
   if (verbose) print_init_ll(initloglik = initloglik)
 
@@ -81,18 +68,14 @@ master_ml <- function(phy,
                           trparsfix = trparsfix,
                           idparsfix = idparsfix,
                           idparslist = idparslist,
-                          phy = phy,
-                          traits = traits,
+                          datalist = datalist,
+                          num_observed_states = num_observed_states,
+                          num_hidden_states = num_hidden_states,
                           cond = cond,
-                          root_state_weight = root_state_weight,
-                          see_ancestral_states = see_ancestral_states,
-                          num_threads = num_threads,
                           atol = atol,
                           rtol = rtol,
-                          method = method,
-                          display_warning = FALSE,
-                          verbose = ll_verbose,
-                          use_normalization = use_normalization)
+                          methode = methode,
+                          verbose = verbose)
     if (out$conv != 0) {
       stop("Optimization has not converged.
                  Try again with different initial values.")
@@ -116,18 +99,14 @@ loglik_choosepar <- function(trparsopt,
                              idparsopt,
                              idparsfix,
                              idparslist,
-                             phy,
-                             traits,
+                              datalist,
+                             num_observed_states,
+                             num_hidden_states,
                              cond = cond,
-                             root_state_weight,
-                             see_ancestral_states,
-                             num_threads,
                              atol,
                              rtol,
-                             method,
-                             display_warning,
-                             verbose,
-                             use_normalization) {
+                             methode,
+                             verbose) {
   alltrpars <- c(trparsopt, trparsfix)
   if (max(alltrpars) > 1 || min(alltrpars) < 0) {
     loglik <- -Inf
@@ -136,20 +115,14 @@ loglik_choosepar <- function(trparsopt,
                                          idparsopt, idparsfix,
                                          idparslist)
 
-    loglik <- master_loglik(parameter = pars1,
-                            phy = phy,
-                            traits = traits,
-                            cond = cond,
-                            root_state_weight =
-                              root_state_weight,
-                             see_ancestral_states =
-                              see_ancestral_states,
-                            num_threads = num_threads,
-                            method = method,
-                            atol = atol,
-                            rtol = rtol,
-                            display_warning = display_warning,
-                            use_normalization = use_normalization)
+    loglik <- DAISIE_DE_trait_loglik_CS(parameter = pars1,
+                                        datalist = datalist,
+                                        methode = methode,
+                                        atol = atol,
+                                        rtol = rtol,
+                                        num_observed_states = num_observed_states,
+                                        num_hidden_states = num_hidden_states,
+                                        cond = cond)
 
     if (is.nan(loglik) || is.na(loglik)) {
       warning("There are parameter values used which cause
@@ -162,53 +135,4 @@ loglik_choosepar <- function(trparsopt,
     message(paste(out_print, collapse = " "))
   }
   return(loglik)
-}
-
-#' Maximum likehood estimation for (SecSSE)
-#'
-#' Maximum likehood estimation under Several examined and concealed
-#' States-dependent Speciation and Extinction (SecSSE) with cladogenetic option
-#'
-#' @inheritParams default_params_doc
-#'
-#' @return Parameter estimated and maximum likelihood
-#' @export
-calc_ml <- function(phy,
-                    traits,
-                    idparslist,
-                    idparsopt,
-                    initparsopt,
-                    idparsfix,
-                    parsfix,
-                    cond = "proper_cond",
-                    root_state_weight = "proper_weights",
-                     tol = c(1e-04, 1e-05, 1e-07),
-                    maxiter = 1000 * round((1.25)^length(idparsopt)),
-                    optimmethod = "simplex",
-                    num_cycles = 1,
-                    verbose = FALSE,
-                    num_threads = 1,
-                    atol = 1e-8,
-                    rtol = 1e-7,
-                    method = "odeint::bulirsch_stoer",
-                    use_normalization = TRUE) {
-  master_ml(phy = phy,
-            traits = traits,
-            idparslist = idparslist,
-            idparsopt = idparsopt,
-            initparsopt = initparsopt,
-            idparsfix = idparsfix,
-            parsfix = parsfix,
-            cond = cond,
-            root_state_weight = root_state_weight,
-            tol = tol,
-            maxiter = maxiter,
-            optimmethod = optimmethod,
-            num_cycles = num_cycles,
-            verbose = verbose,
-            num_threads = num_threads,
-            atol = atol,
-            rtol = rtol,
-            method = method,
-            use_normalization = use_normalization)
 }
