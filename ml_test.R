@@ -101,4 +101,5 @@ ml_res <- treeLL::calc_ml(  datalist,
                             idparsopt = idparsopt,
                             initparsopt = initvals,
                             idparsfix = c(0),
-                            parsfix = c(0))
+                            parsfix = c(0),
+                            verbose = TRUE)

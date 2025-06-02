@@ -42,15 +42,12 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   vec_loglikelihood <- rep(NA, length(datalist) - 1) # first entry is not data
 
   for (i in 2:length(datalist)) {
-
     stac <- datalist[[i]]$stac
     brts <- datalist[[i]]$branching_times
     traits <- datalist[[i]]$traits
     trait <- datalist[[i]]$traits
     trait_mainland_ancestor <- datalist[[i]]$root_state[2]
-    sampling_fraction <- datalist[[i]]$sampling_fraction[2]
-    sf0 <- datalist[[i]]$sampling_fraction[2]
-    sf1 <- datalist[[i]]$sampling_fraction[2]
+    sampling_fraction <- datalist[[i]]$sampling_fraction
     phy <- datalist[[i]]$phylogeny
     if (stac %in% c(1, 4)) {
       loglikelihood <- DAISIE_DE_trait_logpNE(brts = brts,
@@ -158,9 +155,6 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
     }
 
     vec_loglikelihood[i - 1] <- loglikelihood
-  }
-  if (verbose) {
-    cat(vec_loglikelihood, "\n")
   }
   loglik <- sum(vec_loglikelihood) + loglik
   return(loglik)
