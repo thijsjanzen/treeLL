@@ -35,15 +35,17 @@
 #' DAISIE_DE_trait_logpES_max_min_age_hidden(
 #'   brts                  = c(4, 3.9999, 0.001),
 #'   trait                 = 0,
+#'   status                = 9,
 #'   parameter             = parameter,
-#'   num_observed_states   = 2,
-#'   num_hidden_states     = 2,
+#'   num_observed_states   = 1,
+#'   num_hidden_states     = 1,
 #'   atol                  = 1e-10,
 #'   rtol                  = 1e-10,
 #'   methode               = "ode45"
 #' )
 DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                       trait,
+                                                      status,
                                                       sf = 1,
                                                       parameter,
                                                       num_observed_states,
@@ -65,19 +67,15 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
 
 
   ## SOLVED: can't we call 'get_initial_conditions' here? //NO, because brts > 2
-  num_unique_states <- length(parameter[[1]])
-  DE  <- rep(0, num_unique_states)
-  DM2 <- rep(0, num_unique_states)
-  DM3 <- rep(0, num_unique_states)
-  E   <- rep(0, num_unique_states)
-  DA3 <- 1
+  initial_conditions2 <- get_initial_conditions2(status = status,
+                                                 res = res,
+                                                 num_observed_states = num_observed_states,
+                                                 num_hidden_states = num_hidden_states,
+                                                 trait = trait,
+                                                 brts = brts,
+                                                 sf = sf,
+                                                 trait_mainland_ancestor = trait_mainland_ancestor)
 
-  DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
-  E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
-
-  initial_conditions2 <- c(DE, DM2, DM3, E, DA3)
-
-  initial_conditions2 <- matrix(initial_conditions2, nrow = 1)
 
 
   # Time sequence for interval [tp, tmin]
@@ -91,7 +89,6 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                             method = methode,
                             atol = atol,
                             rtol = rtol)
-
 
   solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
 

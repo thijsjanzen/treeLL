@@ -46,7 +46,8 @@ get_initial_conditions2 <- function(status,
     DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
   }
   else if(status == 9)  {
-    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
+     E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
   }
 
   initial_conditions2 <- ( c(DE, DM2, DM3, E, DA3))

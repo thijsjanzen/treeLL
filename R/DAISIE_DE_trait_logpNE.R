@@ -43,11 +43,11 @@
 #'
 #' DAISIE_DE_trait_logpNE(
 #'   brts                    = brts,
-#'   trait                  = trait,
+#'   trait                   = trait,
 #'   status                  = 1,
 #'   parameter               = parameter,
-#'   num_observed_states     = 1,
-#'   num_hidden_states       = 1,
+#'   num_observed_states     = 2,
+#'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45"
