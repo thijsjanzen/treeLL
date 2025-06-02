@@ -29,6 +29,14 @@ num_hidden_states <- 2
 # q
 
 # let's first do a Constant Rates model
+# 0A, 0B, 1A, 1B
+# c(1, 1, 1, 1) # CR
+# c(1, 1, 2, 2) # ETD
+# c(1, 2, 1, 2) # CTD
+# c(1, 2, 3, 4) # fancy
+
+
+
 idparslist[[1]] <- c(1, 1, 1, 1) # lambda_c
 idparslist[[2]] <- c(2, 2, 2, 2) # mu
 idparslist[[3]] <- c(3, 3, 3, 3) # gamma

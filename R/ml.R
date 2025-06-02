@@ -1,7 +1,7 @@
 #' apply maximum likelihood to a dataset
 #' @description ml function
 #' @inheritParams default_params_doc
-#' @keywords export
+#' @export
 calc_ml <- function(datalist,
                       num_observed_states,
                       num_hidden_states,
@@ -108,6 +108,9 @@ loglik_choosepar <- function(trparsopt,
                              methode,
                              verbose) {
   alltrpars <- c(trparsopt, trparsfix)
+
+  loglik <- NA
+
   if (max(alltrpars) > 1 || min(alltrpars) < 0) {
     loglik <- -Inf
   } else {
