@@ -104,7 +104,9 @@ ml_res <- treeLL::calc_ml(  datalist,
                             initparsopt = initvals,
                             idparsfix = c(0),
                             parsfix = c(0),
-                            verbose = TRUE,
+                            verbose = FALSE,
+                            atol = 1e-10,
+                            rtol = 1e-10,
                             use_R = TRUE)
 t1 <- Sys.time()
 ml_res2 <- treeLL::calc_ml(  datalist,
@@ -115,7 +117,9 @@ ml_res2 <- treeLL::calc_ml(  datalist,
                             initparsopt = initvals,
                             idparsfix = c(0),
                             parsfix = c(0),
-                            verbose = TRUE,
+                            atol = 1e-10,
+                            rtol = 1e-10,
+                            verbose = FALSE,
                             use_R = FALSE)
 t2 <- Sys.time()
 difftime(t1, t0)

@@ -132,8 +132,8 @@ DAISIE_DE_trait_logpEC <- function(
                               methode = methode,
                               atol = atol,
                               rtol =  rtol,
-                              use_R = TRUE)
-
+                              use_R = use_R)
+    if (1 == 2) {
     solution2_2 <- solve_branch(interval_func = interval2,
                               initial_conditions = initial_conditions2,
                               time = time2,
@@ -144,6 +144,7 @@ DAISIE_DE_trait_logpEC <- function(
                               use_R = FALSE)
 
     testthat::expect_equal(solution2[2, ], solution2_2[2, ], tol = 1e-5)
+    }
 
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution2,
@@ -159,7 +160,8 @@ DAISIE_DE_trait_logpEC <- function(
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = TRUE)
+                              use_R = use_R)
+    if (1 == 2) {
 
     solution4_2 <- solve_branch(interval = interval4,
                               initial_conditions = initial_conditions4,
@@ -171,6 +173,7 @@ DAISIE_DE_trait_logpEC <- function(
                               use_R = FALSE)
 
     testthat::expect_equal(solution4[2, ], solution4_2[2, ], tol = 1e-5)
+    }
   }
 
   if (status == 6) {

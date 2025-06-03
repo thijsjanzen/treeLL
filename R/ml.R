@@ -17,8 +17,8 @@ calc_ml <- function(datalist,
                       methode = "ode45",
                       num_cycles = 1,
                       verbose = FALSE,
-                      atol = 1e-8,
-                      rtol = 1e-7,
+                      atol = 1e-10,
+                      rtol = 1e-10,
                       use_R = TRUE
                       ) {
   if (identical(as.numeric(sort(c(idparsopt, idparsfix))),

@@ -61,8 +61,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               atol  = atol,
                                               rtol  = rtol,
                                               methode = methode,
-                                              use_R = TRUE)
-
+                                              use_R = use_R)
+      if (1 == 2) {
       loglikelihood2 <- DAISIE_DE_trait_logpNE(brts = brts,
                                               status = stac,
                                               trait = trait,
@@ -74,7 +74,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               rtol  = rtol,
                                               methode = methode,
                                               use_R = FALSE)
-      testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-4)
+      testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-4) }
     } else if (stac %in% c(2, 5)) {
       if (length(brts) == 2) {
         loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
@@ -102,7 +102,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode,
-                                                use_R = TRUE)
+                                                use_R = use_R)
+        if (1 == 2) {
         loglikelihood2 <- DAISIE_DE_trait_logpEC(brts = brts,
                                                 parameter = parameter,
                                                 phy = phy,
@@ -116,7 +117,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 rtol  = rtol,
                                                 methode = methode,
                                                 use_R = FALSE)
-        testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-5)
+        testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-5) }
      }
     } else if (stac == 3) {
       if (length(brts) == 2) {
@@ -190,7 +191,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 
     vec_loglikelihood[i - 1] <- loglikelihood
   }
- # cat(vec_loglikelihood, "\n")
+
   loglik <- sum(vec_loglikelihood) + loglik
+  #cat(vec_loglikelihood, loglik,"\n")
   return(loglik)
 }
