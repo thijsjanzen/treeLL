@@ -10,7 +10,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        num_observed_states,
                                        num_hidden_states,
                                        cond = 1,
-                                       verbose = FALSE)
+                                       verbose = FALSE,
+                                       use_R = TRUE)
 
 {
   logcond <- 0 # default value gives no effect
@@ -59,7 +60,21 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               parameter = parameter,
                                               atol  = atol,
                                               rtol  = rtol,
-                                              methode = methode)
+                                              methode = methode,
+                                              use_R = TRUE)
+
+      loglikelihood2 <- DAISIE_DE_trait_logpNE(brts = brts,
+                                              status = stac,
+                                              trait = trait,
+                                              trait_mainland_ancestor = FALSE,
+                                              num_observed_states = num_observed_states,
+                                              num_hidden_states = num_hidden_states,
+                                              parameter = parameter,
+                                              atol  = atol,
+                                              rtol  = rtol,
+                                              methode = methode,
+                                              use_R = FALSE)
+      testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-4)
     } else if (stac %in% c(2, 5)) {
       if (length(brts) == 2) {
         loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
@@ -72,7 +87,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 parameter = parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
-                                                methode = methode)
+                                                methode = methode,
+                                                use_R = use_R)
      } else {
         loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
                                                 parameter = parameter,
@@ -85,7 +101,22 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 sampling_fraction = sampling_fraction,
                                                 atol  = atol,
                                                 rtol  = rtol,
-                                                methode = methode)
+                                                methode = methode,
+                                                use_R = TRUE)
+        loglikelihood2 <- DAISIE_DE_trait_logpEC(brts = brts,
+                                                parameter = parameter,
+                                                phy = phy,
+                                                traits = traits,
+                                                num_observed_states = num_observed_states,
+                                                num_hidden_states = num_hidden_states,
+                                                trait_mainland_ancestor = FALSE,
+                                                status = stac,
+                                                sampling_fraction = sampling_fraction,
+                                                atol  = atol,
+                                                rtol  = rtol,
+                                                methode = methode,
+                                                use_R = FALSE)
+        testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-5)
      }
     } else if (stac == 3) {
       if (length(brts) == 2) {
@@ -99,7 +130,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 parameter = parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
-                                                methode = methode)
+                                                methode = methode,
+                                                use_R = use_R)
      } else {
         loglikelihood <- DAISIE_DE_trait_logpEC( brts = brts,
                                                  parameter = parameter,
@@ -112,7 +144,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                  sampling_fraction = sampling_fraction,
                                                  atol  = atol,
                                                  rtol  = rtol,
-                                                 methode = methode)
+                                                 methode = methode,
+                                                 use_R = use_R)
      }
     }
     else if (stac == 6) {
@@ -127,7 +160,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               sampling_fraction = sampling_fraction,
                                               atol  = atol,
                                               rtol  = rtol,
-                                              methode = methode)
+                                              methode = methode,
+                                              use_R = use_R)
     }
      else if (stac == 8) {
       loglikelihood <- DAISIE_DE_trait_logpNE_max_min_age_hidden(brts = brts,
@@ -156,6 +190,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 
     vec_loglikelihood[i - 1] <- loglikelihood
   }
+ # cat(vec_loglikelihood, "\n")
   loglik <- sum(vec_loglikelihood) + loglik
   return(loglik)
 }

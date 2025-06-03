@@ -14,7 +14,8 @@ DAISIE_DE_trait_logpNE(
   parameter,
   atol = 1e-15,
   rtol = 1e-15,
-  methode = "ode45"
+  methode = "ode45",
+  use_R = TRUE
 )
 }
 \arguments{

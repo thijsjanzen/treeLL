@@ -18,7 +18,8 @@ calc_ml <- function(datalist,
                       num_cycles = 1,
                       verbose = FALSE,
                       atol = 1e-8,
-                      rtol = 1e-7
+                      rtol = 1e-7,
+                      use_R = TRUE
                       ) {
   if (identical(as.numeric(sort(c(idparsopt, idparsfix))),
                 as.numeric(sort(unique(unlist(idparslist))))) == FALSE) {
@@ -47,7 +48,8 @@ calc_ml <- function(datalist,
                                  atol = atol,
                                  rtol = rtol,
                                  methode = methode,
-                                 verbose = verbose)
+                                 verbose = verbose,
+                                 use_R = use_R)
   # Function here
   if (verbose) print_init_ll(initloglik = initloglik)
 
@@ -72,7 +74,8 @@ calc_ml <- function(datalist,
                           atol = atol,
                           rtol = rtol,
                           methode = methode,
-                          verbose = verbose)
+                          verbose = verbose,
+                          use_R = use_R)
     if (out$conv != 0) {
       stop("Optimization has not converged.
                  Try again with different initial values.")
@@ -90,9 +93,9 @@ calc_ml <- function(datalist,
   return(out2)
 }
 
+#' loglik choosepar temp
 #' @description
 #' temporary export for testing
-#'
 #' @export
 loglik_choosepar <- function(trparsopt,
                              trparsfix,
@@ -106,7 +109,8 @@ loglik_choosepar <- function(trparsopt,
                              atol,
                              rtol,
                              methode,
-                             verbose) {
+                             verbose,
+                             use_R) {
   alltrpars <- c(trparsopt, trparsfix)
 
   loglik <- NA
@@ -126,7 +130,8 @@ loglik_choosepar <- function(trparsopt,
                                         num_observed_states = num_observed_states,
                                         num_hidden_states = num_hidden_states,
                                         cond = cond,
-                                        verbose = verbose)
+                                        verbose = verbose,
+                                        use_R = use_R)
 
     if (is.nan(loglik) || is.na(loglik)) {
       warning("There are parameter values used which cause

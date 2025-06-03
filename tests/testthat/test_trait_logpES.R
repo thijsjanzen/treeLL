@@ -14,7 +14,7 @@ test_that("logpES", {
 
     res1 <-  treeLL::DAISIE_DE_trait_logpES(
       brts                    = brts,
-      trait                  = trait,
+      trait                   = trait,
       status                  = 2,
       parameter               = parameter,
       num_observed_states     = 1,
@@ -32,6 +32,20 @@ test_that("logpES", {
                                              datalist = datalist)
 
     testthat::expect_equal(res1, res2)
+
+    res3 <-  treeLL::DAISIE_DE_trait_logpES(
+      brts                    = brts,
+      trait                   = trait,
+      status                  = 2,
+      parameter               = parameter,
+      num_observed_states     = 1,
+      num_hidden_states       = 1,
+      atol                    = 1e-10,
+      rtol                    = 1e-10,
+      methode                 = "ode45",
+      use_R                   = FALSE)
+
+    testthat::expect_equal(res1, res3)
   }
 })
 

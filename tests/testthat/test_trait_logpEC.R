@@ -32,8 +32,23 @@ test_that("logpEC", {
                                               stac = 2,
                                               missnumspec = 0,
                                               datalist = datalist)
-
     testthat::expect_equal(res1, res2)
+
+    res3 <-  DAISIE_DE_trait_logpEC(
+      brts                    = brts,
+      phy                     = phy,
+      traits                  = traits,
+      status                  = 2,
+      sampling_fraction       = sampling_fraction,
+      parameter               = parameter,
+      num_observed_states     = 1,
+      num_hidden_states       = 1,
+      atol                    = 1e-10,
+      rtol                    = 1e-10,
+      methode                 = "ode45",
+      use_R = FALSE)
+
+    testthat::expect_equal(res1, res3)
   }
 })
 

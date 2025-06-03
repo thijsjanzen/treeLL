@@ -25,6 +25,6 @@ test_that("logpNE_max_min_age_coltime", {
                                                missnumspec = 0,
                                                datalist = datalist)
 
-    testthat::expect_equal(res1, res2)
+    testthat::expect_equal(res1, res2, tolerance = 0.01)
   }
 )

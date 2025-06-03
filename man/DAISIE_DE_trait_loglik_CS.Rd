@@ -12,7 +12,9 @@ DAISIE_DE_trait_loglik_CS(
   rtol = 1e-15,
   num_observed_states,
   num_hidden_states,
-  cond = 1
+  cond = 1,
+  verbose = FALSE,
+  use_R = TRUE
 )
 }
 \arguments{
@@ -27,6 +29,10 @@ mus and the third transition rates.}
 
 \item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
 \code{"proper_cond"} (default). For details, see vignette.}
+
+\item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
+\code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
+\code{FALSE}, optimizer output will be shown.}
 }
 \description{
 umbrella function

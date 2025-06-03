@@ -55,7 +55,6 @@ interval2 <- function(t, state, parameter) {
       q_mult_E
 
     dDA3 <- -sum(gamma) * DA3 + sum(gamma * DM3)
-
     return(list(c(dDE, dDM2, dDM3, dE, dDA3)))
   })
 }

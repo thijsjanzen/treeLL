@@ -89,11 +89,13 @@ initloglik <- treeLL::loglik_choosepar(trparsopt = trparsopt,
                                atol = 1e-9,
                                rtol = 1e-9,
                                methode = "ode45",
-                               verbose = TRUE)
+                               verbose = TRUE,
+                               use_R = FALSE)
 
 
 initloglik
 
+t0 <- Sys.time()
 ml_res <- treeLL::calc_ml(  datalist,
                             num_observed_states = 2,
                             num_hidden_states = 2,
@@ -102,4 +104,21 @@ ml_res <- treeLL::calc_ml(  datalist,
                             initparsopt = initvals,
                             idparsfix = c(0),
                             parsfix = c(0),
-                            verbose = TRUE)
+                            verbose = TRUE,
+                            use_R = TRUE)
+t1 <- Sys.time()
+ml_res2 <- treeLL::calc_ml(  datalist,
+                            num_observed_states = 2,
+                            num_hidden_states = 2,
+                            idparslist = idparslist,
+                            idparsopt = idparsopt,
+                            initparsopt = initvals,
+                            idparsfix = c(0),
+                            parsfix = c(0),
+                            verbose = TRUE,
+                            use_R = FALSE)
+t2 <- Sys.time()
+difftime(t1, t0)
+difftime(t2, t1)
+
+

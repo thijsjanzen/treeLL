@@ -16,7 +16,8 @@ DAISIE_DE_trait_logpEC(
   sampling_fraction,
   atol = 1e-10,
   rtol = 1e-10,
-  methode = "ode45"
+  methode = "ode45",
+  use_R = TRUE
 )
 }
 \arguments{

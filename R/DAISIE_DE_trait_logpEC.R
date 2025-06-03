@@ -74,7 +74,8 @@ DAISIE_DE_trait_logpEC <- function(
     sampling_fraction,
     atol = 1e-10,
     rtol = 1e-10,
-    methode = "ode45"
+    methode = "ode45",
+    use_R = TRUE
 ) {
 
   check_arguments(brts, parameter, phy, traits, num_observed_states,
@@ -130,7 +131,19 @@ DAISIE_DE_trait_logpEC <- function(
                               parameter = parameter,
                               methode = methode,
                               atol = atol,
-                              rtol =  rtol)
+                              rtol =  rtol,
+                              use_R = TRUE)
+
+    solution2_2 <- solve_branch(interval_func = interval2,
+                              initial_conditions = initial_conditions2,
+                              time = time2,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol =  rtol,
+                              use_R = FALSE)
+
+    testthat::expect_equal(solution2[2, ], solution2_2[2, ], tol = 1e-5)
 
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution2,
@@ -145,7 +158,19 @@ DAISIE_DE_trait_logpEC <- function(
                               parameter = parameter,
                               methode = methode,
                               atol = atol,
-                              rtol = rtol)
+                              rtol = rtol,
+                              use_R = TRUE)
+
+    solution4_2 <- solve_branch(interval = interval4,
+                              initial_conditions = initial_conditions4,
+                              time = time4,
+                              parameter = parameter,
+                              methode = methode,
+                              atol = atol,
+                              rtol = rtol,
+                              use_R = FALSE)
+
+    testthat::expect_equal(solution4[2, ], solution4_2[2, ], tol = 1e-5)
   }
 
   if (status == 6) {
@@ -160,7 +185,8 @@ DAISIE_DE_trait_logpEC <- function(
                               parameter = parameter,
                               methode = methode,
                               atol = atol,
-                              rtol = rtol)
+                              rtol = rtol,
+                              use_R = use_R)
 
 
     initial_conditions4 <- get_initial_conditions4(status = status,
@@ -175,7 +201,8 @@ DAISIE_DE_trait_logpEC <- function(
                               parameter = parameter,
                               methode = methode,
                               atol = atol,
-                              rtol = rtol)
+                              rtol = rtol,
+                              use_R = use_R)
   }
 
   # Extract log-likelihood from final solution
