@@ -4,21 +4,7 @@
 #' This function calculates the likelihood of observing a clade with specified species trait states,
 #' given known colonization time. It is designed for comparison with DAISIE-based models.
 #'
-#' @param brts Branching times.
-#' @param missnumspec Number of missing species.
-#' @param parameter List of model parameters.
-#' @param num_observed_states Number of observed trait states.
-#' @param num_hidden_states Number of hidden trait states.
-#' @param trait_mainland_ancestor Trait state of the species at the stem (mainland ancestor).
-#' @param phy Phylogeny (class 'phylo').
-#' @param traits Vector of trait states for the tips.
-#' @param cond Conditioning scheme (default = "proper_cond").
-#' @param root_state_weight Root state weighting method (default = "proper_weights").
-#' @param setting_calculation Argument used in ML optimization routines.
-#' @param see_ancestral_states Logical; whether to return ancestral state reconstructions.
-#' @param atol Absolute tolerance for numerical integration.
-#' @param rtol Relative tolerance for numerical integration.
-#' @param methode Numerical integration method (e.g., "ode45").
+#' @inheritParams default_params_doc
 #'
 #' @export
 #'
@@ -136,7 +122,7 @@ DAISIE_DE_trait_logpEC <- function(
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
                                                    brts = brts,
-                                                   sf = sampling_fraction,
+                                                   sampling_fraction = sampling_fraction,
                                                    trait_mainland_ancestor = trait_mainland_ancestor)
 
     solution2 <- solve_branch(interval_func = interval2,
@@ -155,7 +141,7 @@ DAISIE_DE_trait_logpEC <- function(
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states)
 
-    solution4 <- solve_branch(interval = interval4,
+    solution4 <- solve_branch(interval_func = interval4,
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,

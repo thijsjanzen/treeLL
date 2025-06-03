@@ -2,6 +2,9 @@
 #' @description
 #' solve along branch
 #' @inheritParams default_params_doc
+#' @param interval_func chosen function for interval, can also be string if using Rcpp
+#' @param initial_conditions vector of initial conditions
+#' @param time vector with two time points
 #' @export
 solve_branch <- function(interval_func,
                          initial_conditions,

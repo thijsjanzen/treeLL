@@ -8,31 +8,48 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
   brts,
   trait,
   status,
-  sf = 1,
+  sampling_fraction = 1,
   parameter,
   num_observed_states,
   num_hidden_states,
   atol = 1e-10,
   rtol = 1e-10,
-  methode = "ode45"
+  methode = "ode45",
+  use_Rcpp = 0
 )
 }
 \arguments{
-\item{brts}{branching times}
+\item{brts}{branching times, being: island age, colonization time, branching times}
 
-\item{trait}{trait state of the species at the tip}
+\item{trait}{vector with trait states for each tip in the phylogeny. The
+order of the states must be the same as the tree tips. For help, see
+\code{vignette("starting_secsse", package = "secsse")}. When providing a
+\code{multiPhylo} set of multiple phylognies, traits should be a list where
+each entry in the list corresponds to the matching phylogeny on that
+position.}
 
-\item{parameter}{parameters}
+\item{status}{indicator for type of inference required}
 
-\item{num_observed_states}{number of observed traits}
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a \code{multiPhylo} object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
 
-\item{num_hidden_states}{number of hidden traits}
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
-\item{atol}{absolute tolerance}
+\item{num_observed_states}{number of observed states}
 
-\item{rtol}{relative tolerance}
+\item{num_hidden_states}{number of hidden states}
 
-\item{methode}{method of integration}
+\item{atol}{A numeric specifying the absolute tolerance of integration.}
+
+\item{rtol}{A numeric specifying the relative tolerance of integration.}
+
+\item{methode}{used integration method, default is ode45}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 }
 \description{
 this function calculates the likelihood of observing a singleton endemic species on an island

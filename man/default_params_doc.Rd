@@ -73,13 +73,17 @@ default_params_doc(
   display_warning,
   take_into_account_root_edge,
   use_normalization,
-  num_hidden_traits,
   missnumspec,
   brts,
   use_R_version,
   methode,
   rhs_func,
-  use_Rcpp
+  use_Rcpp,
+  datalist,
+  num_observed_states,
+  num_hidden_states,
+  status,
+  trait
 )
 }
 \arguments{
@@ -313,8 +317,6 @@ no longer needs to assume a speciation event at the start of the tree)}
 \item{use_normalization}{normalize the density vector during integration,
 more accurate but slower (default = TRUE)}
 
-\item{num_hidden_traits}{number of hidden traits}
-
 \item{missnumspec}{missing number of species}
 
 \item{brts}{branching times, being: island age, colonization time, branching times}
@@ -328,6 +330,24 @@ uses Rcpp implementation (faster)}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
 value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+
+\item{datalist}{a list containing in the first entry: island age and the number of species not present,
+then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
+each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny}
+
+\item{num_observed_states}{number of observed states}
+
+\item{num_hidden_states}{number of hidden states}
+
+\item{status}{indicator for type of inference required}
+
+\item{trait}{vector with trait states for each tip in the phylogeny. The
+order of the states must be the same as the tree tips. For help, see
+\code{vignette("starting_secsse", package = "secsse")}. When providing a
+\code{multiPhylo} set of multiple phylognies, traits should be a list where
+each entry in the list corresponds to the matching phylogeny on that
+position.}
 
 \item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
 

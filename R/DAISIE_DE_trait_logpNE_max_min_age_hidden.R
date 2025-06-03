@@ -4,14 +4,7 @@
 #' with the trait state `i`, either non-endemic or rendered endemic by a trait change, and
 #' for which only the estimated maximum age of colonization is known.
 #' @export
-#' @param brts branching times
-#' @param parameter parameters
-#' @param num_observed_states number of observed traits
-#' @param num_hidden_states number of hidden traits
-#' @param trait trait of the species at the tip
-#' @param atol absolute tolerance
-#' @param rtol relative tolerance
-#' @param methode method of integration
+#' @inheritParams default_params_doc
 #' @examples
 #' # load DAISIE package and data
 #' library(DAISIE)

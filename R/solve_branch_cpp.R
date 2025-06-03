@@ -1,7 +1,4 @@
-#' branch solving
-#' @description use cpp
-#' @inheritParams default_params_doc
-#' @export
+#' @keywords internal
 solve_branch_cpp <- function(chosen_func,
                              initial_conditions,
                              time,

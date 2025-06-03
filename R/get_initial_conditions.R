@@ -7,7 +7,7 @@ get_initial_conditions2 <- function(status,
                                     num_observed_states,
                                     num_hidden_states,
                                     brts,
-                                    sf,
+                                    sampling_fraction,
                                     trait_mainland_ancestor) {
   n <- num_observed_states * num_hidden_states
   num_unique_states <- n
@@ -30,12 +30,12 @@ get_initial_conditions2 <- function(status,
     return(matrix(initial_conditions2, nrow = 1))
   }
   else if (status == 2 && length(brts) == 2) {
-    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
-    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sf
+    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
   }
   else if (status == 3 && length(brts) == 2 ) {
-    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
-    E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
+    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+    E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
     DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   }
@@ -46,8 +46,8 @@ get_initial_conditions2 <- function(status,
     DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
   }
   else if(status == 9)  {
-    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
-     E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
+    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+     E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
   }
 
   initial_conditions2 <- ( c(DE, DM2, DM3, E, DA3))

@@ -2,16 +2,7 @@
 #' This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,
 #'
 #'
-#' @param brts Branching times.
-#' @param missnumspec Number of missing species.
-#' @param parameter List of model parameters.
-#' @param num_observed_states Number of observed trait states.
-#' @param num_hidden_states Number of hidden trait states.
-#' @param trait_mainland_ancestor Trait state of the species at the stem (mainland ancestor).
-#' @param trait trait state of the species at the tip.
-#' @param atol Absolute tolerance for numerical integration.
-#' @param rtol Relative tolerance for numerical integration.
-#' @param methode Numerical integration method (e.g., "ode45").
+#' @inheritParams default_params_doc
 #'
 #' @export
 #'

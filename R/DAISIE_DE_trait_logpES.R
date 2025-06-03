@@ -4,16 +4,7 @@
 #' This function calculates the likelihood of observing a clade with specified species trait states,
 #' given known colonization time. It is designed for comparison with DAISIE-based models.
 #'
-#' @param brts Branching times.
-#' @param missnumspec Number of missing species.
-#' @param parameter List of model parameters.
-#' @param num_observed_states Number of observed trait states.
-#' @param num_hidden_states Number of hidden trait states.
-#' @param trait_mainland_ancestor Trait state of the species at the stem (mainland ancestor).
-#' @param trait trait state of the species at the tip.
-#' @param atol Absolute tolerance for numerical integration.
-#' @param rtol Relative tolerance for numerical integration.
-#' @param methode Numerical integration method (e.g., "ode45").
+#' @inheritParams default_params_doc
 #'
 #' @export
 #'
@@ -26,7 +17,7 @@
 #' i <- 7
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
-#' sf <- 1
+#' sampling_fraction <- 1
 #'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
@@ -58,7 +49,7 @@
 DAISIE_DE_trait_logpES <- function(brts,
                                    status,
                                    trait,
-                                   sf = 1,
+                                   sampling_fraction = 1,
                                    trait_mainland_ancestor = FALSE,
                                    num_observed_states,
                                    num_hidden_states,
@@ -101,7 +92,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                                                    num_hidden_states = num_hidden_states,
                                                    trait = trait,
                                                    brts = brts,
-                                                   sf = sf,
+                                                   sampling_fraction = sampling_fraction,
                                                    trait_mainland_ancestor = trait_mainland_ancestor)
 
     solution2 <- solve_branch(interval_func = interval2,

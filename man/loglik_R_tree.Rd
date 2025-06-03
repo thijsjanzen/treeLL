@@ -38,6 +38,8 @@ trait state. It must have as many elements as there are trait states. When
 using a \code{multiPhylo} object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
 
+\item{num_hidden_states}{number of hidden states}
+
 \item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
 
 \item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}

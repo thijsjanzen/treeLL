@@ -15,11 +15,23 @@ DAISIE_DE_trait_logp0(
 )
 }
 \arguments{
-\item{atol}{absolute tolerance}
+\item{datalist}{a list containing in the first entry: island age and the number of species not present,
+then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
+each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny}
 
-\item{rtol}{relative tolerance}
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
-\item{methode}{method of integration}
+\item{atol}{A numeric specifying the absolute tolerance of integration.}
+
+\item{rtol}{A numeric specifying the relative tolerance of integration.}
+
+\item{num_observed_states}{number of observed states}
+
+\item{num_hidden_states}{number of hidden states}
+
+\item{methode}{used integration method, default is ode45}
 }
 \description{
 This function compute the likelihood that all species that colonize the island

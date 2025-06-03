@@ -16,6 +16,12 @@ solve_branch(
 )
 }
 \arguments{
+\item{interval_func}{chosen function for interval, can also be string if using Rcpp}
+
+\item{initial_conditions}{vector of initial conditions}
+
+\item{time}{vector with two time points}
+
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
 

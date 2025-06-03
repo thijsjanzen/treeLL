@@ -19,25 +19,34 @@ DAISIE_DE_trait_logpNE(
 )
 }
 \arguments{
-\item{brts}{Branching times.}
+\item{brts}{branching times, being: island age, colonization time, branching times}
 
-\item{trait}{trait state of the species at the tip.}
+\item{status}{indicator for type of inference required}
 
-\item{trait_mainland_ancestor}{Trait state of the species at the stem (mainland ancestor).}
+\item{trait}{vector with trait states for each tip in the phylogeny. The
+order of the states must be the same as the tree tips. For help, see
+\code{vignette("starting_secsse", package = "secsse")}. When providing a
+\code{multiPhylo} set of multiple phylognies, traits should be a list where
+each entry in the list corresponds to the matching phylogeny on that
+position.}
 
-\item{num_observed_states}{Number of observed trait states.}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
-\item{num_hidden_states}{Number of hidden trait states.}
+\item{num_observed_states}{number of observed states}
 
-\item{parameter}{List of model parameters.}
+\item{num_hidden_states}{number of hidden states}
 
-\item{atol}{Absolute tolerance for numerical integration.}
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
-\item{rtol}{Relative tolerance for numerical integration.}
+\item{atol}{A numeric specifying the absolute tolerance of integration.}
 
-\item{methode}{Numerical integration method (e.g., "ode45").}
+\item{rtol}{A numeric specifying the relative tolerance of integration.}
 
-\item{missnumspec}{Number of missing species.}
+\item{methode}{used integration method, default is ode45}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 }
 \description{
 This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,

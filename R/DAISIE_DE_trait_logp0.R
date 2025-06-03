@@ -3,9 +3,7 @@
 #' This function compute the likelihood that all species that colonize the island
 #' have gone extinct prior to the present.
 #' @export
-#' @param atol absolute tolerance
-#' @param rtol relative tolerance
-#' @param methode method of integration
+#' @inheritParams default_params_doc
 #' @examples
 #' #Load DAISIE package and data
 #' library(DAISIE)

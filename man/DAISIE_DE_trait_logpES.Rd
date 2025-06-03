@@ -8,7 +8,7 @@ DAISIE_DE_trait_logpES(
   brts,
   status,
   trait,
-  sf = 1,
+  sampling_fraction = 1,
   trait_mainland_ancestor = FALSE,
   num_observed_states,
   num_hidden_states,
@@ -20,25 +20,39 @@ DAISIE_DE_trait_logpES(
 )
 }
 \arguments{
-\item{brts}{Branching times.}
+\item{brts}{branching times, being: island age, colonization time, branching times}
 
-\item{trait}{trait state of the species at the tip.}
+\item{status}{indicator for type of inference required}
 
-\item{trait_mainland_ancestor}{Trait state of the species at the stem (mainland ancestor).}
+\item{trait}{vector with trait states for each tip in the phylogeny. The
+order of the states must be the same as the tree tips. For help, see
+\code{vignette("starting_secsse", package = "secsse")}. When providing a
+\code{multiPhylo} set of multiple phylognies, traits should be a list where
+each entry in the list corresponds to the matching phylogeny on that
+position.}
 
-\item{num_observed_states}{Number of observed trait states.}
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a \code{multiPhylo} object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
 
-\item{num_hidden_states}{Number of hidden trait states.}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
-\item{parameter}{List of model parameters.}
+\item{num_observed_states}{number of observed states}
 
-\item{atol}{Absolute tolerance for numerical integration.}
+\item{num_hidden_states}{number of hidden states}
 
-\item{rtol}{Relative tolerance for numerical integration.}
+\item{parameter}{list where first vector represents lambdas, the second
+mus and the third transition rates.}
 
-\item{methode}{Numerical integration method (e.g., "ode45").}
+\item{atol}{A numeric specifying the absolute tolerance of integration.}
 
-\item{missnumspec}{Number of missing species.}
+\item{rtol}{A numeric specifying the relative tolerance of integration.}
+
+\item{methode}{used integration method, default is ode45}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 }
 \description{
 This function calculates the likelihood of observing a clade with specified species trait states,
@@ -53,7 +67,7 @@ datalist <- Galapagos_datalist
 i <- 7
 brts <- datalist[[i]]$branching_times
 trait <- 0
-sf <- 1
+sampling_fraction <- 1
 
 parameter <- list(
   c(2.546591, 1.2, 1, 0.2),

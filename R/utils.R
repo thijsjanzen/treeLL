@@ -88,6 +88,23 @@ create_q_matrix_int <- function(masterBlock,
     return(Q)
 }
 
+#' @keywords internal
+get_state_names <- function(state_names, num_concealed_states) {
+  num_obs_states <- length(state_names)
+
+  concealed_state_names <- LETTERS[1:num_concealed_states]
+  all_state_names <- c()
+  cnt <- 1
+  for (j in 1:num_concealed_states) {
+    for (i in 1:num_obs_states) {
+      all_state_names[cnt] <- paste0(state_names[i],
+                                     concealed_state_names[j])
+      cnt <- cnt + 1
+    }
+  }
+  return(all_state_names)
+}
+
 
 #' @title Basic Qmatrix
 #' Sets a Q matrix where double transitions are not allowed

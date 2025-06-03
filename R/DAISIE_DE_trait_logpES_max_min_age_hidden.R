@@ -3,14 +3,7 @@
 #' this function calculates the likelihood of observing a singleton endemic species on an island
 #' with the trait state `i`, and for which only the estimated maximum and minimum ages of colonization are known.
 #' @export
-#' @param brts branching times
-#' @param parameter parameters
-#' @param num_observed_states number of observed traits
-#' @param num_hidden_states number of hidden traits
-#' @param trait trait state of the species at the tip
-#' @param atol absolute tolerance
-#' @param rtol relative tolerance
-#' @param methode method of integration
+#' @inheritParams default_params_doc
 #' @examples
 #' library(DAISIE)
 #' data("Biwa_datalist")
@@ -46,7 +39,7 @@
 DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                       trait,
                                                       status,
-                                                      sf = 1,
+                                                      sampling_fraction = 1,
                                                       parameter,
                                                       num_observed_states,
                                                       num_hidden_states,
@@ -73,7 +66,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                  num_hidden_states = num_hidden_states,
                                                  trait = trait,
                                                  brts = brts,
-                                                 sf = sf)
+                                                 sampling_fraction = sampling_fraction)
 
   # Time sequence for interval [tp, tmin]
   time2 <- c(tp, tmin)
