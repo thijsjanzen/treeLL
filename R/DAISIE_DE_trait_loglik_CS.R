@@ -46,7 +46,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   for (i in 2:length(datalist)) {
 
     if (i  == 6) {
-  #   cat("debug\n")
+      #   cat("debug\n")
     }
 
 
@@ -83,7 +83,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 rtol  = rtol,
                                                 methode = methode,
                                                 use_Rcpp = use_Rcpp)
-     } else {
+      } else {
         loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
                                                 parameter = parameter,
                                                 phy = phy,
@@ -98,7 +98,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 methode = methode,
                                                 use_Rcpp = use_Rcpp,
                                                 num_threads = num_threads)
-     }
+      }
     } else if (stac == 3) {
       if (length(brts) == 2) {
         loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
@@ -113,7 +113,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 rtol  = rtol,
                                                 methode = methode,
                                                 use_Rcpp = use_Rcpp)
-     } else {
+      } else {
         loglikelihood <- DAISIE_DE_trait_logpEC( brts = brts,
                                                  parameter = parameter,
                                                  phy = phy,
@@ -127,7 +127,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                  rtol  = rtol,
                                                  methode = methode,
                                                  use_Rcpp = use_Rcpp)
-     }
+      }
     }
     else if (stac == 6) {
       loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
@@ -145,7 +145,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               use_Rcpp = use_Rcpp,
                                               num_threads = num_threads)
     }
-     else if (stac == 8) {
+    else if (stac == 8) {
       loglikelihood <- DAISIE_DE_trait_logpNE_max_min_age_hidden(brts = brts,
                                                                  trait = trait,
                                                                  status = stac,
@@ -154,18 +154,20 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                                  num_hidden_states = num_hidden_states,
                                                                  atol  = atol,
                                                                  rtol  = rtol,
-                                                                 methode = "ode45")
+                                                                 methode = "ode45",
+                                                                 use_Rcpp = use_Rcpp)
     } else if (stac == 9) {
       loglikelihood <- DAISIE_DE_trait_logpES_max_min_age_hidden(brts = brts,
-                                                                         trait = trait,
-                                                                         sf = sampling_fraction,
-                                                                         status = stac,
-                                                                         parameter = parameter,
-                                                                         num_observed_states = num_observed_states,
-                                                                         num_hidden_states = num_hidden_states,
-                                                                         atol  = atol,
-                                                                         rtol  = rtol,
-                                                                         methode = "ode45")
+                                                                 trait = trait,
+                                                                 sf = sampling_fraction,
+                                                                 status = stac,
+                                                                 parameter = parameter,
+                                                                 num_observed_states = num_observed_states,
+                                                                 num_hidden_states = num_hidden_states,
+                                                                 atol  = atol,
+                                                                 rtol  = rtol,
+                                                                 methode = "ode45",
+                                                                 use_Rcpp = use_Rcpp)
     } else {
       stop("Unknown stac value: ", stac)
     }

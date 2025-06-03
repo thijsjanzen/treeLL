@@ -52,7 +52,8 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                       num_hidden_states,
                                                       atol = 1e-10,
                                                       rtol = 1e-10,
-                                                      methode = "ode45") {
+                                                      methode = "ode45",
+                                                      use_Rcpp = 0) {
   t0   <- brts[1]
   tmax <- brts[2]
   tmin <- brts[3]
@@ -74,21 +75,17 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                  brts = brts,
                                                  sf = sf)
 
-
-
   # Time sequence for interval [tp, tmin]
   time2 <- c(tp, tmin)
 
-  # Solve the system for interval [tp, tmin]
-  solution2 <- deSolve::ode(y = initial_conditions2,
-                            times = time2,
-                            func = interval2,
-                            parms = parameter,
-                            method = methode,
+  solution2 <- solve_branch(interval_func = interval2,
+                            initial_conditions = initial_conditions2,
+                            time = time2,
+                            parameter = parameter,
+                            methode = methode,
                             atol = atol,
-                            rtol = rtol)
-
-  solution2 <- matrix(solution2[,-1], nrow = 2) # remove the time from the result
+                            rtol = rtol,
+                            use_Rcpp = use_Rcpp)
 
   #########interval3 [tmin, tmax]
 
@@ -108,17 +105,14 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   # Time sequence for interval [tmin, tmax]
   time3 <- c(tmin, tmax)
 
-  # Solve the system for interval [tp, tmax]
-  solution3 <- deSolve::ode(y = initial_conditions3_max_min,
-                            times = time3,
-                            func = interval3,
-                            parms = parameter,
-                            method = methode,
+  solution3 <- solve_branch(interval_func = interval3,
+                            initial_conditions = initial_conditions3_max_min,
+                            time = time3,
+                            parameter = parameter,
+                            methode = methode,
                             atol = atol,
-                            rtol = rtol)
-
-
-  solution3 <- matrix(solution3[,-1], nrow = 2) # remove the time from the result
+                            rtol = rtol,
+                            use_Rcpp = use_Rcpp)
 
   #########interval4 [tmax, t0]
 
@@ -135,15 +129,14 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   time4 <- c(tmax, t0)
 
   # Solve the system for interval [tmax, t0]
-  solution4 <- deSolve::ode(y = initial_conditions4_max_min,
-                            times = time4,
-                            func = interval4,
-                            parms = parameter,
-                            method = methode,
+  solution4 <- solve_branch(interval_func = interval4,
+                            initial_conditions = initial_conditions4_max_min,
+                            time = time4,
+                            parameter = parameter,
+                            methode = methode,
                             atol = atol,
-                            rtol = rtol)
-
-  solution4 <- matrix(solution4[,-1], nrow = 2)
+                            rtol = rtol,
+                            use_Rcpp = use_Rcpp)
 
   # Extract log-likelihood
   Lk <- solution4[2,][length(solution4[2,])]
