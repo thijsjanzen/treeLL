@@ -18,7 +18,8 @@ loglik_choosepar(
   rtol,
   methode,
   verbose,
-  use_R
+  use_Rcpp,
+  num_threads
 )
 }
 \description{

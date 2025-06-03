@@ -17,9 +17,10 @@ calc_ml <- function(datalist,
                       methode = "ode45",
                       num_cycles = 1,
                       verbose = FALSE,
+                      num_threads = 1,
                       atol = 1e-10,
                       rtol = 1e-10,
-                      use_R = TRUE
+                      use_Rcpp = 0
                       ) {
   if (identical(as.numeric(sort(c(idparsopt, idparsfix))),
                 as.numeric(sort(unique(unlist(idparslist))))) == FALSE) {
@@ -49,7 +50,8 @@ calc_ml <- function(datalist,
                                  rtol = rtol,
                                  methode = methode,
                                  verbose = verbose,
-                                 use_R = use_R)
+                                 use_Rcpp = use_Rcpp,
+                                 num_threads = num_threads)
   # Function here
   if (verbose) print_init_ll(initloglik = initloglik)
 
@@ -75,7 +77,8 @@ calc_ml <- function(datalist,
                           rtol = rtol,
                           methode = methode,
                           verbose = verbose,
-                          use_R = use_R)
+                          use_Rcpp = use_Rcpp,
+                          num_threads = num_threads)
     if (out$conv != 0) {
       stop("Optimization has not converged.
                  Try again with different initial values.")
@@ -110,7 +113,8 @@ loglik_choosepar <- function(trparsopt,
                              rtol,
                              methode,
                              verbose,
-                             use_R) {
+                             use_Rcpp,
+                             num_threads) {
   alltrpars <- c(trparsopt, trparsfix)
 
   loglik <- NA
@@ -131,7 +135,8 @@ loglik_choosepar <- function(trparsopt,
                                         num_hidden_states = num_hidden_states,
                                         cond = cond,
                                         verbose = verbose,
-                                        use_R = use_R)
+                                        use_Rcpp = use_Rcpp,
+                                        num_threads = num_threads)
 
     if (is.nan(loglik) || is.na(loglik)) {
       warning("There are parameter values used which cause

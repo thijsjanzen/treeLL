@@ -10,9 +10,9 @@ solve_branch <- function(interval_func,
                          methode,
                          atol,
                          rtol,
-                         use_R = TRUE) {
+                         use_Rcpp = 0) {
   solution <- c()
-  if (use_R == TRUE) {
+  if (use_Rcpp <= 1) {
 
     solution <- deSolve::ode(
         y = initial_conditions,
@@ -23,7 +23,7 @@ solve_branch <- function(interval_func,
         atol = atol,
         rtol = rtol
     )
-    return(matrix(solution[, -1], nrow = 2))
+    solution <- matrix(solution[, -1], nrow = 2)
   } else {
     interval_name <- as.character(substitute(interval_func))
     solution <- solve_branch_cpp(interval_name,
@@ -33,8 +33,6 @@ solve_branch <- function(interval_func,
                                  methode,
                                  atol,
                                  rtol)
-    return(solution)
   }
-
-
+  return(solution)
 }

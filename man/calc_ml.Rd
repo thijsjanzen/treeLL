@@ -20,8 +20,10 @@ calc_ml(
   methode = "ode45",
   num_cycles = 1,
   verbose = FALSE,
-  atol = 1e-08,
-  rtol = 1e-07
+  num_threads = 1,
+  atol = 1e-10,
+  rtol = 1e-10,
+  use_Rcpp = 0
 )
 }
 \arguments{
@@ -60,9 +62,14 @@ tolerance, equal to the starting values, with a maximum of 10 cycles.}
 \code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
 \code{FALSE}, optimizer output will be shown.}
 
+\item{num_threads}{number of threads to be used. Default is one thread.}
+
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 }
 \description{
 ml function

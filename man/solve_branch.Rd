@@ -12,8 +12,7 @@ solve_branch(
   methode,
   atol,
   rtol,
-  num_hidden_states,
-  use_R = TRUE
+  use_Rcpp = 0
 )
 }
 \arguments{
@@ -25,6 +24,9 @@ mus and the third transition rates.}
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 }
 \description{
 solve along branch

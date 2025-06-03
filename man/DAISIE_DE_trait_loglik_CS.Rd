@@ -13,8 +13,9 @@ DAISIE_DE_trait_loglik_CS(
   num_observed_states,
   num_hidden_states,
   cond = 1,
+  num_threads = 1,
   verbose = FALSE,
-  use_R = TRUE
+  use_Rcpp = 0
 )
 }
 \arguments{
@@ -30,9 +31,14 @@ mus and the third transition rates.}
 \item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
 \code{"proper_cond"} (default). For details, see vignette.}
 
+\item{num_threads}{number of threads to be used. Default is one thread.}
+
 \item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
 \code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
 \code{FALSE}, optimizer output will be shown.}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 }
 \description{
 umbrella function

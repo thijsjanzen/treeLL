@@ -11,8 +11,7 @@ solve_branch_cpp(
   parameter,
   methode,
   atol,
-  rtol,
-  num_hidden_states
+  rtol
 )
 }
 \arguments{

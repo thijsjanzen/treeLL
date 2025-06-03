@@ -1,13 +1,5 @@
 require(treeLL)
-data("Galapagos_datalist", package = "DAISIE")
-datalist <- Galapagos_datalist
-for (i in 2:length(datalist)) {
-  datalist[[i]]$traits <- sample(c(0, 1), size = length(datalist[[i]]$branching_times),
-                                 replace = TRUE)
-  datalist[[i]]$sampling_fraction <- rep(1, 2)
-  datalist[[i]]$phylogeny <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
-}
-
+load("/Users/thijsjanzen/Downloads/datalist.RData")
 parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 
 res1 <-  DAISIE_DE_trait_logp0(
@@ -20,9 +12,6 @@ res1 <-  DAISIE_DE_trait_logp0(
   methode             = "lsodes"
 )
 res1
-
-# but now we want to optimize
-
 idparslist <- list()
 num_observed_states <- 2
 num_hidden_states <- 2
@@ -78,19 +67,20 @@ trparsfix <- parsfix / (1 + parsfix)
 trparsfix[which(parsfix == Inf)] <- 1
 
 initloglik <- treeLL::loglik_choosepar(trparsopt = trparsopt,
-                               trparsfix = trparsfix,
-                               idparsopt = idparsopt,
-                               idparsfix = c(0),
-                               idparslist = idparslist,
-                               datalist = datalist,
-                               num_observed_states = num_observed_states,
-                               num_hidden_states = num_hidden_states,
-                               cond = 1,
-                               atol = 1e-9,
-                               rtol = 1e-9,
-                               methode = "ode45",
-                               verbose = TRUE,
-                               use_R = FALSE)
+                                       trparsfix = trparsfix,
+                                       idparsopt = idparsopt,
+                                       idparsfix = c(0),
+                                       idparslist = idparslist,
+                                       datalist = datalist,
+                                       num_observed_states = num_observed_states,
+                                       num_hidden_states = num_hidden_states,
+                                       cond = 1,
+                                       atol = 1e-9,
+                                       rtol = 1e-9,
+                                       methode = "ode45",
+                                       verbose = TRUE,
+                                       use_R = TRUE,
+                                       num_threads = 8)
 
 
 initloglik
@@ -104,25 +94,25 @@ ml_res <- treeLL::calc_ml(  datalist,
                             initparsopt = initvals,
                             idparsfix = c(0),
                             parsfix = c(0),
-                            verbose = FALSE,
-                            atol = 1e-15,
-                            rtol = 1e-15,
+                            atol = 1e-11,
+                            rtol = 1e-11,
+                            num_threads = 8,
+                            verbose = TRUE,
                             use_R = TRUE)
 t1 <- Sys.time()
 ml_res2 <- treeLL::calc_ml(  datalist,
-                            num_observed_states = 2,
-                            num_hidden_states = 2,
-                            idparslist = idparslist,
-                            idparsopt = idparsopt,
-                            initparsopt = initvals,
-                            idparsfix = c(0),
-                            parsfix = c(0),
-                            atol = 1e-15,
-                            rtol = 1e-15,
-                            verbose = FALSE,
-                            use_R = FALSE)
+                             num_observed_states = 2,
+                             num_hidden_states = 2,
+                             idparslist = idparslist,
+                             idparsopt = idparsopt,
+                             initparsopt = initvals,
+                             idparsfix = c(0),
+                             parsfix = c(0),
+                             atol = 1e-11,
+                             rtol = 1e-11,
+                             num_threads = 8,
+                             verbose = TRUE,
+                             use_R = FALSE)
 t2 <- Sys.time()
 difftime(t1, t0)
 difftime(t2, t1)
-
-

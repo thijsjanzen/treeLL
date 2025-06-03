@@ -14,10 +14,11 @@ DAISIE_DE_trait_logpEC(
   trait_mainland_ancestor = FALSE,
   status,
   sampling_fraction,
+  num_threads = 1,
   atol = 1e-10,
   rtol = 1e-10,
   methode = "ode45",
-  use_R = TRUE
+  use_Rcpp = 0
 )
 }
 \arguments{

@@ -78,7 +78,8 @@ default_params_doc(
   brts,
   use_R_version,
   methode,
-  rhs_func
+  rhs_func,
+  use_Rcpp
 )
 }
 \arguments{
@@ -324,6 +325,9 @@ uses Rcpp implementation (faster)}
 \item{methode}{used integration method, default is ode45}
 
 \item{rhs_func}{rhs function used in R implementation}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 
 \item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
 

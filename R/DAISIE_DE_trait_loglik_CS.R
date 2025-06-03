@@ -10,8 +10,9 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        num_observed_states,
                                        num_hidden_states,
                                        cond = 1,
+                                       num_threads = 1,
                                        verbose = FALSE,
-                                       use_R = TRUE)
+                                       use_Rcpp = 0)
 
 {
   logcond <- 0 # default value gives no effect
@@ -43,6 +44,12 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   vec_loglikelihood <- rep(NA, length(datalist) - 1) # first entry is not data
 
   for (i in 2:length(datalist)) {
+
+    if (i  == 6) {
+  #   cat("debug\n")
+    }
+
+
     stac <- datalist[[i]]$stac
     brts <- datalist[[i]]$branching_times
     traits <- datalist[[i]]$traits
@@ -61,20 +68,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               atol  = atol,
                                               rtol  = rtol,
                                               methode = methode,
-                                              use_R = use_R)
-      if (1 == 2) {
-      loglikelihood2 <- DAISIE_DE_trait_logpNE(brts = brts,
-                                              status = stac,
-                                              trait = trait,
-                                              trait_mainland_ancestor = FALSE,
-                                              num_observed_states = num_observed_states,
-                                              num_hidden_states = num_hidden_states,
-                                              parameter = parameter,
-                                              atol  = atol,
-                                              rtol  = rtol,
-                                              methode = methode,
-                                              use_R = FALSE)
-      testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-4) }
+                                              use_Rcpp = use_Rcpp)
     } else if (stac %in% c(2, 5)) {
       if (length(brts) == 2) {
         loglikelihood <- DAISIE_DE_trait_logpES(brts = brts,
@@ -88,7 +82,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode,
-                                                use_R = use_R)
+                                                use_Rcpp = use_Rcpp)
      } else {
         loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
                                                 parameter = parameter,
@@ -102,22 +96,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode,
-                                                use_R = use_R)
-        if (1 == 2) {
-        loglikelihood2 <- DAISIE_DE_trait_logpEC(brts = brts,
-                                                parameter = parameter,
-                                                phy = phy,
-                                                traits = traits,
-                                                num_observed_states = num_observed_states,
-                                                num_hidden_states = num_hidden_states,
-                                                trait_mainland_ancestor = FALSE,
-                                                status = stac,
-                                                sampling_fraction = sampling_fraction,
-                                                atol  = atol,
-                                                rtol  = rtol,
-                                                methode = methode,
-                                                use_R = FALSE)
-        testthat::expect_equal(loglikelihood, loglikelihood2, tol = 1e-5) }
+                                                use_Rcpp = use_Rcpp,
+                                                num_threads = num_threads)
      }
     } else if (stac == 3) {
       if (length(brts) == 2) {
@@ -132,7 +112,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode,
-                                                use_R = use_R)
+                                                use_Rcpp = use_Rcpp)
      } else {
         loglikelihood <- DAISIE_DE_trait_logpEC( brts = brts,
                                                  parameter = parameter,
@@ -146,7 +126,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                  atol  = atol,
                                                  rtol  = rtol,
                                                  methode = methode,
-                                                 use_R = use_R)
+                                                 use_Rcpp = use_Rcpp)
      }
     }
     else if (stac == 6) {
@@ -162,7 +142,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               atol  = atol,
                                               rtol  = rtol,
                                               methode = methode,
-                                              use_R = use_R)
+                                              use_Rcpp = use_Rcpp,
+                                              num_threads = num_threads)
     }
      else if (stac == 8) {
       loglikelihood <- DAISIE_DE_trait_logpNE_max_min_age_hidden(brts = brts,
@@ -193,6 +174,6 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   }
 
   loglik <- sum(vec_loglikelihood) + loglik
-  #cat(vec_loglikelihood, loglik,"\n")
+  cat(vec_loglikelihood, loglik,"\n")
   return(loglik)
 }

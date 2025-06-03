@@ -66,7 +66,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                                    atol  = 1e-10,
                                    rtol  = 1e-10,
                                    methode                 = "ode45",
-                                   use_R = TRUE) {
+                                   use_Rcpp = 0) {
 
   check_arguments(brts, parameter,
                   phy = 0,
@@ -111,7 +111,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
+                              use_Rcpp = use_Rcpp)
 
 
     initial_conditions4 <- get_initial_conditions4(status = status,
@@ -127,7 +127,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
+                              use_Rcpp = use_Rcpp)
   }
 
   if (status == 5) {
@@ -142,7 +142,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
+                              use_Rcpp = use_Rcpp)
 
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution3,
@@ -157,7 +157,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
+                              use_Rcpp = use_Rcpp)
   }
 
   # Extract log-likelihood from final solution

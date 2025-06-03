@@ -16,7 +16,7 @@ DAISIE_DE_trait_logpES(
   atol = 1e-10,
   rtol = 1e-10,
   methode = "ode45",
-  use_R = TRUE
+  use_Rcpp = 0
 )
 }
 \arguments{

@@ -172,6 +172,8 @@
 #' @param num_hidden_traits number of hidden traits
 #' @param mainland if TRUE, adjust initial conditions for mainland dynamics
 #' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the mainland ancestor
+#' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+#' value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches
 #' @return Nothing
 #' @keywords internal
 #' @export
@@ -248,6 +250,7 @@ default_params_doc <- function(phy,
                                brts,
                                use_R_version,
                                methode,
-                               rhs_func) {
+                               rhs_func,
+                               use_Rcpp) {
   # Nothing
 }

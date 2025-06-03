@@ -33,6 +33,7 @@ solve_branch_cpp <- function(chosen_func,
                         rtol)
 
   res <- matrix(data = NA, nrow = 2, ncol = length(solution$states))
+  res[1, ] <- initial_conditions
   res[2, ] <- solution$states
 
   return(res)

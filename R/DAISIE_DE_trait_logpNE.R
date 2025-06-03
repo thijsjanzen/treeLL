@@ -62,7 +62,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                    atol  = 1e-15,
                                    rtol  = 1e-15,
                                    methode                 = "ode45",
-                                   use_R = TRUE) {
+                                   use_Rcpp = 0) {
 
   check_arguments(brts = brts,
                   parameter = parameter,
@@ -104,20 +104,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
-    if (1 == 2) {
-    solution2_2 <- solve_branch(interval_func = interval2,
-                              initial_conditions = initial_conditions2,
-                              time = time2,
-                              parameter = parameter,
-                              methode = methode,
-                              atol = atol,
-                              rtol = rtol,
-                              use_R = FALSE)
-
-    testthat::expect_equal(solution2[2, ], solution2_2[2, ], tol = 1e-3)
-    }
-
+                              use_Rcpp = use_Rcpp)
 
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution2,
@@ -132,19 +119,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
-    if (1 == 2) {
-    solution4_2 <- solve_branch(interval_func = interval4,
-                              initial_conditions = initial_conditions4,
-                              time = time4,
-                              parameter = parameter,
-                              methode = methode,
-                              atol = atol,
-                              rtol = rtol,
-                              use_R = FALSE)
-    a <- 5
-    testthat::expect_equal(solution4[2, ], solution4_2[2, ], tol = 1e-3)
-    }
+                              use_Rcpp = use_Rcpp)
   }
 
   if (status == 1) {
@@ -159,20 +134,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
-
-    if (1 == 2) {
-    solution3_2 <- solve_branch(interval_func = interval3,
-                                initial_conditions = initial_conditions3,
-                                time = time3,
-                                parameter = parameter,
-                                methode = methode,
-                                atol = atol,
-                                rtol = rtol,
-                                use_R = FALSE)
-    testthat::expect_equal(solution3[2, ], solution3_2[2, ], tol = 1e-3)
-}
-
+                              use_Rcpp = use_Rcpp)
 
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution3,
@@ -187,18 +149,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
-    if (1 == 2) {
-
-    solution4_2 <- solve_branch(interval_func = interval4,
-                              initial_conditions = initial_conditions4,
-                              time = time4,
-                              parameter = parameter,
-                              methode = methode,
-                              atol = atol,
-                              rtol = rtol,
-                              use_R = FALSE)
-    testthat::expect_equal(solution4[2, ], solution4_2[2, ], tol = 1e-4) }
+                              use_Rcpp = use_Rcpp)
   }
 
   # Extract log-likelihood from final solution

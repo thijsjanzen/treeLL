@@ -72,10 +72,11 @@ DAISIE_DE_trait_logpEC <- function(
     trait_mainland_ancestor = FALSE,
     status,
     sampling_fraction,
+    num_threads = 1,
     atol = 1e-10,
     rtol = 1e-10,
     methode = "ode45",
-    use_R = TRUE
+    use_Rcpp = 0
 ) {
 
   check_arguments(brts, parameter, phy, traits, num_observed_states,
@@ -102,16 +103,29 @@ DAISIE_DE_trait_logpEC <- function(
   #n <- num_observed_states * num_hidden_states
 
   # Solve for interval [tp, t2] (stem phase)
-  #res <- loglik_R_tree(
-  res <- loglik_cpp_tree(
-    parameter = parameter,
-    phy = phy,
-    traits = traits,
-    sampling_fraction = sampling_fraction,
-    num_hidden_states = num_hidden_states,
-    atol = atol,
-    rtol = rtol
-  )
+  res <- c()
+  if (use_Rcpp == 0) {
+    res <- loglik_R_tree(
+      parameter = parameter,
+      phy = phy,
+      traits = traits,
+      sampling_fraction = sampling_fraction,
+      num_hidden_states = num_hidden_states,
+      atol = atol,
+      rtol = rtol
+    )
+  } else {
+    res <- loglik_cpp_tree(
+      parameter = parameter,
+      phy = phy,
+      traits = traits,
+      sampling_fraction = sampling_fraction,
+      num_hidden_states = num_hidden_states,
+      atol = atol,
+      rtol = rtol,
+      num_threads = num_threads
+    )
+  }
 
   # Run appropriate sequence of intervals
   if ((status == 2 || status == 3) && length(brts) > 2) {
@@ -132,19 +146,7 @@ DAISIE_DE_trait_logpEC <- function(
                               methode = methode,
                               atol = atol,
                               rtol =  rtol,
-                              use_R = use_R)
-    if (1 == 2) {
-    solution2_2 <- solve_branch(interval_func = interval2,
-                              initial_conditions = initial_conditions2,
-                              time = time2,
-                              parameter = parameter,
-                              methode = methode,
-                              atol = atol,
-                              rtol =  rtol,
-                              use_R = FALSE)
-
-    testthat::expect_equal(solution2[2, ], solution2_2[2, ], tol = 1e-5)
-    }
+                              use_Rcpp = use_Rcpp)
 
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution2,
@@ -160,20 +162,7 @@ DAISIE_DE_trait_logpEC <- function(
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
-    if (1 == 2) {
-
-    solution4_2 <- solve_branch(interval = interval4,
-                              initial_conditions = initial_conditions4,
-                              time = time4,
-                              parameter = parameter,
-                              methode = methode,
-                              atol = atol,
-                              rtol = rtol,
-                              use_R = FALSE)
-
-    testthat::expect_equal(solution4[2, ], solution4_2[2, ], tol = 1e-5)
-    }
+                              use_Rcpp = use_Rcpp)
   }
 
   if (status == 6) {
@@ -189,7 +178,7 @@ DAISIE_DE_trait_logpEC <- function(
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
+                              use_Rcpp = use_Rcpp)
 
 
     initial_conditions4 <- get_initial_conditions4(status = status,
@@ -205,7 +194,7 @@ DAISIE_DE_trait_logpEC <- function(
                               methode = methode,
                               atol = atol,
                               rtol = rtol,
-                              use_R = use_R)
+                              use_Rcpp = use_Rcpp)
   }
 
   # Extract log-likelihood from final solution
