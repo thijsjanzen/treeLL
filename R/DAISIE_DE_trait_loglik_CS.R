@@ -24,7 +24,8 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                    rtol = rtol,
                                    num_observed_states = num_observed_states,
                                    num_hidden_states = num_hidden_states,
-                                   methode = methode)
+                                   methode = methode,
+                                   use_Rcpp = use_Rcpp)
     if (is.null(datalist[[1]]$not_present)) {
       loglik <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) * logp0
       numimm <- (datalist[[1]]$not_present_type1 + datalist[[1]]$not_present_type2) + length(datalist) - 1

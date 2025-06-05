@@ -42,84 +42,30 @@ DAISIE_DE_trait_logp0 <- function(datalist,
                                   rtol = 1e-10,
                                   num_observed_states,
                                   num_hidden_states,
-                                  methode = "ode45") {
+                                  methode = "ode45",
+                                  use_Rcpp = 0) {
 
   n <- num_observed_states * num_hidden_states
   t0 <- datalist[[1]]$island_age
   tp <- 0
   #########interval4 [t_p, t_0]
 
-  interval4_local <- function(t, state, parameter) {
-    with(as.list(c(state, parameter)), {
-
-      lambdac <- parameter[[1]]
-      mu      <- parameter[[2]]
-      gamma   <- parameter[[3]]
-      lambdaa <- parameter[[4]]
-      q       <- parameter[[5]]
-      p       <- parameter[[6]]
-
-
-      n <- num_observed_states * num_hidden_states
-      # number of unique state
-
-
-      dDM1    <- numeric(n)
-      dDE     <- numeric(n)
-
-
-      t_vec   <- rowSums(q)
-
-      DM1  <- state[1:n]
-      E    <- state[(n + 1):(n + n)]
-      DA1  <- state[length(state)]
-
-      gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
-
-      if (nrow(gamma_matrix) == 1) {
-        # when there's only one row, there is no “self” element to subtract
-        gamma_nonself <- 0
-      } else {
-        # for n > 1, subtract the diagonal (self‐effects) as before
-        gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
-      }
-
-      q_mult_E   <- t(q %*% E)
-      q_mult_DM1 <- t(q %*% DM1)
-
-      dDM1 <-  -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM1 +
-        (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
-        (1 - p) * q_mult_DM1 + gamma_nonself * DM1
-
-      dE <- mu - (mu + lambdac + t_vec) * E +
-        lambdac * E * E +
-        q_mult_E
-
-      dDA1 <- -sum(gamma) * DA1 + sum(gamma * DM1)
-
-      return(list(c(dDM1, dE, dDA1)))
-    })
-  }
-
   initial_conditions40 <- c(rep(0, n), ### DM1
                            rep(0, n), ### E
                            1)                         ### DA1
-
-
 
   # Time sequence for interval [tp, t0]
   time4 <- c(tp, t0)
 
   # Solve the system for interval [tp, t1]
-  solution4 <- deSolve::ode(y = initial_conditions40,
-                            times = time4,
-                            func = interval4_local,
-                            parms = parameter,
-                            method = methode,
+  solution4 <- solve_branch(interval_func = interval4,
+                            initial_conditions = initial_conditions40,
+                            time = time2,
+                            parameter = parameter,
+                            methode = methode,
                             atol = atol,
-                            rtol = rtol)
-
-  solution4 <- matrix(solution4[,-1], nrow = 2)
+                            rtol = rtol,
+                            use_Rcpp = use_Rcpp)
 
   # Extract log-likelihood
   Lk <- solution4[2,][length(solution4[2,])]

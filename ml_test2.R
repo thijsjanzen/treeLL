@@ -79,7 +79,7 @@ initloglik <- treeLL::loglik_choosepar(trparsopt = trparsopt,
                                        rtol = 1e-9,
                                        methode = "ode45",
                                        verbose = TRUE,
-                                       use_R = TRUE,
+                                       use_Rcpp = 0,
                                        num_threads = 8)
 
 
@@ -98,7 +98,7 @@ ml_res <- treeLL::calc_ml(  datalist,
                             rtol = 1e-11,
                             num_threads = 8,
                             verbose = TRUE,
-                            use_R = TRUE)
+                            use_Rcpp = 0)
 t1 <- Sys.time()
 ml_res2 <- treeLL::calc_ml(  datalist,
                              num_observed_states = 2,
@@ -112,7 +112,7 @@ ml_res2 <- treeLL::calc_ml(  datalist,
                              rtol = 1e-11,
                              num_threads = 8,
                              verbose = TRUE,
-                             use_R = FALSE)
+                             use_Rcpp = 2)
 t2 <- Sys.time()
 difftime(t1, t0)
 difftime(t2, t1)

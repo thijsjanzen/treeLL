@@ -128,7 +128,7 @@ calcThruNodes_hidden <- function(
   # sf = sampling fraction
 #' @keywords internal
 calc_init_state_hidden <- function(trait,
-                                   sf,
+                                   sampling_fraction,
                                    num_unique_states,
                                    num_hidden_states,
                                    mainland = FALSE,
@@ -139,8 +139,8 @@ calc_init_state_hidden <- function(trait,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sf
-  E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sf
+  DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+  E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
 
   if (mainland) {
     DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
@@ -176,10 +176,10 @@ loglik_R_tree <- function(parameter,
   states <- matrix(nrow = number_of_lineages + phy$Nnode,
                    ncol = 3 * length(parameter[[1]]) + 1,
                    data = NA)
- # sf = sampling fraction
+
   for (i in 1:length(traits)) {
     states[i, ] <- calc_init_state_hidden(trait = traits[i],
-                                          sf = sampling_fraction[ 1 + traits[i] ],
+                                          sampling_fraction = sampling_fraction[ 1 + traits[i] ],
                                           num_unique_states = num_unique_states,
                                           num_hidden_states = num_hidden_states,
                                           mainland = mainland,

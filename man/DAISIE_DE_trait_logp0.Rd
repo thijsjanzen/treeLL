@@ -11,7 +11,8 @@ DAISIE_DE_trait_logp0(
   rtol = 1e-10,
   num_observed_states,
   num_hidden_states,
-  methode = "ode45"
+  methode = "ode45",
+  use_Rcpp = 0
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ mus and the third transition rates.}
 \item{num_hidden_states}{number of hidden states}
 
 \item{methode}{used integration method, default is ode45}
+
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
 }
 \description{
 This function compute the likelihood that all species that colonize the island

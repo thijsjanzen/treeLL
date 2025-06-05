@@ -38,23 +38,16 @@ time2 <- c(0.00, 0.34)
 
 num_hidden_states <- 2
 
-solution2 <- treeLL::solve_branch(interval_func = interval2,
-                          initial_conditions = initial_conditions2,
-                          time = time2,
-                          parameter = parameter,
-                          methode = "ode45",
-                          atol = 1e-9,
-                          rtol = 1e-9,
-                          use_R = TRUE)
 
-solution2_2 <- treeLL::solve_branch(interval_func = interval2,
+test_func <- function(rcpp_flag) {
+    treeLL::solve_branch(interval_func = interval2,
                            initial_conditions = initial_conditions2,
                             time = time2,
                             parameter = parameter,
                             methode = "ode45",
                             atol = 1e-9,
                             rtol = 1e-9,
-                            use_R = FALSE)
-solution2
-solution2_2
-all.equal(solution2[2, ], solution2_2[2, ])
+                            use_Rcpp = rcpp_flag)
+}
+
+test_func(0)
