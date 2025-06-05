@@ -83,7 +83,9 @@ default_params_doc(
   num_observed_states,
   num_hidden_states,
   status,
-  trait
+  trait,
+  mainland,
+  trait_mainland_ancestor
 )
 }
 \arguments{

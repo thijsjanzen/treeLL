@@ -29,7 +29,6 @@ Imports:
 Suggests: 
  DAISIE,
  testthat,
- subplex,
  knitr,
  rmarkdown
 LinkingTo: 

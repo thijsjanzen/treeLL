@@ -267,6 +267,8 @@ default_params_doc <- function(phy,
                                num_observed_states,
                                num_hidden_states,
                                status,
-                               trait) {
+                               trait,
+                               mainland,
+                               trait_mainland_ancestor) {
   # Nothing
 }

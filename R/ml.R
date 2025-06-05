@@ -99,6 +99,7 @@ calc_ml <- function(datalist,
 #' loglik choosepar temp
 #' @description
 #' temporary export for testing
+#' @inheritParams default_params_doc
 #' @export
 loglik_choosepar <- function(trparsopt,
                              trparsfix,
