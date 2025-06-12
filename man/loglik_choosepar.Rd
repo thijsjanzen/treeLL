@@ -17,6 +17,7 @@ loglik_choosepar(
   atol,
   rtol,
   methode,
+  rcpp_methode,
   verbose,
   use_Rcpp,
   num_threads
@@ -46,6 +47,12 @@ each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
 
 \item{methode}{used integration method, default is ode45}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
+\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
+\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
 \item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
 \code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to

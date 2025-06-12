@@ -3,9 +3,9 @@ solve_branch_cpp <- function(chosen_func,
                              initial_conditions,
                              time,
                              parameter,
-                             methode,
-                             atol,
-                             rtol) {
+                             methode = "odeint::bulirsch_stoer",
+                             atol = 1e-15,
+                             rtol = 1e-15) {
 
   lambda_c <- parameter[[1]]
   mus      <- parameter[[2]]
@@ -23,7 +23,7 @@ solve_branch_cpp <- function(chosen_func,
                         q_matrix,
                         p_value,
                         chosen_func,
-                        "odeint::bulirsch_stoer",
+                        methode,
                         initial_conditions,
                         time,
                         atol,

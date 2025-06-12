@@ -9,7 +9,8 @@ solve_branch(
   initial_conditions,
   time,
   parameter,
-  methode,
+  methode = "ode45",
+  rcpp_methode = "odeint::bulirsch_stoer",
   atol,
   rtol,
   use_Rcpp = 0
@@ -26,6 +27,12 @@ solve_branch(
 mus and the third transition rates.}
 
 \item{methode}{used integration method, default is ode45}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
+\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
+\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 

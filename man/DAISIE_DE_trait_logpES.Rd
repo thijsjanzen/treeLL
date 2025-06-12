@@ -16,6 +16,7 @@ DAISIE_DE_trait_logpES(
   atol = 1e-10,
   rtol = 1e-10,
   methode = "ode45",
+  rcpp_methode = "odeint::bulirsch_stoer",
   use_Rcpp = 0
 )
 }
@@ -50,6 +51,12 @@ mus and the third transition rates.}
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
 
 \item{methode}{used integration method, default is ode45}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
+\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
+\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
 value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}

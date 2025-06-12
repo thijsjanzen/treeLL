@@ -185,6 +185,11 @@
 #' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the mainland ancestor
 #' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
 #' value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches
+#' @param rcpp_methode Used integration methode when using Rcpp to integrate,
+#' options available are:
+#'  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+#'  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+#'  `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.
 #' @param status indicator for type of inference required
 #' @return Nothing
 #' @keywords internal
@@ -269,6 +274,7 @@ default_params_doc <- function(phy,
                                status,
                                trait,
                                mainland,
-                               trait_mainland_ancestor) {
+                               trait_mainland_ancestor,
+                               rcpp_methode) {
   # Nothing
 }

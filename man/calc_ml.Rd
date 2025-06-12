@@ -18,11 +18,12 @@ calc_ml(
   maxiter = 1000 * round((1.25)^length(idparsopt)),
   optimmethod = "simplex",
   methode = "ode45",
+  rcpp_methode = "odeint::bulirsch_stoer",
   num_cycles = 1,
   verbose = FALSE,
   num_threads = 1,
-  atol = 1e-10,
-  rtol = 1e-10,
+  atol = 1e-15,
+  rtol = 1e-15,
   use_Rcpp = 0
 )
 }
@@ -62,6 +63,12 @@ algorithm. Default is \code{c(1e-04, 1e-05, 1e-05)}.}
 is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
 
 \item{methode}{used integration method, default is ode45}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
+\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
+\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
 \item{num_cycles}{Number of cycles of the optimization. When set to \code{Inf},
 the optimization will be repeated until the result is, within the

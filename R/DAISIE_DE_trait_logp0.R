@@ -38,11 +38,12 @@
 
 DAISIE_DE_trait_logp0 <- function(datalist,
                                   parameter,
-                                  atol = 1e-10,
-                                  rtol = 1e-10,
+                                  atol = 1e-15,
+                                  rtol = 1e-15,
                                   num_observed_states,
                                   num_hidden_states,
                                   methode = "ode45",
+                                  rcpp_methode = "odeint::bulirsch_stoer",
                                   use_Rcpp = 0) {
 
   n <- num_observed_states * num_hidden_states
@@ -63,6 +64,7 @@ DAISIE_DE_trait_logp0 <- function(datalist,
                             time = time4,
                             parameter = parameter,
                             methode = methode,
+                            rcpp_methode = rcpp_methode,
                             atol = atol,
                             rtol = rtol,
                             use_Rcpp = use_Rcpp)
