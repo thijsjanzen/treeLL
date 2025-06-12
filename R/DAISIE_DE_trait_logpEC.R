@@ -90,6 +90,12 @@ DAISIE_DE_trait_logpEC <- function(
 
   # Solve for interval [tp, t2] (stem phase)
   res <- c()
+
+  if (length(phy$tip.label) < 2) {
+    stop("Tip too small to calculate tree likelihood")
+  }
+
+
   if (use_Rcpp == 0) {
     res <- loglik_R_tree(
       parameter = parameter,

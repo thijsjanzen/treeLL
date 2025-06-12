@@ -60,7 +60,7 @@ DAISIE_DE_trait_logp0 <- function(datalist,
   # Solve the system for interval [tp, t1]
   solution4 <- solve_branch(interval_func = interval4,
                             initial_conditions = initial_conditions40,
-                            time = time2,
+                            time = time4,
                             parameter = parameter,
                             methode = methode,
                             atol = atol,
@@ -68,7 +68,7 @@ DAISIE_DE_trait_logp0 <- function(datalist,
                             use_Rcpp = use_Rcpp)
 
   # Extract log-likelihood
-  Lk <- solution4[2,][length(solution4[2,])]
+  Lk <- solution4[2, ][length(solution4[2, ])]
   logLkb <- log(Lk)
   return(logLkb)
 }

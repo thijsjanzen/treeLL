@@ -13,6 +13,7 @@ Rcpp::List calc_ll_single_branch(std::unique_ptr<ODE> od,
                                  const std::string& method,
                                  double atol,
                                  double rtol) {
+  try {
 
   auto t0 = std::min(forTime[0], forTime[1]);
   auto t1 = std::max(forTime[0], forTime[1]);
@@ -34,6 +35,14 @@ Rcpp::List calc_ll_single_branch(std::unique_ptr<ODE> od,
 
   return Rcpp::List::create(Rcpp::Named("states") = states_out,
                             Rcpp::Named("duration") = DT.count());
+  } catch(std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (const char* msg) {
+    Rcpp::Rcout << msg << std::endl;
+  } catch(...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+  return NA_REAL;
 }
 
 
@@ -98,4 +107,6 @@ Rcpp::List cpp_solve(const Rcpp::NumericVector& lambda_cs,
                                                                      atol,
                                                                      rtol);
   }
+
+  return NA_REAL;
 }
