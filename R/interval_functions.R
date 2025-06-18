@@ -25,36 +25,42 @@ interval2 <- function(t, state, parameter) {
 
     gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
 
-    if (nrow(gamma_matrix) == 1) {
-      # when there's only one row, there is no “self” element to subtract
-      gamma_nonself <- 0
-    } else {
-      # for n > 1, subtract the diagonal (self‐effects) as before
-      gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
-    }
+
 
     q_mult_E   <- t(q %*% E)
     q_mult_DE  <- t(q %*% DE)
     q_mult_DM2 <- t(q %*% DM2)
     q_mult_DM3 <- t(q %*% DM3)
 
+
+    if (trait_mainland_ancestor == FALSE) {
+      gamma <- gamma  # do nothing
+      dist_gamma <- gamma/n
+    } else {
+      s <- ((trait_mainland_ancestor * num_hidden_states) + 1) :
+        ((trait_mainland_ancestor + 1) * num_hidden_states)
+      gamma <- gamma[s]
+      dist_gamma <- gamma/num_hidden_states
+    }
+
+
     dDE <- -(lambdac + mu + t_vec) * DE +
       2 * lambdac * DE * E +
       q_mult_DE
 
-    dDM2 <- -(lambdac + mu + gamma + lambdaa + t_vec) * DM2 +
+    dDM2 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM2 +
       (lambdaa * DE + 2 * lambdac * DE * E + p * q_mult_DE) * DA3 +
-      (1 - p) * q_mult_DM2 + gamma_nonself * DM2
+      (1 - p) * q_mult_DM2
 
-    dDM3 <- -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM3 +
+    dDM3 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM3 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA3 +
-      (1 - p) * q_mult_DM3 + gamma_nonself * DM3
+      (1 - p) * q_mult_DM3 + sum(dist_gamma * DM3)
 
     dE <- mu - (mu + lambdac + t_vec) * E +
       lambdac * E * E +
       q_mult_E
 
-    dDA3 <- -sum(gamma) * DA3 + sum(gamma * DM3)
+    dDA3 <- -sum(dist_gamma) * DA3 + sum(dist_gamma * DM3)
     return(list(c(dDE, dDM2, dDM3, dE, dDA3)))
   })
 }
@@ -89,13 +95,7 @@ interval3 <- function(t, state, parameter) {
 
     gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
 
-    if (nrow(gamma_matrix) == 1) {
-      # when there's only one row, there is no “self” element to subtract
-      gamma_nonself <- 0
-    } else {
-      # for n > 1, subtract the diagonal (self‐effects) as before
-      gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
-    }
+
 
     q_mult_E   <- t(q %*% E)
     q_mult_DE  <- t(q %*% DE)
@@ -103,29 +103,40 @@ interval3 <- function(t, state, parameter) {
     q_mult_DM2 <- t(q %*% DM2)
     q_mult_DM3 <- t(q %*% DM3)
 
+    if (trait_mainland_ancestor == FALSE) {
+      gamma <- gamma  # do nothing
+      dist_gamma <- gamma/n
+    } else {
+      s <- ((trait_mainland_ancestor * num_hidden_states) + 1) :
+        ((trait_mainland_ancestor + 1) * num_hidden_states)
+      gamma <- gamma[s]
+      dist_gamma <- gamma/num_hidden_states
+    }
+
+
     dDE <- -(lambdac + mu + t_vec) * DE +
       2 * lambdac * DE * E +
       q_mult_DE
 
-    dDM1 <- -(lambdac + mu + gamma + lambdaa + t_vec) * DM1 +
+    dDM1 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM1 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA2 +
-      (1 - p) * q_mult_DM1 + gamma * DM2
+      (1 - p) * q_mult_DM1 + sum(dist_gamma * DM2)
 
-    dDM2 <- -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM2 +
+    dDM2 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM2 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA2 +
       (lambdaa * DE + 2 * lambdac * DE + p * q_mult_DE) * DA3 +
-      (1 - p) * q_mult_DM2 + gamma_nonself * DM2
+      (1 - p) * q_mult_DM2 + sum(dist_gamma * DM2)
 
-    dDM3 <- -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM3 +
+    dDM3 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM3 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA3 +
-      (1 - p) * q_mult_DM3 + gamma_nonself * DM3
+      (1 - p) * q_mult_DM3 + sum(dist_gamma * DM3)
 
     dE <- mu - (mu + lambdac + t_vec) * E +
       lambdac * E * E +
       q_mult_E
 
-    dDA2 <- -sum(gamma) * DA2 + sum(gamma * DM2)
-    dDA3 <- -sum(gamma) * DA3 + sum(gamma * DM3)
+    dDA2 <- -sum(dist_gamma) * DA2 + sum(dist_gamma * DM2)
+    dDA3 <- -sum(dist_gamma) * DA3 + sum(dist_gamma * DM3)
 
     return(list(c(dDE, dDM1, dDM2, dDM3, dE, dDA2, dDA3)))
   })
@@ -154,27 +165,34 @@ interval4 <- function(t, state, parameter) {
 
     gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
 
-    if (nrow(gamma_matrix) == 1) {
-      # when there's only one row, there is no “self” element to subtract
-      gamma_nonself <- 0
-    } else {
-      # for n > 1, subtract the diagonal (self‐effects) as before
-      gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
-    }
+
 
     q_mult_E   <- t(q %*% E)
     q_mult_DM1 <- t(q %*% DM1)
 
-    dDM1 <- -(lambdac + mu + gamma_nonself + lambdaa + t_vec) * DM1 +
+
+    if (trait_mainland_ancestor == FALSE) {
+      gamma <- gamma  # do nothing
+      dist_gamma <- gamma/n
+    } else {
+      s <- ((trait_mainland_ancestor * num_hidden_states) + 1) :
+        ((trait_mainland_ancestor + 1) * num_hidden_states)
+      gamma <- gamma[s]
+      dist_gamma <- gamma/num_hidden_states
+    }
+
+
+    dDM1 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM1 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
-      (1 - p) * q_mult_DM1 + gamma_nonself * DM1
+      (1 - p) * q_mult_DM1  + sum(dist_gamma * DM1)
 
     dE <- mu - (mu + lambdac + t_vec) * E +
       lambdac * E * E +
       q_mult_E
 
-    dDA1 <- -sum(gamma) * DA1 + sum(gamma * DM1)
+    dDA1 <- - sum(dist_gamma) * DA1 + sum(dist_gamma * DM1)
 
     return(list(c(dDM1, dE, dDA1)))
   })
 }
+

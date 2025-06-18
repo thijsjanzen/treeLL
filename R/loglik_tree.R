@@ -25,12 +25,14 @@ loglik_hidden_rhs <- function(t, state, parameter) {
 
     gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
 
-    if (nrow(gamma_matrix) == 1) {
-      # when there's only one row, there is no “self” element to subtract
-      gamma_nonself <- 0
+    if (trait_mainland_ancestor == FALSE) {
+      gamma <- gamma  # do nothing
+      dist_gamma <- gamma/n
     } else {
-      # for n > 1, subtract the diagonal (self‐effects) as before
-      gamma_nonself <- rowSums(gamma_matrix - diag(parameter[[3]]))
+      s <- ((trait_mainland_ancestor * num_hidden_states) + 1) :
+        ((trait_mainland_ancestor + 1) * num_hidden_states)
+      gamma <- gamma[s]
+      dist_gamma <- gamma/num_hidden_states
     }
 
     q_mult_E   <- t(q %*% E)
@@ -45,16 +47,16 @@ loglik_hidden_rhs <- function(t, state, parameter) {
       2 * lambdac * DE * E +
       q_mult_DE
 
-    dDM3 <-  -(lambda_c_mu_t_vec_sum + gamma_nonself + lambdaa) * DM3 +
+    dDM3 <-  -(lambda_c_mu_t_vec_sum + dist_gamma + lambdaa) * DM3 +
       (mu + lambdaa * E + lambdac * E_sq + p * q_mult_E) * DA3 +
       (1 - p) * q_mult_DM3 +
-      gamma_nonself * DM3
+      dist_gamma * DM3
 
     dE <- mu - (lambda_c_mu_t_vec_sum) * E +
       lambdac * E_sq +
       q_mult_E
 
-    dDA3 <- -sum(gamma) * DA3 + sum(gamma * DM3)
+    dDA3 <- -sum(dist_gamma) * DA3 + sum(dist_gamma * DM3)
 
     return(list(c(dDE, dDM3, dE, dDA3)))
   })
@@ -139,8 +141,18 @@ calc_init_state_hidden <- function(trait,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
-  DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-  E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
+
+  if (trait == "FALSE") {
+    DE[c(1, n)] <- sampling_fraction
+    E[c(1, n)]  <- 1 - sampling_fraction
+  }
+
+  else if (trait == trait) {
+    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
+
+  }
+
 
   if (mainland) {
     DM3[c((num_hidden_states * trait_mainland_ancestor + 1),

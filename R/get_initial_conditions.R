@@ -28,10 +28,18 @@ get_initial_conditions2 <- function(status,
                              res[length(res)])              ## DA3
     # pre-emptive return because this one is constructed differently.
     return(matrix(initial_conditions2, nrow = 1))
-  }
-  else if (status == 2 && length(brts) == 2) {
-    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
+  } else if (status == 2 && length(brts) == 2) {
+
+    if (trait == "FALSE") {
+      DE[c(1, n)] <- sampling_fraction
+      E[c(1, n)]  <- 1 - sampling_fraction
+    }
+
+    else if (trait == trait) {
+      DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+      E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
+    }
+
   }
   else if (status == 3 && length(brts) == 2 ) {
     DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
@@ -40,14 +48,35 @@ get_initial_conditions2 <- function(status,
           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   }
   else if (status == 4) {
-    DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+
+    if (trait == "FALSE") {
+      DM2[c(1, n)] <- 1
+    }
+
+    else if (trait == trait) {
+      DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+    }
+
   }
   else if(status == 8) {
-    DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+    if (trait == "FALSE") {
+      DM2[c(1, n)] <- 1
+    }
+
+    else if (trait == trait) {
+      DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+    }
   }
   else if(status == 9)  {
-    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-     E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
+    if (trait == "FALSE") {
+      DE[c(1, n)] <- sampling_fraction
+      E[c(1, n)]  <- 1 - sampling_fraction
+    }
+
+    else if (trait == trait) {
+      DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+      E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
+    }
   }
 
   initial_conditions2 <- ( c(DE, DM2, DM3, E, DA3))
@@ -77,7 +106,13 @@ get_initial_conditions3 <- function(status,
   DA3 <- 1
 
   if (status == 1) {
-    DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+    if (trait == "FALSE") {
+      DM2[c(1, n)] <- 1
+    }
+
+    else if (trait == trait) {
+      DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+    }
 
     initial_conditions3 <- c(DE, DM1, DM2, DM3, E, DA2, DA3)
   } else if (status == 6) {
@@ -90,7 +125,15 @@ get_initial_conditions3 <- function(status,
                              res[length(res)])                                      ## DA3
   }
   else if (status == 5) {
-    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
+    if (trait == "FALSE") {
+      DE[c(1, n)] <- sampling_fraction
+      E[c(1, n)]  <- 1 - sampling_fraction
+    }
+
+    else if (trait == trait) {
+      DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+      E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
+    }
 
     initial_conditions3 <- c(DE, DM1, DM2, DM3, E, DA2, DA3)
   } else if (status == 8 || status == 9) {
@@ -120,17 +163,17 @@ get_initial_conditions4 <- function(status,
 
   if (status == 2 || status == 3 || status == 4) {
     if (trait_mainland_ancestor == "FALSE") {
-      initial_conditions4 <- c(rep( sum(parameter[[3]] * (solution[2,][(n + 1):(n + n)])), n), ### DM1: select DM2 in solution2
+      initial_conditions4 <- c(rep( sum((parameter[[3]]/n) * (solution[2,][(n + 1):(n + n)])), n), ### DM1: select DM2 in solution2
                                solution[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution2
-                               sum(parameter[[3]] * (solution[2,][(n + 1):(n + n)])))          ### DA1: select DM2 in solution2
+                                    sum((parameter[[3]]/n) * (solution[2,][(n + 1):(n + n)])))          ### DA1: select DM2 in solution2
     }
     #if the trait state of the species at the stem is known
     else if (trait_mainland_ancestor == trait_mainland_ancestor) {
       pos <- c((num_hidden_states*trait_mainland_ancestor + 1),
                num_hidden_states + trait_mainland_ancestor * num_hidden_states)
-      initial_conditions4 <- c(rep(sum(parameter[[3]][pos] * (solution[2, ][(n + 1):(n + n)])[pos]) / 2, n ), ### DM1: select DM2 in solution2
+      initial_conditions4 <- c(rep(sum(parameter[[3]][pos] * (solution[2, ][(n + 1):(n + n)])[pos]) / num_hidden_states, n ), ### DM1: select DM2 in solution2
                                solution[2,][(n + n + n + 1):(n + n + n + n)],                                                                       ### E: select E in solution2
-                               sum(parameter[[3]][pos] * (solution[2,][(n + 1):(n + n)])[pos]/2))          ### DA1: select DM2 in solution2
+                               sum(parameter[[3]][pos] * (solution[2,][(n + 1):(n + n)])[pos]/num_hidden_states))          ### DA1: select DM2 in solution2
     }
   } else if (status == 1 || status == 5 || status == 6) {
     initial_conditions4 <- c(solution[2,][(n + 1):(n + n)],                                 ### DM1: select DM1 in solution1
@@ -145,3 +188,4 @@ get_initial_conditions4 <- function(status,
   }
   return(matrix(initial_conditions4, nrow = 1))
 }
+

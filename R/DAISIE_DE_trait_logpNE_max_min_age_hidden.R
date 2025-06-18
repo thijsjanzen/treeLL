@@ -26,7 +26,7 @@
 #'
 #'
 #' DAISIE_DE_trait_logpNE_max_min_age_hidden(
-#'   brts                  = c(4, 3.999, 0.0001),
+#'   brts                  = c(23.0000,  8.3540,  8.3308),
 #'   trait                 = 0,
 #'   status                = 8,
 #'   parameter             = parameter,
