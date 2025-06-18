@@ -85,7 +85,8 @@ default_params_doc(
   status,
   trait,
   mainland,
-  trait_mainland_ancestor
+  trait_mainland_ancestor,
+  rcpp_methode
 )
 }
 \arguments{
@@ -354,6 +355,12 @@ position.}
 \item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
 
 \item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
+\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
+\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 }
 \value{
 Nothing

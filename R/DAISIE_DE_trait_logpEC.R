@@ -68,9 +68,10 @@ DAISIE_DE_trait_logpEC <- function(
     status,
     sampling_fraction,
     num_threads = 1,
-    atol = 1e-10,
-    rtol = 1e-10,
+    atol = 1e-15,
+    rtol = 1e-15,
     methode = "ode45",
+    rcpp_methode = "odeint::bulirsch_stoer",
     use_Rcpp = 0
 ) {
 
@@ -99,6 +100,12 @@ DAISIE_DE_trait_logpEC <- function(
 
   # Solve for interval [tp, t2] (stem phase)
   res <- c()
+
+  if (length(phy$tip.label) < 2) {
+    stop("Tip too small to calculate tree likelihood")
+  }
+
+
   if (use_Rcpp == 0) {
     res <- loglik_R_tree(
       parameter = parameter,
@@ -139,6 +146,7 @@ DAISIE_DE_trait_logpEC <- function(
                               time = time2,
                               parameter = parameter,
                               methode = methode,
+                              rcpp_methode = rcpp_methode,
                               atol = atol,
                               rtol =  rtol,
                               use_Rcpp = use_Rcpp)
@@ -155,6 +163,7 @@ DAISIE_DE_trait_logpEC <- function(
                               time = time4,
                               parameter = parameter,
                               methode = methode,
+                              rcpp_methode = rcpp_methode,
                               atol = atol,
                               rtol = rtol,
                               use_Rcpp = use_Rcpp)
@@ -171,6 +180,7 @@ DAISIE_DE_trait_logpEC <- function(
                               time = time3,
                               parameter = parameter,
                               methode = methode,
+                              rcpp_methode = rcpp_methode,
                               atol = atol,
                               rtol = rtol,
                               use_Rcpp = use_Rcpp)
@@ -187,6 +197,7 @@ DAISIE_DE_trait_logpEC <- function(
                               time = time4,
                               parameter = parameter,
                               methode = methode,
+                              rcpp_methode = rcpp_methode,
                               atol = atol,
                               rtol = rtol,
                               use_Rcpp = use_Rcpp)

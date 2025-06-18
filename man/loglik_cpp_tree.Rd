@@ -12,8 +12,8 @@ loglik_cpp_tree(
   num_hidden_states,
   mainland = FALSE,
   trait_mainland_ancestor = NULL,
-  atol = 1e-10,
-  rtol = 1e-10,
+  atol = 1e-15,
+  rtol = 1e-15,
   method = "odeint::bulirsch_stoer",
   use_normalization = TRUE,
   num_threads = 1

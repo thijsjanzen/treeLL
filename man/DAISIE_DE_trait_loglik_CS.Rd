@@ -8,6 +8,7 @@ DAISIE_DE_trait_loglik_CS(
   parameter,
   datalist,
   methode = "lsodes",
+  rcpp_methode = "odeint::bulirsch_stoer",
   atol = 1e-15,
   rtol = 1e-15,
   num_observed_states,
@@ -28,6 +29,12 @@ each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
 3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny}
 
 \item{methode}{used integration method, default is ode45}
+
+\item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
+options available are:
+\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
+\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
+\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 

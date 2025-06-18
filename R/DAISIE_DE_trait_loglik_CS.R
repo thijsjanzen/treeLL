@@ -5,6 +5,7 @@
 DAISIE_DE_trait_loglik_CS <- function( parameter,
                                        datalist,
                                        methode = "lsodes",
+                                       rcpp_methode = "odeint::bulirsch_stoer",
                                        atol = 1e-15,
                                        rtol = 1e-15,
                                        num_observed_states,
@@ -63,6 +64,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               atol  = atol,
                                               rtol  = rtol,
                                               methode = methode,
+                                              rcpp_methode = rcpp_methode,
                                               use_Rcpp = use_Rcpp)
     } else if (stac %in% c(2, 5)) {
       if (length(brts) == 2) {
@@ -77,6 +79,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode,
+                                                rcpp_methode = rcpp_methode,
                                                 use_Rcpp = use_Rcpp)
       } else {
         loglikelihood <- DAISIE_DE_trait_logpEC(brts = brts,
@@ -92,6 +95,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 rtol  = rtol,
                                                 methode = methode,
                                                 use_Rcpp = use_Rcpp,
+                                                rcpp_methode = rcpp_methode,
                                                 num_threads = num_threads)
       }
     } else if (stac == 3) {
@@ -107,6 +111,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 atol  = atol,
                                                 rtol  = rtol,
                                                 methode = methode,
+                                                rcpp_methode = rcpp_methode,
                                                 use_Rcpp = use_Rcpp)
       } else {
         loglikelihood <- DAISIE_DE_trait_logpEC( brts = brts,
@@ -121,6 +126,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                  atol  = atol,
                                                  rtol  = rtol,
                                                  methode = methode,
+                                                 rcpp_methode = rcpp_methode,
                                                  use_Rcpp = use_Rcpp)
       }
     }
@@ -138,6 +144,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               rtol  = rtol,
                                               methode = methode,
                                               use_Rcpp = use_Rcpp,
+                                              rcpp_methode = rcpp_methode,
                                               num_threads = num_threads)
     }
     else if (stac == 8) {
@@ -150,6 +157,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                                  atol  = atol,
                                                                  rtol  = rtol,
                                                                  methode = "ode45",
+                                                                 rcpp_methode = rcpp_methode,
                                                                  use_Rcpp = use_Rcpp)
     } else if (stac == 9) {
       loglikelihood <- DAISIE_DE_trait_logpES_max_min_age_hidden(brts = brts,
@@ -162,6 +170,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                                  atol  = atol,
                                                                  rtol  = rtol,
                                                                  methode = "ode45",
+                                                                 rcpp_methode = rcpp_methode,
                                                                  use_Rcpp = use_Rcpp)
     } else {
       stop("Unknown stac value: ", stac)

@@ -178,8 +178,8 @@ loglik_R_tree <- function(parameter,
                           num_hidden_states,
                           mainland = FALSE,
                           trait_mainland_ancestor = NULL,
-                          atol = 1e-10,
-                          rtol = 1e-10,
+                          atol = 1e-15,
+                          rtol = 1e-15,
                           methode = "ode45",
                           rhs_func = loglik_hidden_rhs) {
 
@@ -234,17 +234,16 @@ loglik_R_tree <- function(parameter,
 #'
 #' @inheritParams default_params_doc
 #'
-#' @param rhs_func ll function
 #' @export
 loglik_cpp_tree <- function(parameter,
-                              phy,
-                              traits,
+                            phy,
+                            traits,
                             sampling_fraction,
                             num_hidden_states,
                             mainland = FALSE,
                             trait_mainland_ancestor = NULL,
-                            atol = 1e-10,
-                            rtol = 1e-10,
+                            atol = 1e-15,
+                            rtol = 1e-15,
                             method = "odeint::bulirsch_stoer",
                             use_normalization = TRUE,
                             num_threads = 1) {
