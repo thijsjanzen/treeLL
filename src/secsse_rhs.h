@@ -101,18 +101,6 @@ struct interval1 : public interval {
   void mergebranch(const std::vector<double>& N,
                    const std::vector<double>& M,
                    std::vector<double>& out) const {
-    /*
-     out[DE_0]  = lc_[0] * N[DE_0] * M[DE_0];
-     out[DE_1]  = lc_[1] * N[DE_1] * M[DE_1];
-
-     out[DM3_0] = N[DM3_0];
-     out[DM3_1] = N[DM3_1];
-
-     out[E_0]   = N[E_0];
-     out[E_1]   = N[E_1];
-     out[DA_3]  = N[DA_3];
-     */
-
     out = N;
 
     for (size_t i = 0; i < n_; ++i) {
@@ -130,8 +118,8 @@ struct interval1 : public interval {
     auto DA3 = x.back();
 
     auto DE  = vector_view_t<const double>(x.data() , n_);
-    auto DM3 = vector_view_t<const double>(x.data() + n_, n_);
-    auto E   = vector_view_t<const double>(x.data() + n_ + n_, n_);
+    auto DM3 = vector_view_t<const double>(x.data() + 1 * n_, n_);
+    auto E   = vector_view_t<const double>(x.data() + 2 * n_, n_);
 
     auto q_mult_E   = q_ * E;
     auto q_mult_DE  = q_ * DE;
@@ -246,8 +234,6 @@ struct interval3 : public interval {
     auto q_mult_DM2 = q_ * DM2;
     auto q_mult_DM3 = q_ * DM3;
 
-
-
     double s_g_DM3 = calc_sum(dist_g_, DM3);
     double s_g_DM2 = calc_sum(dist_g_, DM2);
 
@@ -300,9 +286,7 @@ struct interval4 : public interval {
 
   void operator()(const std::vector<double>& x,
                 std::vector<double>& dxdt,
-                const double /* t */) const
-  {
-
+                const double /* t */) const {
     auto DA1 = x.back();
 
     auto DM1  = vector_view_t<const double>(x.data() , n_);
