@@ -1,8 +1,7 @@
 #' @keywords internal
 dist_gamma_tma <- function(gamma,
-                              trait_mainland_ancestor,
-                              num_hidden_states,
-                              num_unique_states) {
+                           trait_mainland_ancestor,
+                           num_unique_states) {
 
   dist_gamma <- c()
 
@@ -12,6 +11,7 @@ dist_gamma_tma <- function(gamma,
     # because if one is NA, then all must be NA
     dist_gamma <- gamma / num_unique_states
   } else {
+    num_hidden_states <- length(gamma) / length(trait_mainland_ancestor)
     s <- c()
     for (i in seq_along(trait_mainland_ancestor)) {
       s <- c(s, rep(trait_mainland_ancestor[i], num_hidden_states))
@@ -61,8 +61,7 @@ interval2 <- function(t, state, parameter) {
 
     dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
-                                 num_hidden_states,
-                                 num_unique_states)
+                                 n)
 
     dDE <- -(lambdac + mu + t_vec) * DE +
       2 * lambdac * DE * E +
@@ -122,8 +121,7 @@ interval3 <- function(t, state, parameter) {
 
     dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
-                                 num_hidden_states,
-                                 num_unique_states)
+                                 n)
 
 
     dDE <- -(lambdac + mu + t_vec) * DE +
@@ -182,8 +180,7 @@ interval4 <- function(t, state, parameter) {
 
     dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
-                                 num_hidden_states,
-                                 num_unique_states)
+                                 n)
 
     dDM1 <- -(lambdac + mu + sum(dist_gamma) + lambdaa + t_vec) * DM1 +
       (mu + lambdaa * E + lambdac * E * E + p * q_mult_E) * DA1 +
@@ -198,4 +195,3 @@ interval4 <- function(t, state, parameter) {
     return(list(c(dDM1, dE, dDA1)))
   })
 }
-

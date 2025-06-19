@@ -26,8 +26,7 @@ loglik_hidden_rhs <- function(t, state, parameter) {
 
     dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
-                                 num_hidden_states,
-                                 num_unique_states)
+                                 n)
 
     q_mult_E   <- t(q %*% E)
     q_mult_DE  <- t(q %*% DE)
