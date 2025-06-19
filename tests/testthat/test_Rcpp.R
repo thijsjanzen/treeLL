@@ -12,7 +12,7 @@ test_that("R vs Rcpp", {
   mus      <- rep(0, num_total_states)  # c(0, 0)
   gammas   <- rep(0.01, num_total_states) # c(0.01, 0.01)
   p <- 0
-  tma <- 0
+  tma <- c(1, 0)
 
   parameters <- list()
   parameters[[1]] <- lambda_c
@@ -36,19 +36,26 @@ test_that("R vs Rcpp", {
 
   parameters[[5]] <- expanded_matrix
 
+  all_tma <- list( c(1, 0),
+                   c(0, 1),
+                   c(NA, NA))
 
-  res_hidden <- treeLL::loglik_R_tree(parameter = parameters,
-                                      phy = phy,
-                                      traits = traits,
-                                      num_hidden_states = 2,
-                                      sampling_fraction = c(1, 1))
+  for (i in 1:length(all_tma)) {
+    parameters[[7]] <- all_tma[[i]]
 
-  res_cpp <- treeLL::loglik_cpp_tree(parameter = parameters,
-                                     phy = phy,
-                                     traits = traits,
-                                     num_hidden_states = 2,
-                                     sampling_fraction = c(1, 1))
+    res_hidden <- treeLL::loglik_R_tree(parameter = parameters,
+                                        phy = phy,
+                                        traits = traits,
+                                        num_hidden_states = 2,
+                                        sampling_fraction = c(1, 1))
 
-  testthat::expect_equal(res_hidden, res_cpp)
+    res_cpp <- treeLL::loglik_cpp_tree(parameter = parameters,
+                                       phy = phy,
+                                       traits = traits,
+                                       num_hidden_states = 2,
+                                       sampling_fraction = c(1, 1))
+
+    testthat::expect_equal(res_hidden, res_cpp)
+  }
 })
 
