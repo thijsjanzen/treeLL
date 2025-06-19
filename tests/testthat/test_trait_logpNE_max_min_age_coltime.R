@@ -23,5 +23,17 @@ test_that("logpNE_max_min_age_coltime", {
                                                datalist = datalist)
 
     testthat::expect_equal(res1, res2, tolerance = 0.01)
+
+    res3 <-  DAISIE_DE_trait_logpNE_max_min_age_hidden(brts                  = brts,
+                                                       trait                 = 0,
+                                                       status                = 8,
+                                                       parameter             = parameter,
+                                                       num_observed_states   = 1,
+                                                       num_hidden_states     = 1,
+                                                       atol                  = 1e-15,
+                                                       rtol                  = 1e-15,
+                                                       methode               = "ode45",
+                                                       use_Rcpp              = 2)
+    testthat::expect_equal(res1, res3, tolerance = 0.01)
   }
 )

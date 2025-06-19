@@ -46,7 +46,7 @@ test_that("logpEC", {
       atol                    = 1e-10,
       rtol                    = 1e-10,
       methode                 = "ode45",
-      use_Rcpp                = FALSE)
+      use_Rcpp                = 0)
 
     testthat::expect_equal(res1, res3)
 
@@ -62,7 +62,7 @@ test_that("logpEC", {
       atol                    = 1e-10,
       rtol                    = 1e-10,
       methode                 = "ode45",
-      use_Rcpp                = TRUE)
+      use_Rcpp                = 2)
 
     testthat::expect_equal(res1, res3)
   }

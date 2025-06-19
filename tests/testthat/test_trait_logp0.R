@@ -25,6 +25,18 @@ test_that("logp0", {
                                        reltolint = 1e-10,
                                        abstolint = 1e-10)
       testthat::expect_equal(res1, res2)
+
+      res3 <-  DAISIE_DE_trait_logp0(
+        datalist            = datalist,
+        parameter           = parameter,
+        num_observed_states     = 1,
+        num_hidden_states       = 1,
+        atol                = 1e-10,
+        rtol                = 1e-10,
+        methode             = "lsodes",
+        use_Rcpp = 2
+      )
+      testthat::expect_equal(res1, res3)
     }
   }
 })
