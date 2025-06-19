@@ -10,7 +10,6 @@
 #include <RcppParallel.h>
 #include <type_traits>
 #include <vector>
-
 #include "sq_matrix.h"
 
 namespace loglik {
@@ -22,8 +21,8 @@ template <typename T>
 using rmatrix = RcppParallel::RMatrix<T>;
 
 inline rvector<double> make_dist_g(const Rcpp::NumericVector& tma,
-                            const Rcpp::NumericVector& gamma,
-                            const size_t num_unique_states) {
+                                   const Rcpp::NumericVector& gamma,
+                                   const size_t num_unique_states) {
   rvector<double> dist_gamma(gamma);
   if (Rcpp::NumericVector::is_na(tma[0])) {
     // tma not known, please note that entire vector is NA in this case
@@ -44,7 +43,7 @@ inline double calc_sum_dist_g_(const rvector<double>& dist_gamma) {
 }
 
 inline double calc_sum(const rvector<double>& dist_g_,
-                const vector_view_t<const double>& DM3) {
+                       const vector_view_t<const double>& DM3) {
   double s = 0.0;
   for (size_t i = 0; i < dist_g_.size(); ++i) {
     s += dist_g_[i] * DM3[i];
@@ -52,8 +51,7 @@ inline double calc_sum(const rvector<double>& dist_g_,
   return s;
 }
 
-class interval1 {
-
+struct interval {
   const rvector<const double> lc_; // cladogenesis rates
   const rvector<const double> m_; //  extinction rates
 
@@ -68,10 +66,9 @@ class interval1 {
   const rvector<double> dist_g_;
 
   const double sum_dist_g_;
-public:
 
   // constructor
-  interval1(const Rcpp::NumericVector& lc,
+  interval(const Rcpp::NumericVector& lc,
             const Rcpp::NumericVector& la,
             const Rcpp::NumericVector& m,
             const Rcpp::NumericVector& g,
@@ -89,6 +86,12 @@ public:
       dist_g_(make_dist_g(tma, g, n)),
       sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
   }
+};
+
+
+struct interval1 : public interval {
+
+  using interval::interval;
 
   size_t size() const noexcept {
     // (DE + DM3 + E) * n + DA3
@@ -121,8 +124,8 @@ public:
   // this is the dx/dt calculation // true rhs that gets integrated
   // along the branches
   void operator()(const std::vector<double>& x,
-                  std::vector<double>& dxdt,
-                  const double /* t */) const
+                std::vector<double>& dxdt,
+                const double /* t */) const
   {
     auto DA3 = x.back();
 
@@ -141,17 +144,17 @@ public:
 
       // DE
       dxdt[i] = -(lambda_c_mu_t_vec_sum) * DE[i] +
-                  2 * lc_[i] * DE[i] * E[i] +
-                  q_mult_DE[i];
+        2 * lc_[i] * DE[i] * E[i] +
+        q_mult_DE[i];
       // DM3
       dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
-                  (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
-                  (1 - p_) * q_mult_DM3[i] +
-                  s_g_DM3;
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+        (1 - p_) * q_mult_DM3[i] +
+        s_g_DM3;
       // E
       dxdt[i + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
-                       lc_[i] * E[i] * E[i] +
-                       q_mult_E[i];
+        lc_[i] * E[i] * E[i] +
+        q_mult_E[i];
     }
 
     // DA3
@@ -159,43 +162,8 @@ public:
   }
 };
 
-class interval2 {
-  const rvector<const double> lc_; // cladogenesis rates
-  const rvector<const double> m_; //  extinction rates
-
-  const rvector<const double> la_; // anagenesis rates
-  const sq_matrix q_; // transition rates
-  const double p_;
-
-  const size_t n_; // number of unique states
-
-  const std::vector<double> t_vec;
-
-  const rvector<double> dist_g_;
-
-  const double sum_dist_g_;
-
-public:
-
-  // constructor
-  interval2(const Rcpp::NumericVector& lc,
-            const Rcpp::NumericVector& la,
-            const Rcpp::NumericVector& m,
-            const Rcpp::NumericVector& g,
-            const Rcpp::NumericMatrix& q,
-            const double p,
-            const Rcpp::NumericVector& tma,
-            const size_t n)
-    : lc_(lc),
-      m_(m),
-      la_(la),
-      q_(q),
-      p_(p),
-      n_(n),
-      t_vec(q_.row_sums()),
-      dist_g_(make_dist_g(tma, g, n)),
-      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
-  }
+struct interval2 : public interval {
+  using interval::interval;
 
   size_t size() const noexcept {
     // (DE + DM3 + E) * n + DA3
@@ -208,16 +176,6 @@ public:
                 std::vector<double>& dxdt,
                 const double /* t */) const
   {
-    // substitute with your own code below:
-
-    // vector x is:
-    // [
-    // DE_0, DE_1, ... , DE_n
-    // DM3_0, DM3_1, ..., DM3_n
-    // E_0, E_1, ..., E_n
-    // DA3
-    // ]
-
     auto DA3 = x.back();
 
     auto DE  = vector_view_t<const double>(x.data() + 0 * n_, n_);
@@ -237,13 +195,13 @@ public:
 
       // DE
       dxdt[i] = -(lambda_c_mu_t_vec_sum) * DE[i] +
-                  2 * lc_[i] * DE[i] * E[i] +
-                  q_mult_DE[i];
+        2 * lc_[i] * DE[i] * E[i] +
+        q_mult_DE[i];
 
       // DM2
       dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
-                      (la_[i] * DE[i] + 2 * lc_[i] * DE[i] * E[i] + p_ * q_mult_DE[i]) * DA3 +
-                      (1 - p_) * q_mult_DM2[i];
+        (la_[i] * DE[i] + 2 * lc_[i] * DE[i] * E[i] + p_ * q_mult_DE[i]) * DA3 +
+        (1 - p_) * q_mult_DM2[i];
 
       // DM3
       dxdt[i + n_ + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
@@ -261,42 +219,8 @@ public:
   }
 };
 
-class interval3 {
-  const rvector<const double> lc_; // cladogenesis rates
-  const rvector<const double> m_; //  extinction rates
-
-  const rvector<const double> la_; // anagenesis rates
-  const sq_matrix q_; // transition rates
-  const double p_;
-
-  const size_t n_; // number of unique states
-
-  const std::vector<double> t_vec;
-
-  const rvector<double> dist_g_;
-  const double sum_dist_g_;
-
-public:
-
-  // constructor
-  interval3(const Rcpp::NumericVector& lc,
-            const Rcpp::NumericVector& la,
-            const Rcpp::NumericVector& m,
-            const Rcpp::NumericVector& g,
-            const Rcpp::NumericMatrix& q,
-            const double p,
-            const Rcpp::NumericVector& tma,
-            const size_t n)
-    : lc_(lc),
-      m_(m),
-      la_(la),
-      q_(q),
-      p_(p),
-      n_(n),
-      t_vec(q_.row_sums()),
-      dist_g_(make_dist_g(tma, g, n)),
-      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
-  }
+struct interval3 : public interval {
+  using interval::interval;
 
   size_t size() const noexcept {
     // (DE + DM3 + E) * n + DA3
@@ -337,9 +261,9 @@ public:
 
       // DM1
       dxdt[i + 1 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
-                         (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
-                         (1 - p_) * q_mult_DM1[i] +
-                         s_g_DM2;
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
+        (1 - p_) * q_mult_DM1[i] +
+        s_g_DM2;
       // DM2
       dxdt[i + 2 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
         (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
@@ -367,43 +291,8 @@ public:
   }
 };
 
-class interval4 {
-  const rvector<const double> lc_; // cladogenesis rates
-  const rvector<const double> m_; //  extinction rates
-
-  const rvector<const double> la_; // anagenesis rates
-  const sq_matrix q_; // transition rates
-  const double p_;
-
-  const size_t n_; // number of unique states
-
-  const std::vector<double> t_vec;
-
-
-  const rvector<double> dist_g_;
-  const double sum_dist_g_;
-
-public:
-
-  // constructor
-  interval4(const Rcpp::NumericVector& lc,
-            const Rcpp::NumericVector& la,
-            const Rcpp::NumericVector& m,
-            const Rcpp::NumericVector& g,
-            const Rcpp::NumericMatrix& q,
-            const double p,
-            const Rcpp::NumericVector& tma,
-            const size_t n)
-    : lc_(lc),
-      m_(m),
-      la_(la),
-      q_(q),
-      p_(p),
-      n_(n),
-      t_vec(q_.row_sums()),
-      dist_g_(make_dist_g(tma, g, n)),
-      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
-  }
+struct interval4 : public interval {
+  using interval::interval;
 
   size_t size() const noexcept {
     return 2 * n_ + 1;
@@ -429,9 +318,9 @@ public:
 
       // DM1
       dxdt[i] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
-                (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA1 +
-                (1 - p_) * q_mult_DM1[i] +
-                s_g_DM1;
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA1 +
+        (1 - p_) * q_mult_DM1[i] +
+        s_g_DM1;
 
       // E
       dxdt[i + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
