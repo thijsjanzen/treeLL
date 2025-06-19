@@ -13,7 +13,7 @@ solve_branch_cpp <- function(chosen_func,
   lambda_a <- parameter[[4]]
   q_matrix       <- parameter[[5]]
   p_value       <- parameter[[6]]
-
+  tma  <- parameter[[7]]
 
 
   solution <- cpp_solve(lambda_c,
@@ -22,6 +22,7 @@ solve_branch_cpp <- function(chosen_func,
                         gammas,
                         q_matrix,
                         p_value,
+                        tma,
                         chosen_func,
                         methode,
                         initial_conditions,

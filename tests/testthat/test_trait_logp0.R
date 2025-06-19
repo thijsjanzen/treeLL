@@ -7,7 +7,7 @@ test_that("logp0", {
       data("Galapagos_datalist", package = "DAISIE")
       datalist <- Galapagos_datalist
 
-      parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+      parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0, 1)
 
       res1 <-  DAISIE_DE_trait_logp0(
            datalist            = datalist,

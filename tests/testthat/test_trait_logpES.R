@@ -9,7 +9,7 @@ test_that("logpES", {
     trait <- 0
     sf <- 1
 
-    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0, NA)
 
 
     res1 <-  treeLL::DAISIE_DE_trait_logpES(
@@ -43,9 +43,23 @@ test_that("logpES", {
       atol                    = 1e-10,
       rtol                    = 1e-10,
       methode                 = "ode45",
-      use_R                   = FALSE)
+      use_Rcpp                   = FALSE)
 
     testthat::expect_equal(res1, res3)
+
+    res4 <-  treeLL::DAISIE_DE_trait_logpES(
+      brts                    = brts,
+      trait                   = trait,
+      status                  = 2,
+      parameter               = parameter,
+      num_observed_states     = 1,
+      num_hidden_states       = 1,
+      atol                    = 1e-10,
+      rtol                    = 1e-10,
+      methode                 = "ode45",
+      use_Rcpp                = TRUE)
+
+    testthat::expect_equal(res1, res4)
   }
 })
 

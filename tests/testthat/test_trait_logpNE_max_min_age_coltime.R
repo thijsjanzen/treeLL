@@ -1,10 +1,7 @@
 test_that("logpNE_max_min_age_coltime", {
-
-
-
     brts <- c(4, 3, 2.5)
 
-    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0, NA)
 
     res1 <-  DAISIE_DE_trait_logpNE_max_min_age_hidden(brts                  = brts,
                                                        trait                 = 0,

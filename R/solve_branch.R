@@ -34,7 +34,7 @@ solve_branch <- function(interval_func,
                                  initial_conditions,
                                  time,
                                  parameter,
-                                 methode,
+                                 rcpp_methode,
                                  atol,
                                  rtol)
   }

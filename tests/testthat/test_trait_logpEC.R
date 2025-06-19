@@ -11,7 +11,7 @@ test_that("logpEC", {
 
     sampling_fraction <- sample(c(1, 1), length(1), replace = TRUE)
 
-    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0, 1)
 
     res1 <-  DAISIE_DE_trait_logpEC(
       brts                    = brts,
@@ -46,7 +46,23 @@ test_that("logpEC", {
       atol                    = 1e-10,
       rtol                    = 1e-10,
       methode                 = "ode45",
-      use_R = FALSE)
+      use_Rcpp                = FALSE)
+
+    testthat::expect_equal(res1, res3)
+
+    res3 <-  DAISIE_DE_trait_logpEC(
+      brts                    = brts,
+      phy                     = phy,
+      traits                  = traits,
+      status                  = 2,
+      sampling_fraction       = sampling_fraction,
+      parameter               = parameter,
+      num_observed_states     = 1,
+      num_hidden_states       = 1,
+      atol                    = 1e-10,
+      rtol                    = 1e-10,
+      methode                 = "ode45",
+      use_Rcpp                = TRUE)
 
     testthat::expect_equal(res1, res3)
   }

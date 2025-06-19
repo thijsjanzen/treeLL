@@ -36,8 +36,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_solve
-Rcpp::List cpp_solve(const Rcpp::NumericVector& lambda_cs, const Rcpp::NumericVector& lambda_as, const Rcpp::NumericVector& mus, const Rcpp::NumericVector& gammas, const Rcpp::NumericMatrix& qs, const double& p, const std::string& chosen_interval, const std::string& inte_method, const Rcpp::NumericVector& init_states, const Rcpp::NumericVector& time, double atol, double rtol);
-RcppExport SEXP _treeLL_cpp_solve(SEXP lambda_csSEXP, SEXP lambda_asSEXP, SEXP musSEXP, SEXP gammasSEXP, SEXP qsSEXP, SEXP pSEXP, SEXP chosen_intervalSEXP, SEXP inte_methodSEXP, SEXP init_statesSEXP, SEXP timeSEXP, SEXP atolSEXP, SEXP rtolSEXP) {
+Rcpp::List cpp_solve(const Rcpp::NumericVector& lambda_cs, const Rcpp::NumericVector& lambda_as, const Rcpp::NumericVector& mus, const Rcpp::NumericVector& gammas, const Rcpp::NumericMatrix& qs, const double& p, const Rcpp::NumericVector& tma, const std::string& chosen_interval, const std::string& inte_method, const Rcpp::NumericVector& init_states, const Rcpp::NumericVector& time, double atol, double rtol);
+RcppExport SEXP _treeLL_cpp_solve(SEXP lambda_csSEXP, SEXP lambda_asSEXP, SEXP musSEXP, SEXP gammasSEXP, SEXP qsSEXP, SEXP pSEXP, SEXP tmaSEXP, SEXP chosen_intervalSEXP, SEXP inte_methodSEXP, SEXP init_statesSEXP, SEXP timeSEXP, SEXP atolSEXP, SEXP rtolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,20 +47,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type gammas(gammasSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type qs(qsSEXP);
     Rcpp::traits::input_parameter< const double& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type tma(tmaSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type chosen_interval(chosen_intervalSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type inte_method(inte_methodSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type init_states(init_statesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type time(timeSEXP);
     Rcpp::traits::input_parameter< double >::type atol(atolSEXP);
     Rcpp::traits::input_parameter< double >::type rtol(rtolSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_solve(lambda_cs, lambda_as, mus, gammas, qs, p, chosen_interval, inte_method, init_states, time, atol, rtol));
+    rcpp_result_gen = Rcpp::wrap(cpp_solve(lambda_cs, lambda_as, mus, gammas, qs, p, tma, chosen_interval, inte_method, init_states, time, atol, rtol));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_treeLL_calc_ll_cpp", (DL_FUNC) &_treeLL_calc_ll_cpp, 15},
-    {"_treeLL_cpp_solve", (DL_FUNC) &_treeLL_cpp_solve, 12},
+    {"_treeLL_cpp_solve", (DL_FUNC) &_treeLL_cpp_solve, 13},
     {NULL, NULL, 0}
 };
 

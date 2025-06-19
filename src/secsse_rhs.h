@@ -171,9 +171,9 @@ class interval2 {
 
   const std::vector<double> t_vec;
 
+  const rvector<double> dist_g_;
 
-  const sq_matrix g_mat_; //  colonization rates
-  const rvector<const double> g_;
+  const double sum_dist_g_;
 
 public:
 
@@ -184,6 +184,7 @@ public:
             const Rcpp::NumericVector& g,
             const Rcpp::NumericMatrix& q,
             const double p,
+            const Rcpp::NumericVector& tma,
             const size_t n)
     : lc_(lc),
       m_(m),
@@ -192,8 +193,8 @@ public:
       p_(p),
       n_(n),
       t_vec(q_.row_sums()),
-      g_mat_(g, n_),
-      g_(g) {
+      dist_g_(make_dist_g(tma, g, n)),
+      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
   }
 
   size_t size() const noexcept {
@@ -218,7 +219,6 @@ public:
     // ]
 
     auto DA3 = x.back();
-    auto gamma_nonself = g_mat_.non_self();
 
     auto DE  = vector_view_t<const double>(x.data() + 0 * n_, n_);
     auto DM2 = vector_view_t<const double>(x.data() + 1 * n_, n_);
@@ -230,9 +230,7 @@ public:
     auto q_mult_DM2 = q_ * DM2;
     auto q_mult_DM3 = q_ * DM3;
 
-    auto g_row_sums = g_mat_.row_sums();
-
-    double s_g_DM3 = 0.0;
+    double s_g_DM3 = calc_sum(dist_g_, DM3);
 
     for (size_t i = 0; i < n_; ++i) {
       auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
@@ -243,26 +241,23 @@ public:
                   q_mult_DE[i];
 
       // DM2
-      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + g_[i] + la_[i]) * DM2[i] +
+      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
                       (la_[i] * DE[i] + 2 * lc_[i] * DE[i] * E[i] + p_ * q_mult_DE[i]) * DA3 +
-                      (1 - p_) * q_mult_DM2[i] + gamma_nonself[i] * DM2[i];
+                      (1 - p_) * q_mult_DM2[i];
 
       // DM3
-      dxdt[i + n_ + n_] = -(lambda_c_mu_t_vec_sum + gamma_nonself[i] + la_[i]) * DM3[i] +
+      dxdt[i + n_ + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
         (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
         (1 - p_) * q_mult_DM3[i] +
-        gamma_nonself[i] * DM3[i];
+        s_g_DM3;
       // E
       dxdt[i + n_ + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
         lc_[i] * E[i] * E[i] +
         q_mult_E[i];
-
-      s_g_DM3 += g_[i] * DM3[i];
     }
 
     // DA3
-    auto a = std::accumulate(g_.begin(), g_.end(), 0.0);
-    dxdt.back() = -a * DA3 + s_g_DM3;
+    dxdt.back() = -sum_dist_g_ * DA3 + s_g_DM3;
   }
 };
 
@@ -278,9 +273,8 @@ class interval3 {
 
   const std::vector<double> t_vec;
 
-
-  const sq_matrix g_mat_; //  colonization rates
-  const rvector<const double> g_;
+  const rvector<double> dist_g_;
+  const double sum_dist_g_;
 
 public:
 
@@ -291,6 +285,7 @@ public:
             const Rcpp::NumericVector& g,
             const Rcpp::NumericMatrix& q,
             const double p,
+            const Rcpp::NumericVector& tma,
             const size_t n)
     : lc_(lc),
       m_(m),
@@ -299,8 +294,8 @@ public:
       p_(p),
       n_(n),
       t_vec(q_.row_sums()),
-      g_mat_(g, n_),
-      g_(g) {
+      dist_g_(make_dist_g(tma, g, n)),
+      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
   }
 
   size_t size() const noexcept {
@@ -314,7 +309,6 @@ public:
 
     auto DA3 = x.back();
     auto DA2 = x[x.size() - 2];
-    auto gamma_nonself = g_mat_.non_self();
 
     auto DE  = vector_view_t<const double>(x.data() , n_);
     auto DM1 = vector_view_t<const double>(x.data() + 1 * n_, n_);
@@ -328,10 +322,10 @@ public:
     auto q_mult_DM2 = q_ * DM2;
     auto q_mult_DM3 = q_ * DM3;
 
-    auto g_row_sums = g_mat_.row_sums();
 
-    double s_g_DM3 = 0.0;
-    double s_g_DM2 = 0.0;
+
+    double s_g_DM3 = calc_sum(dist_g_, DM3);
+    double s_g_DM2 = calc_sum(dist_g_, DM2);
 
     for (size_t i = 0; i < n_; ++i) {
       auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
@@ -342,36 +336,34 @@ public:
         q_mult_DE[i];
 
       // DM1
-      dxdt[i + 1 * n_] = -(lambda_c_mu_t_vec_sum + g_[i] + la_[i]) * DM1[i] +
+      dxdt[i + 1 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
                          (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
-                         (1 - p_) * q_mult_DM1[i] + g_[i] * DM2[i];
+                         (1 - p_) * q_mult_DM1[i] +
+                         s_g_DM2;
       // DM2
-      dxdt[i + 2 * n_] = -(lambda_c_mu_t_vec_sum + gamma_nonself[i] + la_[i]) * DM2[i] +
+      dxdt[i + 2 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
         (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
         (la_[i] * DE[i] + 2 * lc_[i] * DE[i]  + p_ * q_mult_DE[i]) * DA3 +
-        (1 - p_) * q_mult_DM2[i] + gamma_nonself[i] * DM2[i];
+        (1 - p_) * q_mult_DM2[i] +
+        s_g_DM2;
 
       // DM3
-      dxdt[i + 3 * n_] = -(lambda_c_mu_t_vec_sum + gamma_nonself[i] + la_[i]) * DM3[i] +
+      dxdt[i + 3 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
         (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
         (1 - p_) * q_mult_DM3[i] +
-        gamma_nonself[i] * DM3[i];
+        s_g_DM3;
 
       // E
       dxdt[i + 4 * n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
         lc_[i] * E[i] * E[i] +
         q_mult_E[i];
-
-      s_g_DM3 += g_[i] * DM3[i];
-      s_g_DM2 += g_[i] * DM2[i];
     }
 
     // DA3
-    auto a = std::accumulate(g_.begin(), g_.end(), 0.0);
-    dxdt.back() = -a * DA3 + s_g_DM3;
+    dxdt.back() = -sum_dist_g_ * DA3 + s_g_DM3;
 
     // DA2
-    dxdt[dxdt.size() - 2] = -a * DA2 + s_g_DM2;
+    dxdt[dxdt.size() - 2] = -sum_dist_g_ * DA2 + s_g_DM2;
   }
 };
 
@@ -388,8 +380,8 @@ class interval4 {
   const std::vector<double> t_vec;
 
 
-  const sq_matrix g_mat_; //  colonization rates
-  const rvector<const double> g_;
+  const rvector<double> dist_g_;
+  const double sum_dist_g_;
 
 public:
 
@@ -400,6 +392,7 @@ public:
             const Rcpp::NumericVector& g,
             const Rcpp::NumericMatrix& q,
             const double p,
+            const Rcpp::NumericVector& tma,
             const size_t n)
     : lc_(lc),
       m_(m),
@@ -408,8 +401,8 @@ public:
       p_(p),
       n_(n),
       t_vec(q_.row_sums()),
-      g_mat_(g, n_),
-      g_(g) {
+      dist_g_(make_dist_g(tma, g, n)),
+      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
   }
 
   size_t size() const noexcept {
@@ -422,7 +415,6 @@ public:
   {
 
     auto DA1 = x.back();
-    auto gamma_nonself = g_mat_.non_self();
 
     auto DM1  = vector_view_t<const double>(x.data() , n_);
     auto E   = vector_view_t<const double>(x.data() + n_, n_);
@@ -430,29 +422,25 @@ public:
     auto q_mult_E   = q_ * E;
     auto q_mult_DM1  = q_ * DM1;
 
-    auto g_row_sums = g_mat_.row_sums();
-
-    double s_g_DM1 = 0.0;
+    double s_g_DM1 = calc_sum(dist_g_, DM1);
 
     for (size_t i = 0; i < n_; ++i) {
       auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
 
       // DM1
-      dxdt[i] = -(lambda_c_mu_t_vec_sum + gamma_nonself[i] + la_[i]) * DM1[i] +
+      dxdt[i] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
                 (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA1 +
-                (1 - p_) * q_mult_DM1[i] + gamma_nonself[i] * DM1[i];
+                (1 - p_) * q_mult_DM1[i] +
+                s_g_DM1;
 
       // E
       dxdt[i + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
         lc_[i] * E[i] * E[i] +
         q_mult_E[i];
-
-      s_g_DM1 += g_[i] * DM1[i];
     }
 
     // DA3
-    auto a = std::accumulate(g_.begin(), g_.end(), 0.0);
-    dxdt.back() = -a * DA1 + s_g_DM1;
+    dxdt.back() = -sum_dist_g_ * DA1 + s_g_DM1;
   }
 };
 
