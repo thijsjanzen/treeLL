@@ -27,7 +27,7 @@
 #'     0,    0,    0.002,0.005,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   0
+#'   0, c(1, 0)
 #' )
 #'
 #' parameter <- list(
@@ -38,7 +38,7 @@
 #'   matrix(c(
 #'     rep(0, 4)
 #'   ), nrow = 2),
-#'   0
+#'   0, c(1,0)
 #' )
 #' brts <- datalist[[2]]$branching_times
 #' DAISIE_DE_trait_logpNE(
@@ -47,7 +47,7 @@
 #'   status                  = 1,
 #'   parameter               = parameter,
 #'   num_observed_states     = 2,
-#'   num_hidden_states       = 1,
+#'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45"
@@ -55,7 +55,6 @@
 DAISIE_DE_trait_logpNE <- function(brts,
                                    status,
                                    trait,
-                                   trait_mainland_ancestor = FALSE,
                                    num_observed_states,
                                    num_hidden_states,
                                    parameter,
@@ -81,7 +80,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
 
   tp   <- 0
 
-
+  trait_mainland_ancestor <- parameter[[7]]
   # Time intervals
 
   time2 <- c(tp, t1)

@@ -30,7 +30,7 @@
 #'     0,    0,    0.002,0.005,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   0
+#'   0, c(1,0)
 #' )
 #'
 #' #' DAISIE_DE_trait_logpEC(
@@ -55,7 +55,7 @@
 #'   matrix(c(
 #'     rep(0, 4)
 #'   ), nrow = 2),
-#'   0
+#'   0, c(1,0)
 #' )
 #'
 #' DAISIE_DE_trait_logpEC(
@@ -78,7 +78,6 @@ DAISIE_DE_trait_logpEC <- function(
     traits,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor = FALSE,
     status,
     sampling_fraction,
     num_threads = 1,
@@ -108,7 +107,7 @@ DAISIE_DE_trait_logpEC <- function(
   time2 <- c(t2, t1)
   time3 <- c(t2, tmax)
   time4 <- c(tmax, t0)
-
+  trait_mainland_ancestor <- parameter[[7]]
   # Number of states in the system
   #n <- num_observed_states * num_hidden_states
 

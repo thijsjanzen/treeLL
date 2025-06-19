@@ -17,7 +17,7 @@
 #' i <- 7
 #' brts <- datalist[[i]]$branching_times
 #' trait <- 0
-#' sampling_fraction <- 1
+#' sampling_fraction <- c(1,1)
 #'
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
@@ -29,7 +29,7 @@
 #'     0,    0,    0.002,0.005,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   0
+#'   0, c(1,0)
 #' )
 #'
 #' parameter <- list(
@@ -40,16 +40,17 @@
 #'   matrix(c(
 #'     rep(0, 4)
 #'   ), nrow = 2),
-#'   0
+#'   0, c(1, 0)
 #' )
 #'
 #' DAISIE_DE_trait_logpES(
 #'   brts                    = brts,
-#'   trait                  = FALSE,
+#'   trait                   = 0,
 #'   status                  = 2,
+#'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
 #'   num_observed_states     = 2,
-#'   num_hidden_states       = 1,
+#'   num_hidden_states       = 2,
 #'   atol                    = 1e-10,
 #'   rtol                    = 1e-10,
 #'   methode                 = "ode45"
@@ -57,8 +58,7 @@
 DAISIE_DE_trait_logpES <- function(brts,
                                    status,
                                    trait,
-                                   sampling_fraction = 1,
-                                   trait_mainland_ancestor = FALSE,
+                                   sampling_fraction,
                                    num_observed_states,
                                    num_hidden_states,
                                    parameter,
@@ -87,7 +87,7 @@ DAISIE_DE_trait_logpES <- function(brts,
   time2 <- c(tp, t1)
   time3 <- c(tp, tmax)
   time4 <- c(tmax, t0)
-
+  trait_mainland_ancestor <- parameter[[7]]
   # Number of states in the system
   #n <- num_observed_states * num_hidden_states
 
