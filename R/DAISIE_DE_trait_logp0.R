@@ -22,6 +22,17 @@
 #'   0
 #' )
 #'
+#' # Compute log‐likelihood under the DE‐trait model
+#' DAISIE_DE_trait_logp0(
+#'   datalist            = datalist,
+#'   parameter           = parameter,
+#'   num_observed_states     = 2,
+#'   num_hidden_states       = 2,
+#'   atol                = 1e-5,
+#'   rtol                = 1e-5,
+#'   methode             = "ode45"
+#' )
+#'
 #' parameter <- list(
 #'   c(2.546591, 2.546591, 2.546591, 2.546591),
 #'   c(2.678781, 2.678781, 2.678781, 2.678781),
@@ -36,8 +47,8 @@
 #' DAISIE_DE_trait_logp0(
 #'   datalist            = datalist,
 #'   parameter           = parameter,
-#'   num_observed_states     = 1,
-#'   num_hidden_states       = 1,
+#'   num_observed_states     = 2,
+#'   num_hidden_states       = 2,
 #'   atol                = 1e-5,
 #'   rtol                = 1e-5,
 #'   methode             = "ode45"

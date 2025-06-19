@@ -21,6 +21,37 @@ using rvector = RcppParallel::RVector<T>;
 template <typename T>
 using rmatrix = RcppParallel::RMatrix<T>;
 
+inline rvector<double> make_dist_g(const Rcpp::NumericVector& tma,
+                            const Rcpp::NumericVector& gamma,
+                            const size_t num_unique_states) {
+  rvector<double> dist_gamma(gamma);
+  if (Rcpp::NumericVector::is_na(tma[0])) {
+    // tma not known, please note that entire vector is NA in this case
+    for (auto& i : dist_gamma) i *= 1.0 / num_unique_states;
+  } else {
+    // no NAs, we are good:
+    auto num_hidden_states = gamma.size() / tma.size();
+    for (size_t i = 0; i < dist_gamma.size(); ++i) {
+      auto s = tma[i / num_hidden_states];
+      dist_gamma[i] *= s * 1.0 / num_hidden_states;
+    }
+  }
+  return dist_gamma;
+}
+
+inline double calc_sum_dist_g_(const rvector<double>& dist_gamma) {
+  return std::accumulate(dist_gamma.begin(), dist_gamma.end(), 0.0);
+}
+
+inline double calc_sum(const rvector<double>& dist_g_,
+                const vector_view_t<const double>& DM3) {
+  double s = 0.0;
+  for (size_t i = 0; i < dist_g_.size(); ++i) {
+    s += dist_g_[i] * DM3[i];
+  }
+  return s;
+}
+
 class interval1 {
 
   const rvector<const double> lc_; // cladogenesis rates
@@ -34,10 +65,9 @@ class interval1 {
 
   const std::vector<double> t_vec;
 
+  const rvector<double> dist_g_;
 
-  const sq_matrix g_mat_; //  colonization rates
-  const rvector<const double> g_;
-
+  const double sum_dist_g_;
 public:
 
   // constructor
@@ -47,6 +77,7 @@ public:
             const Rcpp::NumericVector& g,
             const Rcpp::NumericMatrix& q,
             const double p,
+            const Rcpp::NumericVector& tma,
             const size_t n)
     : lc_(lc),
       m_(m),
@@ -55,8 +86,8 @@ public:
       p_(p),
       n_(n),
       t_vec(q_.row_sums()),
-      g_mat_(g, n_),
-      g_(g) {
+      dist_g_(make_dist_g(tma, g, n)),
+      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
   }
 
   size_t size() const noexcept {
@@ -94,7 +125,6 @@ public:
                   const double /* t */) const
   {
     auto DA3 = x.back();
-    auto gamma_nonself = g_mat_.non_self();
 
     auto DE  = vector_view_t<const double>(x.data() , n_);
     auto DM3 = vector_view_t<const double>(x.data() + n_, n_);
@@ -104,9 +134,7 @@ public:
     auto q_mult_DE  = q_ * DE;
     auto q_mult_DM3 = q_ * DM3;
 
-    auto g_row_sums = g_mat_.row_sums();
-
-    double s_g_DM3 = 0.0;
+    double s_g_DM3 = calc_sum(dist_g_, DM3);
 
     for (size_t i = 0; i < n_; ++i) {
       auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
@@ -116,21 +144,18 @@ public:
                   2 * lc_[i] * DE[i] * E[i] +
                   q_mult_DE[i];
       // DM3
-      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + gamma_nonself[i] + la_[i]) * DM3[i] +
+      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
                   (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
                   (1 - p_) * q_mult_DM3[i] +
-                  gamma_nonself[i] * DM3[i];
+                  s_g_DM3;
       // E
       dxdt[i + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
                        lc_[i] * E[i] * E[i] +
                        q_mult_E[i];
-
-      s_g_DM3 += g_[i] * DM3[i];
     }
 
     // DA3
-    auto a = std::accumulate(g_.begin(), g_.end(), 0.0);
-    dxdt.back() = -a * DA3 + s_g_DM3;
+    dxdt.back() = -sum_dist_g_ * DA3 + s_g_DM3;
   }
 };
 

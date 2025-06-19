@@ -8,6 +8,7 @@ loglik_hidden_rhs <- function(t, state, parameter) {
     lambdaa <- parameter[[4]]
     q       <- parameter[[5]]
     p       <- parameter[[6]]
+    trait_mainland_ancestor <- parameter[[7]]
 
 
     n <- (length(state) - 1) / 3
@@ -23,17 +24,10 @@ loglik_hidden_rhs <- function(t, state, parameter) {
     E   <- state[(n + n + 1):(n + n + n)]
     DA3 <- state[length(state)]
 
-    gamma_matrix <- matrix(parameter[[3]], nrow = n, ncol = length(parameter[[3]]), byrow = TRUE)
-
-    if (trait_mainland_ancestor == FALSE) {
-      gamma <- gamma  # do nothing
-      dist_gamma <- gamma/n
-    } else {
-      s <- ((trait_mainland_ancestor * num_hidden_states) + 1) :
-        ((trait_mainland_ancestor + 1) * num_hidden_states)
-      gamma <- gamma[s]
-      dist_gamma <- gamma/num_hidden_states
-    }
+    dist_gamma <- dist_gamma_tma(gamma,
+                                 trait_mainland_ancestor,
+                                 num_hidden_states,
+                                 num_unique_states)
 
     q_mult_E   <- t(q %*% E)
     q_mult_DE  <- t(q %*% DE)
@@ -47,10 +41,10 @@ loglik_hidden_rhs <- function(t, state, parameter) {
       2 * lambdac * DE * E +
       q_mult_DE
 
-    dDM3 <-  -(lambda_c_mu_t_vec_sum + dist_gamma + lambdaa) * DM3 +
+    dDM3 <-  -(lambda_c_mu_t_vec_sum + sum(dist_gamma) + lambdaa) * DM3 +
       (mu + lambdaa * E + lambdac * E_sq + p * q_mult_E) * DA3 +
       (1 - p) * q_mult_DM3 +
-      dist_gamma * DM3
+      sum(dist_gamma * DM3)
 
     dE <- mu - (lambda_c_mu_t_vec_sum) * E +
       lambdac * E_sq +
@@ -142,9 +136,9 @@ calc_init_state_hidden <- function(trait,
   DA3 <- 1
 
 
-  if (trait == "FALSE") {
-    DE[c(1, n)] <- sampling_fraction
-    E[c(1, n)]  <- 1 - sampling_fraction
+  if (is.na(trait)) {
+    DE[c(1, num_unique_states)] <- sampling_fraction
+    E[c(1, num_unique_states)]  <- 1 - sampling_fraction
   }
 
   else if (trait == trait) {
@@ -274,6 +268,7 @@ loglik_cpp_tree <- function(parameter,
   lambda_a <- parameter[[4]]
   q_matrix       <- parameter[[5]]
   p_value       <- parameter[[6]]
+  tma    <- parameter[[7]]
 
   RcppParallel::setThreadOptions(numThreads = num_threads)
 
@@ -286,6 +281,7 @@ loglik_cpp_tree <- function(parameter,
                         gammas = gammas,
                         qs = q_matrix,
                         p = p_value,
+                        trait_mainland_ancestor = tma,
                         method = method,
                         atol = atol,
                         rtol = rtol,

@@ -20,6 +20,11 @@ get_initial_conditions2 <- function(status,
   E   <- rep(0, num_unique_states)
   DA3 <- 1
 
+  # only use the sampling fraction of the focal trait, assuming traits start
+  # counting at 0.
+
+  sampling_fraction <- sampling_fraction[1 + trait]
+
   if (status == 2 && length(brts) > 2) {
     initial_conditions2 <- c(res[1:n],                      ## DE
                              (res[1:n]) * res[length(res)], ## DM2
@@ -30,56 +35,50 @@ get_initial_conditions2 <- function(status,
     return(matrix(initial_conditions2, nrow = 1))
   } else if (status == 2 && length(brts) == 2) {
 
-    if (trait == "FALSE") {
+    if ( is.na(trait) ) {
       DE[c(1, n)] <- sampling_fraction
       E[c(1, n)]  <- 1 - sampling_fraction
-    }
-
-    else if (trait == trait) {
+    } else {
       DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
       E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
     }
 
   }
   else if (status == 3 && length(brts) == 2 ) {
-    DE[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-    E[c((num_hidden_states*trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
+    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
     DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   }
   else if (status == 4) {
-
-    if (trait == "FALSE") {
+    if ( is.na(trait) ) {
       DM2[c(1, n)] <- 1
     }
-
-    else if (trait == trait) {
+    else {
       DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
     }
 
   }
   else if(status == 8) {
-    if (trait == "FALSE") {
+    if (is.na(trait)) {
       DM2[c(1, n)] <- 1
     }
-
-    else if (trait == trait) {
+    else {
       DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
     }
   }
   else if(status == 9)  {
-    if (trait == "FALSE") {
+    if (is.na(trait)) {
       DE[c(1, n)] <- sampling_fraction
       E[c(1, n)]  <- 1 - sampling_fraction
     }
-
-    else if (trait == trait) {
+    else  {
       DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
       E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
     }
   }
 
-  initial_conditions2 <- ( c(DE, DM2, DM3, E, DA3))
+  initial_conditions2 <- c(DE, DM2, DM3, E, DA3)
   return(matrix(initial_conditions2, nrow = 1))
 }
 
@@ -91,6 +90,7 @@ get_initial_conditions3 <- function(status,
                                     num_observed_states,
                                     num_hidden_states,
                                     trait,
+                                    sampling_fraction,
                                     solution) {
 
   n <- num_observed_states * num_hidden_states
@@ -106,7 +106,7 @@ get_initial_conditions3 <- function(status,
   DA3 <- 1
 
   if (status == 1) {
-    if (trait == "FALSE") {
+    if (is.na(trait)) {
       DM2[c(1, n)] <- 1
     }
 
@@ -125,12 +125,11 @@ get_initial_conditions3 <- function(status,
                              res[length(res)])                                      ## DA3
   }
   else if (status == 5) {
-    if (trait == "FALSE") {
+    if (is.na(trait)) {
       DE[c(1, n)] <- sampling_fraction
       E[c(1, n)]  <- 1 - sampling_fraction
     }
-
-    else if (trait == trait) {
+    else  {
       DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
       E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
     }

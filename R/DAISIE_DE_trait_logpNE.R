@@ -129,7 +129,8 @@ DAISIE_DE_trait_logpNE <- function(brts,
     initial_conditions3 <- get_initial_conditions3(status = status,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
-                                                   trait = trait)
+                                                   trait = trait,
+                                                   sampling_fraction = 1)
     solution3 <- solve_branch(interval_func = interval3,
                               initial_conditions = initial_conditions3,
                               time = time3,

@@ -33,6 +33,20 @@
 #'   0
 #' )
 #'
+#' #' DAISIE_DE_trait_logpEC(
+#'   brts                    = brts,
+#'   phy                     = phy,
+#'   traits                  = rep(FALSE, length(brts)),
+#'   status                  = 2,
+#'   sampling_fraction       = sampling_fraction,
+#'   parameter               = parameter,
+#'   num_observed_states     = 2,
+#'   num_hidden_states       = 1,
+#'   atol                    = 1e-10,
+#'   rtol                    = 1e-10,
+#'   methode                 = "ode45")
+#'
+#' # Or DAISIE style:
 #' parameter <- list(
 #'   c(2.546591, 2.546591),
 #'   c(2.678781, 2.678781),
@@ -174,7 +188,8 @@ DAISIE_DE_trait_logpEC <- function(
                                                    res = res,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
-                                                   trait = traits)
+                                                   trait = traits,
+                                                   sampling_fraction = sampling_fraction)
     solution3 <- solve_branch(interval_func = interval3,
                               initial_conditions = initial_conditions3,
                               time = time3,

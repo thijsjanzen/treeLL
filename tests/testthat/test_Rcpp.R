@@ -12,6 +12,7 @@ test_that("R vs Rcpp", {
   mus      <- rep(0, num_total_states)  # c(0, 0)
   gammas   <- rep(0.01, num_total_states) # c(0.01, 0.01)
   p <- 0
+  tma <- 0
 
   parameters <- list()
   parameters[[1]] <- lambda_c
@@ -20,6 +21,7 @@ test_that("R vs Rcpp", {
   parameters[[4]] <- gammas
   parameters[[5]] <- NA # placeholder
   parameters[[6]] <- p
+  parameters[[7]] <- tma
 
   # we have to re-write the q rates as a matrix:
   base_matrix <- matrix(0, nrow = 2, ncol = 2)
