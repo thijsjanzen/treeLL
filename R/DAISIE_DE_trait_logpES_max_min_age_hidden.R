@@ -8,7 +8,6 @@
 #' library(DAISIE)
 #' data("Biwa_datalist")
 #' datalist <- Biwa_datalist
-#' sf <- 1
 #' parameter <- list(
 #'   c(2.546591, 1.2, 1, 0.2),
 #'   c(2.678781, 2, 1.9, 3),
@@ -19,10 +18,8 @@
 #'     0,    0,    0.002,0.005,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   0
+#'   0, c(1,0)
 #' )
-#'
-#' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 #'
 #'
 #' DAISIE_DE_trait_logpES_max_min_age_hidden(
@@ -30,8 +27,8 @@
 #'   trait                 = 0,
 #'   status                = 9,
 #'   parameter             = parameter,
-#'   num_observed_states   = 1,
-#'   num_hidden_states     = 1,
+#'   num_observed_states   = 2,
+#'   num_hidden_states     = 2,
 #'   atol                  = 1e-10,
 #'   rtol                  = 1e-10,
 #'   methode               = "ode45"
@@ -39,7 +36,7 @@
 DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                       trait,
                                                       status,
-                                                      sampling_fraction = 1,
+                                                      sampling_fraction,
                                                       parameter,
                                                       num_observed_states,
                                                       num_hidden_states,
@@ -59,7 +56,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   #########interval2 [t_p, tmin]
 
   m = length(parameter[[1]])
-
+  trait_mainland_ancestor <- parameter[[7]]
 
   ## SOLVED: can't we call 'get_initial_conditions' here? //NO, because brts > 2
   initial_conditions2 <- get_initial_conditions2(status = status,

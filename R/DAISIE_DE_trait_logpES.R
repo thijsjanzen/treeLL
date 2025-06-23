@@ -50,7 +50,7 @@
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
 #'   num_observed_states     = 2,
-#'   num_hidden_states       = 2,
+#'   num_hidden_states       = 1,
 #'   atol                    = 1e-10,
 #'   rtol                    = 1e-10,
 #'   methode                 = "ode45"
@@ -74,7 +74,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                   num_observed_states,
                   num_hidden_states,
                   status,
-                  sampling_fraction = 0)
+                  sampling_fraction)
 
   # Unpack times from brts
   t0   <- brts[1]

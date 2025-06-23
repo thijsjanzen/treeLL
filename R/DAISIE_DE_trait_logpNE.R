@@ -38,7 +38,7 @@
 #'   matrix(c(
 #'     rep(0, 4)
 #'   ), nrow = 2),
-#'   0, c(1,0)
+#'   0, c(1, 0)
 #' )
 #' brts <- datalist[[2]]$branching_times
 #' DAISIE_DE_trait_logpNE(
@@ -48,8 +48,8 @@
 #'   parameter               = parameter,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
-#'   atol                    = 1e-15,
-#'   rtol                    = 1e-15,
+#'   atol                    = 1e-10,
+#'   rtol                    = 1e-10,
 #'   methode                 = "ode45"
 #' )
 DAISIE_DE_trait_logpNE <- function(brts,
@@ -71,7 +71,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                   num_observed_states = num_observed_states,
                   num_hidden_states = num_hidden_states,
                   status = status,
-                  sampling_fraction = 1)
+                  sampling_fraction = sampling_fraction)
 
   # Unpack times from brts
   t0   <- brts[1]
@@ -96,6 +96,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
                                                    brts = brts,
+                                                   sampling_fraction = sampling_fraction,
                                                    trait_mainland_ancestor = trait_mainland_ancestor)
     solution2 <- solve_branch(interval_func = interval2,
                               initial_conditions = initial_conditions2,
@@ -129,7 +130,9 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
                                                    trait = trait,
-                                                   sampling_fraction = 1)
+                                                   sampling_fraction = sampling_fraction
+                                                   )
+
     solution3 <- solve_branch(interval_func = interval3,
                               initial_conditions = initial_conditions3,
                               time = time3,
