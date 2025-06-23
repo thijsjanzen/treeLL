@@ -1,5 +1,5 @@
 #' @keywords internal
-dist_gamma_tma <- function(parameter,
+dist_gamma_tma <- function(gamma,
                            trait_mainland_ancestor,
                            num_unique_states) {
 
@@ -9,15 +9,15 @@ dist_gamma_tma <- function(parameter,
       length(trait_mainland_ancestor)) {
     # this is always true if we don't know the tma,
     # because if one is NA, then all must be NA
-    dist_gamma <- parameter[[3]] / num_unique_states
+    dist_gamma <- gamma / num_unique_states
   } else {
-    num_hidden_states <- length(parameter[[3]]) / length(trait_mainland_ancestor)
+    num_hidden_states <- length(gamma) / length(trait_mainland_ancestor)
     s <- c()
     for (i in seq_along(trait_mainland_ancestor)) {
       s <- c(s, rep(trait_mainland_ancestor[i], num_hidden_states))
     }
 
-    dist_gamma <- (parameter[[3]] * s) / num_hidden_states
+    dist_gamma <- (gamma * s) / num_hidden_states
   }
 
   return(dist_gamma)
@@ -56,10 +56,7 @@ interval2 <- function(t, state, parameter) {
     q_mult_DM3 <- t(q %*% DM3)
 
 
-    # TODO: pass trait mainland_ancestor to interval functions
-    # trait mainland ancestor is vector of probabilities
-
-    dist_gamma <- dist_gamma_tma(parameter,
+    dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
                                  n)
 
@@ -119,7 +116,7 @@ interval3 <- function(t, state, parameter) {
     q_mult_DM2 <- t(q %*% DM2)
     q_mult_DM3 <- t(q %*% DM3)
 
-    dist_gamma <- dist_gamma_tma(parameter,
+    dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
                                  n)
 
@@ -178,7 +175,7 @@ interval4 <- function(t, state, parameter) {
     q_mult_DM1 <- t(q %*% DM1)
 
 
-    dist_gamma <- dist_gamma_tma(parameter,
+    dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
                                  n)
 

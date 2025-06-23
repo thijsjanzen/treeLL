@@ -11,7 +11,6 @@ DAISIE_DE_trait_logpEC(
   traits,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor = FALSE,
   status,
   sampling_fraction,
   num_threads = 1,
@@ -42,8 +41,6 @@ position.}
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
-
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{status}{indicator for type of inference required}
 
@@ -78,7 +75,7 @@ library(DAISIE)
 library(secsse)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
-i <- 5
+i <- 4
 phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 brts <- datalist[[i]]$branching_times
 traits <- sample(c(0, 0), length(brts), replace = TRUE)
@@ -98,7 +95,31 @@ parameter <- list(
   0
 )
 
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+#' DAISIE_DE_trait_logpEC(
+  brts                    = brts,
+  phy                     = phy,
+  traits                  = traits,
+  status                  = 2,
+  sampling_fraction       = sampling_fraction,
+  parameter               = parameter,
+  trait_mainland_ancestor = c(1, 0),
+  num_observed_states     = 2,
+  num_hidden_states       = 2,
+  atol                    = 1e-15,
+  rtol                    = 1e-15,
+  methode                 = "ode45")
+
+# Or DAISIE style:
+parameter <- list(
+  c(2.546591, 2.546591),
+  c(2.678781, 2.678781),
+  c(0.009326754, 0.009326754),
+  c(1.008583, 1.008583),
+  matrix(c(
+    rep(0, 4)
+  ), nrow = 2),
+  0
+)
 
 DAISIE_DE_trait_logpEC(
   brts                    = brts,
@@ -107,9 +128,10 @@ DAISIE_DE_trait_logpEC(
   status                  = 2,
   sampling_fraction       = sampling_fraction,
   parameter               = parameter,
+  trait_mainland_ancestor = c(1, 0),
   num_observed_states     = 2,
-  num_hidden_states       = 2,
-  atol                    = 1e-10,
-  rtol                    = 1e-10,
+  num_hidden_states       = 1,
+  atol                    = 1e-15,
+  rtol                    = 1e-15,
   methode                 = "ode45")
 }

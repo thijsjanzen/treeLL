@@ -24,7 +24,7 @@ loglik_hidden_rhs <- function(t, state, parameter) {
     E   <- state[(n + n + 1):(n + n + n)]
     DA3 <- state[length(state)]
 
-    dist_gamma <- dist_gamma_tma(parameter,
+    dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
                                  n)
 

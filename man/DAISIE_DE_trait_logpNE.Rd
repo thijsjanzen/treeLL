@@ -8,7 +8,6 @@ DAISIE_DE_trait_logpNE(
   brts,
   status,
   trait,
-  trait_mainland_ancestor = FALSE,
   num_observed_states,
   num_hidden_states,
   parameter,
@@ -30,8 +29,6 @@ order of the states must be the same as the tree tips. For help, see
 \code{multiPhylo} set of multiple phylognies, traits should be a list where
 each entry in the list corresponds to the matching phylogeny on that
 position.}
-
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{num_observed_states}{number of observed states}
 
@@ -64,33 +61,29 @@ library(secsse)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
 
-i <- 2
+i <- 3
 brts <- datalist[[i]]$branching_times
 trait <- 0
 
-
 parameter <- list(
-  c(2.546591, 1.2, 1, 0.2),
-  c(2.678781, 2, 1.9, 3),
-  c(0.009326754, 0.003, 0.002, 0.2),
-  c(1.008583, 1, 2, 1.5),
+  c(2.546591, 2.546591),
+  c(2.678781, 2.678781),
+  c(0.009326754, 0.009326754),
+  c(1.008583, 1.008583),
   matrix(c(
-    0,    1,    0.5,  0,
-    0,    0,    0.002,0.005,
-    rep(0, 8)
-  ), nrow = 4),
+    rep(0, 4)
+  ), nrow = 2),
   0
 )
-
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
-
+brts <- datalist[[2]]$branching_times
 DAISIE_DE_trait_logpNE(
   brts                    = brts,
   trait                   = trait,
   status                  = 1,
   parameter               = parameter,
+  trait_mainland_ancestor = c(1, 0),
   num_observed_states     = 2,
-  num_hidden_states       = 2,
+  num_hidden_states       = 1,
   atol                    = 1e-15,
   rtol                    = 1e-15,
   methode                 = "ode45"
