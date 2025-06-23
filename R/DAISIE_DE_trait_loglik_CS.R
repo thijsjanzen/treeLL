@@ -18,7 +18,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 {
   logcond <- 0 # default value gives no effect
 
-  if (length(parameter) == 7) {
+  if (length(parameter) == 6) {
     logp0 <- DAISIE_DE_trait_logp0(datalist = datalist,
                                    parameter = parameter,
                                    atol = atol,
