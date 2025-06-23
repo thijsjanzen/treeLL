@@ -52,6 +52,7 @@ have gone extinct prior to the present.
 #Load DAISIE package and data
 library(DAISIE)
 data("Galapagos_datalist")
+datalist <- Galapagos_datalist
 
 parameter <- list(
   c(2.546591, 1.2, 1, 0.2),
@@ -93,7 +94,6 @@ DAISIE_DE_trait_logp0(
   parameter           = parameter,
   num_observed_states     = 2,
   num_hidden_states       = 2,
-  trait_mainland_ancestor = c(0, 1),
   atol                = 1e-15,
   rtol                = 1e-15,
   methode             = "ode45"

@@ -98,7 +98,7 @@ parameter <- list(
   0
 )
 
-#' DAISIE_DE_trait_logpEC(
+ DAISIE_DE_trait_logpEC(
   brts                    = brts,
   phy                     = phy,
   traits                  = traits,
