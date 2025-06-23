@@ -44,7 +44,6 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                    trait,
                                    num_observed_states,
                                    num_hidden_states,
-                                   trait_mainland_ancestor = NA,
                                    parameter,
                                    atol  = 1e-15,
                                    rtol  = 1e-15,
@@ -59,7 +58,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                   num_observed_states = num_observed_states,
                   num_hidden_states = num_hidden_states,
                   status = status,
-                  sampling_fraction = 1)
+                  sampling_fraction = sampling_fraction)
 
   # Unpack times from brts
   t0   <- brts[1]
@@ -68,6 +67,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
 
   tp   <- 0
 
+  trait_mainland_ancestor <- parameter[[7]]
   # Time intervals
 
   time2 <- c(tp, t1)
@@ -83,12 +83,12 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
                                                    brts = brts,
+                                                   sampling_fraction = sampling_fraction,
                                                    trait_mainland_ancestor = trait_mainland_ancestor)
     solution2 <- solve_branch(interval_func = interval2,
                               initial_conditions = initial_conditions2,
                               time = time2,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -105,7 +105,6 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -118,12 +117,13 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
                                                    trait = trait,
-                                                   sampling_fraction = 1)
+                                                   sampling_fraction = sampling_fraction
+                                                   )
+
     solution3 <- solve_branch(interval_func = interval3,
                               initial_conditions = initial_conditions3,
                               time = time3,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -140,7 +140,6 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,

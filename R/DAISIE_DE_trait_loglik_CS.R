@@ -18,7 +18,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 {
   logcond <- 0 # default value gives no effect
 
-  if (length(parameter) >= 6) {
+  if (length(parameter) == 7) {
     logp0 <- DAISIE_DE_trait_logp0(datalist = datalist,
                                    parameter = parameter,
                                    atol = atol,
@@ -46,23 +46,18 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   vec_loglikelihood <- rep(NA, length(datalist) - 1) # first entry is not data
 
   for (i in 2:length(datalist)) {
-
     stac <- datalist[[i]]$stac
     brts <- datalist[[i]]$branching_times
     traits <- datalist[[i]]$traits
     trait <- datalist[[i]]$traits
-
-    sampling_fraction <- datalist[[i]]$sampling_fraction
-
-    phy <- datalist[[i]]$phylogeny
-
     trait_mainland_ancestor <- datalist[[i]]$root_state[2]
-
+    sampling_fraction <- datalist[[i]]$sampling_fraction
+    phy <- datalist[[i]]$phylogeny
     if (stac %in% c(1, 4)) {
       loglikelihood <- DAISIE_DE_trait_logpNE(brts = brts,
                                               status = stac,
                                               trait = trait,
-                                              trait_mainland_ancestor = trait_mainland_ancestor,
+                                              trait_mainland_ancestor = FALSE,
                                               num_observed_states = num_observed_states,
                                               num_hidden_states = num_hidden_states,
                                               parameter = parameter,
@@ -77,7 +72,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 status = stac,
                                                 trait = trait,
                                                 sampling_fraction = sampling_fraction,
-                                                trait_mainland_ancestor = trait_mainland_ancestor,
+                                                trait_mainland_ancestor = FALSE,
                                                 num_observed_states = num_observed_states,
                                                 num_hidden_states = num_hidden_states,
                                                 parameter = parameter,
@@ -93,7 +88,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 traits = traits,
                                                 num_observed_states = num_observed_states,
                                                 num_hidden_states = num_hidden_states,
-                                                trait_mainland_ancestor = trait_mainland_ancestor,
+                                                trait_mainland_ancestor = FALSE,
                                                 status = stac,
                                                 sampling_fraction = sampling_fraction,
                                                 atol  = atol,
@@ -109,7 +104,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                 status = stac,
                                                 trait = trait,
                                                 sampling_fraction = sampling_fraction,
-                                                trait_mainland_ancestor = trait_mainland_ancestor,
+                                                trait_mainland_ancestor = FALSE,
                                                 num_observed_states = num_observed_states,
                                                 num_hidden_states = num_hidden_states,
                                                 parameter = parameter,
@@ -125,7 +120,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                  traits = traits,
                                                  num_observed_states = num_observed_states,
                                                  num_hidden_states = num_hidden_states,
-                                                 trait_mainland_ancestor = trait_mainland_ancestor,
+                                                 trait_mainland_ancestor = FALSE,
                                                  status = stac,
                                                  sampling_fraction = sampling_fraction,
                                                  atol  = atol,
@@ -142,7 +137,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               traits = traits,
                                               num_observed_states = num_observed_states,
                                               num_hidden_states = num_hidden_states,
-                                              trait_mainland_ancestor = trait_mainland_ancestor,
+                                              trait_mainland_ancestor = FALSE,
                                               status = stac,
                                               sampling_fraction = sampling_fraction,
                                               atol  = atol,
@@ -153,34 +148,30 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                               num_threads = num_threads)
     }
     else if (stac == 8) {
-      loglikelihood <-
-        DAISIE_DE_trait_logpNE_max_min_age_hidden(brts = brts,
-                                                  trait = trait,
-                                                  status = stac,
-                                                  parameter = parameter,
-                                                  trait_mainland_ancestor = trait_mainland_ancestor,
-                                                  num_observed_states = num_observed_states,
-                                                  num_hidden_states = num_hidden_states,
-                                                  atol  = atol,
-                                                  rtol  = rtol,
-                                                  methode = "ode45",
-                                                  rcpp_methode = rcpp_methode,
-                                                  use_Rcpp = use_Rcpp)
+      loglikelihood <- DAISIE_DE_trait_logpNE_max_min_age_hidden(brts = brts,
+                                                                 trait = trait,
+                                                                 status = stac,
+                                                                 parameter = parameter,
+                                                                 num_observed_states = num_observed_states,
+                                                                 num_hidden_states = num_hidden_states,
+                                                                 atol  = atol,
+                                                                 rtol  = rtol,
+                                                                 methode = "ode45",
+                                                                 rcpp_methode = rcpp_methode,
+                                                                 use_Rcpp = use_Rcpp)
     } else if (stac == 9) {
-      loglikelihood <-
-        DAISIE_DE_trait_logpES_max_min_age_hidden(brts = brts,
-                                                  trait = trait,
-                                                  sampling_fraction = sampling_fraction,
-                                                  status = stac,
-                                                  parameter = parameter,
-                                                  trait_mainland_ancestor = trait_mainland_ancestor,
-                                                  num_observed_states = num_observed_states,
-                                                  num_hidden_states = num_hidden_states,
-                                                  atol  = atol,
-                                                  rtol  = rtol,
-                                                  methode = "ode45",
-                                                  rcpp_methode = rcpp_methode,
-                                                  use_Rcpp = use_Rcpp)
+      loglikelihood <- DAISIE_DE_trait_logpES_max_min_age_hidden(brts = brts,
+                                                                 trait = trait,
+                                                                 sampling_fraction = sampling_fraction,
+                                                                 status = stac,
+                                                                 parameter = parameter,
+                                                                 num_observed_states = num_observed_states,
+                                                                 num_hidden_states = num_hidden_states,
+                                                                 atol  = atol,
+                                                                 rtol  = rtol,
+                                                                 methode = "ode45",
+                                                                 rcpp_methode = rcpp_methode,
+                                                                 use_Rcpp = use_Rcpp)
     } else {
       stop("Unknown stac value: ", stac)
     }

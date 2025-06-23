@@ -11,7 +11,7 @@ DAISIE_DE_trait_logpEC(
   traits,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor = NA,
+  trait_mainland_ancestor = FALSE,
   status,
   sampling_fraction,
   num_threads = 1,
@@ -78,7 +78,7 @@ library(DAISIE)
 library(secsse)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
-i <- 4
+i <- 5
 phy <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
 brts <- datalist[[i]]$branching_times
 traits <- sample(c(0, 0), length(brts), replace = TRUE)
@@ -97,6 +97,8 @@ parameter <- list(
   ), nrow = 4),
   0
 )
+
+parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
 
 DAISIE_DE_trait_logpEC(
   brts                    = brts,

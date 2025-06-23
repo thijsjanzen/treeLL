@@ -33,7 +33,7 @@
 #'   0
 #' )
 #'
-#' DAISIE_DE_trait_logpEC(
+#' #' DAISIE_DE_trait_logpEC(
 #'   brts                    = brts,
 #'   phy                     = phy,
 #'   traits                  = traits,
@@ -80,7 +80,6 @@ DAISIE_DE_trait_logpEC <- function(
     traits,
     num_observed_states,
     num_hidden_states,
-    trait_mainland_ancestor = NA,
     status,
     sampling_fraction,
     num_threads = 1,
@@ -110,7 +109,7 @@ DAISIE_DE_trait_logpEC <- function(
   time2 <- c(t2, t1)
   time3 <- c(t2, tmax)
   time4 <- c(tmax, t0)
-
+  trait_mainland_ancestor <- parameter[[7]]
   # Number of states in the system
   #n <- num_observed_states * num_hidden_states
 
@@ -121,6 +120,7 @@ DAISIE_DE_trait_logpEC <- function(
     stop("Tip too small to calculate tree likelihood")
   }
 
+
   if (use_Rcpp == 0) {
     res <- loglik_R_tree(
       parameter = parameter,
@@ -128,7 +128,6 @@ DAISIE_DE_trait_logpEC <- function(
       traits = traits,
       sampling_fraction = sampling_fraction,
       num_hidden_states = num_hidden_states,
-      trait_mainland_ancestor = trait_mainland_ancestor,
       atol = atol,
       rtol = rtol
     )
@@ -139,7 +138,6 @@ DAISIE_DE_trait_logpEC <- function(
       traits = traits,
       sampling_fraction = sampling_fraction,
       num_hidden_states = num_hidden_states,
-      trait_mainland_ancestor = trait_mainland_ancestor,
       atol = atol,
       rtol = rtol,
       num_threads = num_threads
@@ -162,7 +160,6 @@ DAISIE_DE_trait_logpEC <- function(
                               initial_conditions = initial_conditions2,
                               time = time2,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -180,7 +177,6 @@ DAISIE_DE_trait_logpEC <- function(
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -199,7 +195,6 @@ DAISIE_DE_trait_logpEC <- function(
                               initial_conditions = initial_conditions3,
                               time = time3,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -217,7 +212,6 @@ DAISIE_DE_trait_logpEC <- function(
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,

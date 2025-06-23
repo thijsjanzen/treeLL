@@ -58,6 +58,8 @@ entry in the list corresponds to the sampling proportion for each tree.}
 more accurate but slower (default = TRUE)}
 
 \item{num_threads}{number of threads to be used. Default is one thread.}
+
+\item{rhs_func}{ll function}
 }
 \description{
 Likelihood calculation including hidden traits

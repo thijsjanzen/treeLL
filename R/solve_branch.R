@@ -10,7 +10,6 @@ solve_branch <- function(interval_func,
                          initial_conditions,
                          time,
                          parameter,
-                         trait_mainland_ancestor,
                          methode = "ode45",
                          rcpp_methode = "odeint::bulirsch_stoer",
                          atol,
@@ -18,7 +17,7 @@ solve_branch <- function(interval_func,
                          use_Rcpp = 0) {
   solution <- c()
   if (use_Rcpp <= 1) {
-    parameter[[7]] <- trait_mainland_ancestor
+
     solution <- deSolve::ode(
         y = initial_conditions,
         times = time,
@@ -35,7 +34,6 @@ solve_branch <- function(interval_func,
                                  initial_conditions,
                                  time,
                                  parameter,
-                                 trait_mainland_ancestor,
                                  rcpp_methode,
                                  atol,
                                  rtol)

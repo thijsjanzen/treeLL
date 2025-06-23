@@ -3,7 +3,6 @@ solve_branch_cpp <- function(chosen_func,
                              initial_conditions,
                              time,
                              parameter,
-                             trait_mainland_ancestor,
                              methode = "odeint::bulirsch_stoer",
                              atol = 1e-15,
                              rtol = 1e-15) {
@@ -14,6 +13,8 @@ solve_branch_cpp <- function(chosen_func,
   lambda_a <- parameter[[4]]
   q_matrix       <- parameter[[5]]
   p_value       <- parameter[[6]]
+  tma  <- parameter[[7]]
+
 
   solution <- cpp_solve(lambda_c,
                         lambda_a,
@@ -21,7 +22,7 @@ solve_branch_cpp <- function(chosen_func,
                         gammas,
                         q_matrix,
                         p_value,
-                        trait_mainland_ancestor,
+                        tma,
                         chosen_func,
                         methode,
                         initial_conditions,

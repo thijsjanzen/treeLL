@@ -10,7 +10,6 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
   status,
   sampling_fraction = 1,
   parameter,
-  trait_mainland_ancestor = NA,
   num_observed_states,
   num_hidden_states,
   atol = 1e-15,
@@ -39,8 +38,6 @@ entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
-
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{num_observed_states}{number of observed states}
 

@@ -20,10 +20,10 @@ using rvector = RcppParallel::RVector<T>;
 template <typename T>
 using rmatrix = RcppParallel::RMatrix<T>;
 
-inline std::vector<double> make_dist_g(const Rcpp::NumericVector& tma,
-                                       const Rcpp::NumericVector& gamma,
-                                       const size_t num_unique_states) {
-  std::vector<double> dist_gamma(gamma.begin(), gamma.end());
+inline rvector<double> make_dist_g(const Rcpp::NumericVector& tma,
+                                   const Rcpp::NumericVector& gamma,
+                                   const size_t num_unique_states) {
+  rvector<double> dist_gamma(gamma);
   if (Rcpp::NumericVector::is_na(tma[0])) {
     // tma not known, please note that entire vector is NA in this case
     for (auto& i : dist_gamma) i *= 1.0 / num_unique_states;
@@ -38,11 +38,11 @@ inline std::vector<double> make_dist_g(const Rcpp::NumericVector& tma,
   return dist_gamma;
 }
 
-inline double calc_sum_dist_g_(const std::vector<double>& dist_gamma) {
+inline double calc_sum_dist_g_(const rvector<double>& dist_gamma) {
   return std::accumulate(dist_gamma.begin(), dist_gamma.end(), 0.0);
 }
 
-inline double calc_sum(const std::vector<double>& dist_g_,
+inline double calc_sum(const rvector<double>& dist_g_,
                        const vector_view_t<const double>& DM3) {
   double s = 0.0;
   for (size_t i = 0; i < dist_g_.size(); ++i) {
@@ -63,7 +63,7 @@ struct interval {
 
   const std::vector<double> t_vec;
 
-  const std::vector<double> dist_g_;
+  const rvector<double> dist_g_;
 
   const double sum_dist_g_;
 

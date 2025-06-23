@@ -7,8 +7,9 @@ get_initial_conditions2 <- function(status,
                                     num_observed_states,
                                     num_hidden_states,
                                     brts,
-                                    sampling_fraction = c(1),
+                                    sampling_fraction,
                                     trait_mainland_ancestor) {
+
   n <- num_observed_states * num_hidden_states
   num_unique_states <- n
 
@@ -35,13 +36,13 @@ get_initial_conditions2 <- function(status,
     return(matrix(initial_conditions2, nrow = 1))
   } else if (status == 2 && length(brts) == 2) {
 
-    if (is.na(trait)) {
-      s <- c()
-      for (i in seq_along(sampling_fraction)) {
-        s <- c(s, rep(sampling_fraction[i], num_hidden_states))
-      }
-      DE[c(1, n)] <- s
-      E[c(1, n)]  <- 1 - s
+    if (all(is.na(trait))) {
+        s <- c()
+        for (i in seq_along(sampling_fraction)) {
+          s <- c(s, rep(sampling_fraction[i], num_hidden_states))
+        }
+        DE[c(1, n)] <- s
+        E[c(1, n)]  <- 1 - s
     } else {
       DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
       E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
@@ -55,7 +56,7 @@ get_initial_conditions2 <- function(status,
           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   }
   else if (status == 4) {
-    if ( is.na(trait) ) {
+    if (all(is.na(trait))) {
       DM2[c(1, n)] <- 1
     }
     else {
@@ -64,7 +65,7 @@ get_initial_conditions2 <- function(status,
 
   }
   else if(status == 8) {
-    if (is.na(trait)) {
+    if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -76,7 +77,7 @@ get_initial_conditions2 <- function(status,
     }
   }
   else if(status == 9)  {
-    if (is.na(trait)) {
+    if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -124,7 +125,7 @@ get_initial_conditions3 <- function(status,
   sampling_fraction <- sampling_fraction[1 + trait]
 
   if (status == 1) {
-    if (is.na(trait)) {
+    if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -146,7 +147,7 @@ get_initial_conditions3 <- function(status,
                              res[length(res)])                                      ## DA3
   }
   else if (status == 5) {
-    if (is.na(trait)) {
+    if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -184,11 +185,11 @@ get_initial_conditions4 <- function(status,
                                     num_hidden_states) {
   n <- num_observed_states * num_hidden_states
   num_unique_states <- n
-
+  gamma <- parameter[[3]]
   if (status == 2 || status == 3 || status == 4) {
     if (all(is.na(trait_mainland_ancestor))) {
 
-      dist_gamma <- dist_gamma_tma(parameter[[3]],
+      dist_gamma <- dist_gamma_tma(gamma,
                                    trait_mainland_ancestor,
                                    n)
       initial_conditions4 <- c(rep( sum(dist_gamma * (solution[2,][(n + 1):(n + n)])), n), ### DM1: select DM2 in solution2
@@ -197,7 +198,7 @@ get_initial_conditions4 <- function(status,
     }else{
       #if the trait state of the species at the stem is known
 
-      dist_gamma <- dist_gamma_tma(parameter[[3]],
+      dist_gamma <- dist_gamma_tma(gamma,
                                    trait_mainland_ancestor,
                                    n)
 

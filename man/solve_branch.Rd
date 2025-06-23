@@ -9,7 +9,6 @@ solve_branch(
   initial_conditions,
   time,
   parameter,
-  trait_mainland_ancestor,
   methode = "ode45",
   rcpp_methode = "odeint::bulirsch_stoer",
   atol,
@@ -26,8 +25,6 @@ solve_branch(
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
-
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{methode}{used integration method, default is ode45}
 

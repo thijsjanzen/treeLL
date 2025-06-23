@@ -71,9 +71,9 @@ DAISIE_DE_trait_logp0 <- function(datalist,
   tp <- 0
   #########interval4 [t_p, t_0]
 
-  initial_conditions40 <- c(rep(0, n),  ### DM1
-                            rep(0, n),  ### E
-                            1)          ### DA1
+  initial_conditions40 <- c(rep(0, n), ### DM1
+                           rep(0, n), ### E
+                           1)                         ### DA1
 
   # Time sequence for interval [tp, t0]
   time4 <- c(tp, t0)
@@ -83,7 +83,6 @@ DAISIE_DE_trait_logp0 <- function(datalist,
                             initial_conditions = initial_conditions40,
                             time = time4,
                             parameter = parameter,
-                            trait_mainland_ancestor = NA,
                             methode = methode,
                             rcpp_methode = rcpp_methode,
                             atol = atol,

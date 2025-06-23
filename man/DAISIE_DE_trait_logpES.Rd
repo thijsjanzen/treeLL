@@ -8,13 +8,13 @@ DAISIE_DE_trait_logpES(
   brts,
   status,
   trait,
-  sampling_fraction,
+  sampling_fraction = 1,
+  trait_mainland_ancestor = FALSE,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor = NA,
   parameter,
-  atol = 1e-15,
-  rtol = 1e-15,
+  atol = 1e-10,
+  rtol = 1e-10,
   methode = "ode45",
   rcpp_methode = "odeint::bulirsch_stoer",
   use_Rcpp = 0
@@ -37,11 +37,11 @@ trait state. It must have as many elements as there are trait states. When
 using a \code{multiPhylo} object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
 
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
-
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
@@ -74,8 +74,7 @@ datalist <- Galapagos_datalist
 i <- 7
 brts <- datalist[[i]]$branching_times
 trait <- 0
-sampling_fraction <- c(1,1)
-
+sampling_fraction <- 1
 
 parameter <- list(
   c(2.546591, 2.546591),
@@ -90,9 +89,8 @@ parameter <- list(
 
 DAISIE_DE_trait_logpES(
   brts                    = brts,
-  trait                   = 0,
+  trait                  = trait,
   status                  = 2,
-  sampling_fraction       = sampling_fraction,
   parameter               = parameter,
   trait_mainland_ancestor = c(1, 0),
   num_observed_states     = 2,

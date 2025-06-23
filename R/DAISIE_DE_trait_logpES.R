@@ -50,10 +50,9 @@ DAISIE_DE_trait_logpES <- function(brts,
                                    sampling_fraction,
                                    num_observed_states,
                                    num_hidden_states,
-                                   trait_mainland_ancestor = NA,
                                    parameter,
-                                   atol  = 1e-15,
-                                   rtol  = 1e-15,
+                                   atol  = 1e-10,
+                                   rtol  = 1e-10,
                                    methode                 = "ode45",
                                    rcpp_methode = "odeint::bulirsch_stoer",
                                    use_Rcpp = 0) {
@@ -64,7 +63,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                   num_observed_states,
                   num_hidden_states,
                   status,
-                  sampling_fraction = 0)
+                  sampling_fraction)
 
   # Unpack times from brts
   t0   <- brts[1]
@@ -77,7 +76,7 @@ DAISIE_DE_trait_logpES <- function(brts,
   time2 <- c(tp, t1)
   time3 <- c(tp, tmax)
   time4 <- c(tmax, t0)
-
+  trait_mainland_ancestor <- parameter[[7]]
   # Number of states in the system
   #n <- num_observed_states * num_hidden_states
 
@@ -98,7 +97,6 @@ DAISIE_DE_trait_logpES <- function(brts,
                               initial_conditions = initial_conditions2,
                               time = time2,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -116,7 +114,6 @@ DAISIE_DE_trait_logpES <- function(brts,
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -134,7 +131,6 @@ DAISIE_DE_trait_logpES <- function(brts,
                               initial_conditions = initial_conditions3,
                               time = time3,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -151,7 +147,6 @@ DAISIE_DE_trait_logpES <- function(brts,
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
-                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
