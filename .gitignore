@@ -8,3 +8,8 @@
 *.so
 *.o
 *.so
+*.o
+*.o
+src/RcppExports.o
+*.o
+*.so

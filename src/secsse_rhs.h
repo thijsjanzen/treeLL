@@ -10,8 +10,7 @@
 #include <RcppParallel.h>
 #include <type_traits>
 #include <vector>
-
-
+#include "sq_matrix.h"
 
 namespace loglik {
 
@@ -21,72 +20,93 @@ using rvector = RcppParallel::RVector<T>;
 template <typename T>
 using rmatrix = RcppParallel::RMatrix<T>;
 
+inline rvector<double> make_dist_g(const Rcpp::NumericVector& tma,
+                                   const Rcpp::NumericVector& gamma,
+                                   const size_t num_unique_states) {
+  rvector<double> dist_gamma(gamma);
+  if (Rcpp::NumericVector::is_na(tma[0])) {
+    // tma not known, please note that entire vector is NA in this case
+    for (auto& i : dist_gamma) i *= 1.0 / num_unique_states;
+  } else {
+    // no NAs, we are good:
+    auto num_hidden_states = gamma.size() / tma.size();
+    for (size_t i = 0; i < dist_gamma.size(); ++i) {
+      auto s = tma[i / num_hidden_states];
+      dist_gamma[i] *= s * 1.0 / num_hidden_states;
+    }
+  }
+  return dist_gamma;
+}
 
-template <typename T>
-class vector_view_t {
-public:
-  vector_view_t(T* data, size_t n) : first_(data), n_(n) {};
+inline double calc_sum_dist_g_(const rvector<double>& dist_gamma) {
+  return std::accumulate(dist_gamma.begin(), dist_gamma.end(), 0.0);
+}
 
-  size_t size() const noexcept { return n_; }
-  T* begin() noexcept { return first_; }
-  T* end() noexcept { return first_ + n_; }
-  T& operator[](size_t i) { return *(first_ + i); }
-  void advance(size_t s) noexcept { first_ += s; }
+inline double calc_sum(const rvector<double>& dist_g_,
+                       const vector_view_t<const double>& DM3) {
+  double s = 0.0;
+  for (size_t i = 0; i < dist_g_.size(); ++i) {
+    s += dist_g_[i] * DM3[i];
+  }
+  return s;
+}
 
-private:
-  T* first_ = nullptr;
-  size_t n_ = 0;
-};
-
-class ode_tree {
-
-  enum states {DE_0, DE_1, DM3_0, DM3_1, E_0, E_1, DA_3, num_states};
-
+struct interval {
   const rvector<const double> lc_; // cladogenesis rates
   const rvector<const double> m_; //  extinction rates
-  const rvector<const double> g_; //  colonization rates
+
   const rvector<const double> la_; // anagenesis rates
-  const rvector<const double> q_; // transition rates
+  const sq_matrix q_; // transition rates
   const double p_;
 
-  // mu_0, mu_1
-  // lambda_c_0, lambda_c_1
-  // lambda_a_0, lambda_a_1
-  // gamma_0, gamma_1
-  // p
-  // q_01, q_10
+  const size_t n_; // number of unique states
 
-public:
+  const std::vector<double> t_vec;
+
+  const rvector<double> dist_g_;
+
+  const double sum_dist_g_;
 
   // constructor
-  ode_tree(const Rcpp::NumericVector& lc,
-          const Rcpp::NumericVector& la,
-          const Rcpp::NumericVector& m,
-          const Rcpp::NumericVector& g,
-          const Rcpp::NumericVector& q,
-          const double p)
-    : lc_(lc), m_(m), g_(g), la_(la), q_(q), p_(p) {
+  interval(const Rcpp::NumericVector& lc,
+            const Rcpp::NumericVector& la,
+            const Rcpp::NumericVector& m,
+            const Rcpp::NumericVector& g,
+            const Rcpp::NumericMatrix& q,
+            const double p,
+            const Rcpp::NumericVector& tma,
+            const size_t n)
+    : lc_(lc),
+      m_(m),
+      la_(la),
+      q_(q),
+      p_(p),
+      n_(n),
+      t_vec(q_.row_sums()),
+      dist_g_(make_dist_g(tma, g, n)),
+      sum_dist_g_(calc_sum_dist_g_(dist_g_)) {
   }
+};
 
-  size_t size() const noexcept { return num_states; }
+
+struct interval1 : public interval {
+
+  using interval::interval;
+
+  size_t size() const noexcept {
+    // (DE + DM3 + E) * n + DA3
+    return 3 * n_ + 1;
+  }
 
   void mergebranch(const std::vector<double>& N,
                    const std::vector<double>& M,
                    std::vector<double>& out) const {
+    out = N;
 
-    // substitute the code below with your own node-merging code
-    size_t s = num_states;
-    out.resize(s);
-
-    out[DE_0]  = lc_[0] * N[DE_0] * M[DE_0];
-    out[DE_1]  = lc_[1] * N[DE_1] * M[DE_1];
-
-    out[DM3_0] = N[DM3_0];
-    out[DM3_1] = N[DM3_1];
-
-    out[E_0]   = N[E_0];
-    out[E_1]   = N[E_1];
-    out[DA_3]  = N[DA_3];
+    for (size_t i = 0; i < n_; ++i) {
+      // out[DE_0]  = lc_[0] * N[DE_0] * M[DE_0]
+      out[i] = lc_[i] * N[i] * M[i];
+    }
   }
 
   // this is the dx/dt calculation // true rhs that gets integrated
@@ -95,35 +115,206 @@ public:
                 std::vector<double>& dxdt,
                 const double /* t */) const
   {
-    // substitute with your own code below:
+    auto DA3 = x.back();
 
-    // vector x is:
-    // [
-    // DE_0, DE_1
-    // DM3_0, DM3_1
-    // E_0, E_1
+    auto DE  = vector_view_t<const double>(x.data() , n_);
+    auto DM3 = vector_view_t<const double>(x.data() + 1 * n_, n_);
+    auto E   = vector_view_t<const double>(x.data() + 2 * n_, n_);
+
+    auto q_mult_E   = q_ * E;
+    auto q_mult_DE  = q_ * DE;
+    auto q_mult_DM3 = q_ * DM3;
+
+    double s_g_DM3 = calc_sum(dist_g_, DM3);
+
+    for (size_t i = 0; i < n_; ++i) {
+      auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
+
+      // DE
+      dxdt[i] = -(lambda_c_mu_t_vec_sum) * DE[i] +
+        2 * lc_[i] * DE[i] * E[i] +
+        q_mult_DE[i];
+      // DM3
+      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+        (1 - p_) * q_mult_DM3[i] +
+        s_g_DM3;
+      // E
+      dxdt[i + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
+        lc_[i] * E[i] * E[i] +
+        q_mult_E[i];
+    }
+
     // DA3
-    // ]
-
-    dxdt[DE_0]  = -(lc_[0] + m_[0] + q_[0]) * x[DE_0] + 2 * lc_[0] * x[DE_0] * x[E_0] + q_[0] * x[DE_1];
-
-    dxdt[DE_1]  = -(lc_[1] + m_[1] + q_[1]) * x[DE_1] + 2 * lc_[1] * x[DE_1] * x[E_1] + q_[1] * x[DE_0];
-
-    dxdt[DM3_0] = -(la_[0] + lc_[0] + m_[0] + g_[1] + q_[0]) * x[DM3_0]
-                  + (la_[0] * x[E_0]  + lc_[0] * x[E_0] * x[E_0] + m_[0] + p_ * q_[0] * x[E_1]) * x[DA_3]
-                  + (1 - p_) * q_[0] * x[DM3_1] + g_[1] * x[DM3_1];
-
-    dxdt[DM3_1] = -(lc_[1] + la_[1] + m_[1] + g_[0] + q_[1]) * x[DM3_1]
-                  + (la_[1] * x[E_1]  + lc_[1] * x[E_1] * x[E_1] + m_[1] + p_ * q_[1] * x[E_0]) * x[DA_3]
-                  + (1 - p_) * q_[1] * x[DM3_0] + g_[0] * x[DM3_0];
-
-
-    dxdt[E_0]   = m_[0] - (lc_[0] + m_[0] + q_[0]) * x[E_0] +  lc_[0] * x[E_0] * x[E_0] + q_[0] * x[E_1];
-
-
-    dxdt[E_1]   = m_[1] - (lc_[1] + m_[1] + q_[1]) * x[E_1] +  lc_[1] * x[E_1] * x[E_1] + q_[1] * x[E_0];
-
-    dxdt[DA_3]  = -(g_[0] + g_[1]) * x[DA_3] + g_[0] * x[DM3_0] + g_[1] * x[DM3_1];
+    dxdt.back() = -sum_dist_g_ * DA3 + s_g_DM3;
   }
 };
+
+struct interval2 : public interval {
+  using interval::interval;
+
+  size_t size() const noexcept {
+    // (DE + DM3 + E) * n + DA3
+    return 4 * n_ + 1;
+  }
+
+  // this is the dx/dt calculation // true rhs that gets integrated
+  // along the branches
+  void operator()(const std::vector<double>& x,
+                std::vector<double>& dxdt,
+                const double /* t */) const
+  {
+    auto DA3 = x.back();
+
+    auto DE  = vector_view_t<const double>(x.data() + 0 * n_, n_);
+    auto DM2 = vector_view_t<const double>(x.data() + 1 * n_, n_);
+    auto DM3 = vector_view_t<const double>(x.data() + 2 * n_, n_);
+    auto E   = vector_view_t<const double>(x.data() + 3 * n_, n_);
+
+    auto q_mult_E   = q_ * E;
+    auto q_mult_DE  = q_ * DE;
+    auto q_mult_DM2 = q_ * DM2;
+    auto q_mult_DM3 = q_ * DM3;
+
+    double s_g_DM3 = calc_sum(dist_g_, DM3);
+
+    for (size_t i = 0; i < n_; ++i) {
+      auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
+
+      // DE
+      dxdt[i] = -(lambda_c_mu_t_vec_sum) * DE[i] +
+        2 * lc_[i] * DE[i] * E[i] +
+        q_mult_DE[i];
+
+      // DM2
+      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
+        (la_[i] * DE[i] + 2 * lc_[i] * DE[i] * E[i] + p_ * q_mult_DE[i]) * DA3 +
+        (1 - p_) * q_mult_DM2[i];
+
+      // DM3
+      dxdt[i + n_ + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+        (1 - p_) * q_mult_DM3[i] +
+        s_g_DM3;
+      // E
+      dxdt[i + n_ + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
+        lc_[i] * E[i] * E[i] +
+        q_mult_E[i];
+    }
+
+    // DA3
+    dxdt.back() = -sum_dist_g_ * DA3 + s_g_DM3;
+  }
+};
+
+struct interval3 : public interval {
+  using interval::interval;
+
+  size_t size() const noexcept {
+    // (DE + DM3 + E) * n + DA3
+    return 5 * n_ + 2;
+  }
+  void operator()(const std::vector<double>& x,
+                std::vector<double>& dxdt,
+                const double /* t */) const
+  {
+
+    auto DA3 = x.back();
+    auto DA2 = x[x.size() - 2];
+
+    auto DE  = vector_view_t<const double>(x.data() , n_);
+    auto DM1 = vector_view_t<const double>(x.data() + 1 * n_, n_);
+    auto DM2 = vector_view_t<const double>(x.data() + 2 * n_, n_);
+    auto DM3 = vector_view_t<const double>(x.data() + 3 * n_, n_);
+    auto E   = vector_view_t<const double>(x.data() + 4 * n_, n_);
+
+    auto q_mult_E   = q_ * E;
+    auto q_mult_DE  = q_ * DE;
+    auto q_mult_DM1 = q_ * DM1;
+    auto q_mult_DM2 = q_ * DM2;
+    auto q_mult_DM3 = q_ * DM3;
+
+    double s_g_DM3 = calc_sum(dist_g_, DM3);
+    double s_g_DM2 = calc_sum(dist_g_, DM2);
+
+    for (size_t i = 0; i < n_; ++i) {
+      auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
+
+      // DE
+      dxdt[i] = -(lambda_c_mu_t_vec_sum) * DE[i] +
+        2 * lc_[i] * DE[i] * E[i] +
+        q_mult_DE[i];
+
+      // DM1
+      dxdt[i + 1 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
+        (1 - p_) * q_mult_DM1[i] +
+        s_g_DM2;
+      // DM2
+      dxdt[i + 2 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
+        (la_[i] * DE[i] + 2 * lc_[i] * DE[i]  + p_ * q_mult_DE[i]) * DA3 +
+        (1 - p_) * q_mult_DM2[i] +
+        s_g_DM2;
+
+      // DM3
+      dxdt[i + 3 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+        (1 - p_) * q_mult_DM3[i] +
+        s_g_DM3;
+
+      // E
+      dxdt[i + 4 * n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
+        lc_[i] * E[i] * E[i] +
+        q_mult_E[i];
+    }
+
+    // DA3
+    dxdt.back() = -sum_dist_g_ * DA3 + s_g_DM3;
+
+    // DA2
+    dxdt[dxdt.size() - 2] = -sum_dist_g_ * DA2 + s_g_DM2;
+  }
+};
+
+struct interval4 : public interval {
+  using interval::interval;
+
+  size_t size() const noexcept {
+    return 2 * n_ + 1;
+  }
+
+  void operator()(const std::vector<double>& x,
+                std::vector<double>& dxdt,
+                const double /* t */) const {
+    auto DA1 = x.back();
+
+    auto DM1  = vector_view_t<const double>(x.data() , n_);
+    auto E   = vector_view_t<const double>(x.data() + n_, n_);
+
+    auto q_mult_E   = q_ * E;
+    auto q_mult_DM1  = q_ * DM1;
+
+    double s_g_DM1 = calc_sum(dist_g_, DM1);
+
+    for (size_t i = 0; i < n_; ++i) {
+      auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
+
+      // DM1
+      dxdt[i] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
+        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA1 +
+        (1 - p_) * q_mult_DM1[i] +
+        s_g_DM1;
+
+      // E
+      dxdt[i + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
+        lc_[i] * E[i] * E[i] +
+        q_mult_E[i];
+    }
+
+    // DA3
+    dxdt.back() = -sum_dist_g_ * DA1 + s_g_DM1;
+  }
+};
+
 } // namespace secsse

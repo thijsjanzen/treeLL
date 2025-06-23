@@ -12,6 +12,12 @@
 #'  `multiPhylo` set of multiple phylognies, traits should be a list where
 #'  each entry in the list corresponds to the matching phylogeny on that
 #'  position.
+#' @param trait vector with trait states for each tip in the phylogeny. The
+#'  order of the states must be the same as the tree tips. For help, see
+#'  `vignette("starting_secsse", package = "secsse")`. When providing a
+#'  `multiPhylo` set of multiple phylognies, traits should be a list where
+#'  each entry in the list corresponds to the matching phylogeny on that
+#'  position.
 #' @param num_concealed_states number of concealed states, generally equivalent
 #'  to the number of examined states in the dataset.
 #' @param idparslist overview of parameters and their values.
@@ -169,7 +175,24 @@
 #' @param methode used integration method, default is ode45
 #' @param brts branching times, being: island age, colonization time, branching times
 #' @param missnumspec missing number of species
-#' @param num_hidden_traits number of hidden traits
+#' @param num_hidden_states number of hidden states
+#' @param num_observed_states number of observed states
+#' @param datalist a list containing in the first entry: island age and the number of species not present,
+#' then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
+#' each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+#' 3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny
+#' @param mainland if TRUE, adjust initial conditions for mainland dynamics
+#' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the mainland ancestor
+#' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
+#' value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches
+#' @param rcpp_methode Used integration methode when using Rcpp to integrate,
+#' options available are:
+#'  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+#'  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+#'  `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.
+#' @param status indicator for type of inference required
+#' @param trparsopt transformed parameters to optimize
+#' @param trparsfix transformed paramaters that remain fixed
 #' @return Nothing
 #' @keywords internal
 #' @export
@@ -241,11 +264,21 @@ default_params_doc <- function(phy,
                                display_warning,
                                take_into_account_root_edge,
                                use_normalization,
-                               num_hidden_traits,
                                missnumspec,
                                brts,
                                use_R_version,
                                methode,
-                               rhs_func) {
+                               rhs_func,
+                               use_Rcpp,
+                               datalist,
+                               num_observed_states,
+                               num_hidden_states,
+                               status,
+                               trait,
+                               mainland,
+                               trait_mainland_ancestor,
+                               rcpp_methode,
+                               trparsopt,
+                               trparsfix) {
   # Nothing
 }
