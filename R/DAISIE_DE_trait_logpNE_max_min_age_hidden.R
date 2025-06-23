@@ -59,15 +59,12 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <- function(brts,
   #########interval2 [t_p, tmin]
 
   m = length(parameter[[1]])
-  trait_mainland_ancestor <- parameter[[7]]
   initial_conditions2 <- get_initial_conditions2(status = status,
                                                  num_observed_states = num_observed_states,
                                                  num_hidden_states = num_hidden_states,
                                                  trait = trait,
                                                  brts = brts,
                                                  sampling_fraction = sampling_fraction)
-
-
 
   # Time sequence for interval [tp, tmin]
   time2 <- c(tp, tmin)

@@ -10,6 +10,7 @@ DAISIE_DE_trait_logpNE(
   trait,
   num_observed_states,
   num_hidden_states,
+  trait_mainland_ancestor = NA,
   parameter,
   atol = 1e-15,
   rtol = 1e-15,
@@ -33,6 +34,8 @@ position.}
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}

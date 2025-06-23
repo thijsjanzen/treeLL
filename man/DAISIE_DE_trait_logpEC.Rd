@@ -11,6 +11,7 @@ DAISIE_DE_trait_logpEC(
   traits,
   num_observed_states,
   num_hidden_states,
+  trait_mainland_ancestor = NA,
   status,
   sampling_fraction,
   num_threads = 1,
@@ -41,6 +42,8 @@ position.}
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{status}{indicator for type of inference required}
 

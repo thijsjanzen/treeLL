@@ -12,8 +12,9 @@ DAISIE_DE_trait_logpES(
   num_observed_states,
   num_hidden_states,
   parameter,
-  atol = 1e-10,
-  rtol = 1e-10,
+  trait_mainland_ancestor = NA,
+  atol = 1e-15,
+  rtol = 1e-15,
   methode = "ode45",
   rcpp_methode = "odeint::bulirsch_stoer",
   use_Rcpp = 0
@@ -42,6 +43,8 @@ entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 

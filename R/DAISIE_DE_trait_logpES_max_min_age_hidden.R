@@ -56,7 +56,6 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   #########interval2 [t_p, tmin]
 
   m = length(parameter[[1]])
-  trait_mainland_ancestor <- parameter[[7]]
 
   ## SOLVED: can't we call 'get_initial_conditions' here? //NO, because brts > 2
   initial_conditions2 <- get_initial_conditions2(status = status,
