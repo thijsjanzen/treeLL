@@ -33,7 +33,7 @@
 #'   0, c(1,0)
 #' )
 #'
-#' #' DAISIE_DE_trait_logpEC(
+#' DAISIE_DE_trait_logpEC(
 #'   brts                    = brts,
 #'   phy                     = phy,
 #'   traits                  = rep(FALSE, length(brts)),

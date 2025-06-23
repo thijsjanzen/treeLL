@@ -10,7 +10,7 @@ DAISIE_DE_trait_logpNE(
   trait,
   num_observed_states,
   num_hidden_states,
-  trait_mainland_ancestor,
+  trait_mainland_ancestor = NA,
   parameter,
   atol = 1e-15,
   rtol = 1e-15,

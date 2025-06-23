@@ -9,7 +9,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden(
   trait,
   status,
   parameter,
-  trait_mainland_ancestor,
+  trait_mainland_ancestor = NA,
   num_observed_states,
   num_hidden_states,
   atol = 1e-15,

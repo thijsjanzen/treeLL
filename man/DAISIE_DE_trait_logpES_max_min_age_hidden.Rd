@@ -10,7 +10,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
   status,
   sampling_fraction = 1,
   parameter,
-  trait_mainland_ancestor,
+  trait_mainland_ancestor = NA,
   num_observed_states,
   num_hidden_states,
   atol = 1e-15,
