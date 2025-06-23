@@ -66,16 +66,35 @@ parameter <- list(
   0
 )
 
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
-
 # Compute log‐likelihood under the DE‐trait model
 DAISIE_DE_trait_logp0(
   datalist            = datalist,
   parameter           = parameter,
   num_observed_states     = 2,
   num_hidden_states       = 2,
-  atol                = 1e-10,
-  rtol                = 1e-10,
+  atol                = 1e-5,
+  rtol                = 1e-5,
+  methode             = "ode45"
+)
+
+parameter <- list(
+  c(2.546591, 2.546591, 2.546591, 2.546591),
+  c(2.678781, 2.678781, 2.678781, 2.678781),
+  c(0.009326754, 0.009326754, 0.009326754, 0.009326754),
+  c(1.008583, 1.008583, 1.008583, 1.008583),
+  matrix(c(
+    rep(0, 16)
+  ), nrow = 4),
+  0, c(0,1)
+)
+# Compute log‐likelihood under the DE‐trait model
+DAISIE_DE_trait_logp0(
+  datalist            = datalist,
+  parameter           = parameter,
+  num_observed_states     = 2,
+  num_hidden_states       = 2,
+  atol                = 1e-15,
+  rtol                = 1e-15,
   methode             = "ode45"
 )
 }

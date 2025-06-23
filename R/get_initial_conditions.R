@@ -188,7 +188,7 @@ get_initial_conditions4 <- function(status,
   if (status == 2 || status == 3 || status == 4) {
     if (all(is.na(trait_mainland_ancestor))) {
 
-      dist_gamma <- dist_gamma_tma(parameter,
+      dist_gamma <- dist_gamma_tma(parameter[[3]],
                                    trait_mainland_ancestor,
                                    n)
       initial_conditions4 <- c(rep( sum(dist_gamma * (solution[2,][(n + 1):(n + n)])), n), ### DM1: select DM2 in solution2
@@ -197,7 +197,7 @@ get_initial_conditions4 <- function(status,
     }else{
       #if the trait state of the species at the stem is known
 
-      dist_gamma <- dist_gamma_tma(parameter,
+      dist_gamma <- dist_gamma_tma(parameter[[3]],
                                    trait_mainland_ancestor,
                                    n)
 

@@ -21,7 +21,6 @@ test_that("R vs Rcpp", {
   parameters[[4]] <- gammas
   parameters[[5]] <- NA # placeholder
   parameters[[6]] <- p
-  parameters[[7]] <- tma
 
   # we have to re-write the q rates as a matrix:
   base_matrix <- matrix(0, nrow = 2, ncol = 2)
@@ -46,6 +45,7 @@ test_that("R vs Rcpp", {
     res_hidden <- treeLL::loglik_R_tree(parameter = parameters,
                                         phy = phy,
                                         traits = traits,
+                                        trait_mainland_ancestor = tma,
                                         num_hidden_states = 2,
                                         sampling_fraction = c(1, 1))
 
@@ -53,7 +53,8 @@ test_that("R vs Rcpp", {
                                        phy = phy,
                                        traits = traits,
                                        num_hidden_states = 2,
-                                       sampling_fraction = c(1, 1))
+                                       sampling_fraction = c(1, 1),
+                                       trait_mainland_ancestor = tma,)
 
     testthat::expect_equal(res_hidden, res_cpp)
   }

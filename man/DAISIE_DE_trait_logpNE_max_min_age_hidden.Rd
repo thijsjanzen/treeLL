@@ -9,6 +9,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden(
   trait,
   status,
   parameter,
+  trait_mainland_ancestor,
   num_observed_states,
   num_hidden_states,
   atol = 1e-15,
@@ -32,6 +33,8 @@ position.}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{num_observed_states}{number of observed states}
 

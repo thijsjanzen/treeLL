@@ -20,6 +20,7 @@ test_that("logpEC", {
       status                  = 2,
       sampling_fraction       = sampling_fraction,
       parameter               = parameter,
+      trait_mainland_ancestor = NA,
       num_observed_states     = 1,
       num_hidden_states       = 1,
       atol                    = 1e-10,

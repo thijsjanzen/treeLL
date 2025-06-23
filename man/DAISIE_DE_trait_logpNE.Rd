@@ -8,9 +8,9 @@ DAISIE_DE_trait_logpNE(
   brts,
   status,
   trait,
-  trait_mainland_ancestor = FALSE,
   num_observed_states,
   num_hidden_states,
+  trait_mainland_ancestor,
   parameter,
   atol = 1e-15,
   rtol = 1e-15,
@@ -31,11 +31,11 @@ order of the states must be the same as the tree tips. For help, see
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
-
 \item{num_observed_states}{number of observed states}
 
 \item{num_hidden_states}{number of hidden states}
+
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
@@ -64,7 +64,7 @@ library(secsse)
 data("Galapagos_datalist")
 datalist <- Galapagos_datalist
 
-i <- 2
+i <- 3
 brts <- datalist[[i]]$branching_times
 trait <- 0
 
@@ -79,11 +79,20 @@ parameter <- list(
     0,    0,    0.002,0.005,
     rep(0, 8)
   ), nrow = 4),
-  0
+  0, c(1, 0)
 )
 
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
-
+parameter <- list(
+  c(2.546591, 2.546591),
+  c(2.678781, 2.678781),
+  c(0.009326754, 0.009326754),
+  c(1.008583, 1.008583),
+  matrix(c(
+    rep(0, 4)
+  ), nrow = 2),
+  0, c(1,0)
+)
+brts <- datalist[[2]]$branching_times
 DAISIE_DE_trait_logpNE(
   brts                    = brts,
   trait                   = trait,

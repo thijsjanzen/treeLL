@@ -198,6 +198,8 @@ loglik_R_tree <- function(parameter,
 
   loglik <- 0
 
+  parameter[[7]] <- trait_mainland_ancestor
+
   for (i in 1:length(ances)) {
     calcul <- calcThruNodes_hidden(ances = ances[i],
                                    states = states,
@@ -267,7 +269,6 @@ loglik_cpp_tree <- function(parameter,
   lambda_a <- parameter[[4]]
   q_matrix       <- parameter[[5]]
   p_value       <- parameter[[6]]
-  tma    <- parameter[[7]]
 
   RcppParallel::setThreadOptions(numThreads = num_threads)
 
@@ -280,7 +281,7 @@ loglik_cpp_tree <- function(parameter,
                         gammas = gammas,
                         qs = q_matrix,
                         p = p_value,
-                        trait_mainland_ancestor = tma,
+                        trait_mainland_ancestor = trait_mainland_ancestor,
                         method = method,
                         atol = atol,
                         rtol = rtol,
