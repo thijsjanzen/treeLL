@@ -19,7 +19,7 @@
 #'     0,    0,    0.002,0.005,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   0
+#'   0, c(0,1)
 #' )
 #' status <- 8
 #' parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
@@ -30,8 +30,8 @@
 #'   trait                 = 0,
 #'   status                = 8,
 #'   parameter             = parameter,
-#'   num_observed_states   = 1,
-#'   num_hidden_states     = 1,
+#'   num_observed_states   = 2,
+#'   num_hidden_states     = 2,
 #'   atol                  = 1e-15,
 #'   rtol                  = 1e-15,
 #'   methode               = "ode45"

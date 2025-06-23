@@ -30,20 +30,21 @@
 #'     0,    0,    0.002,0.005,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   0, c(1,0)
+#'   0
 #' )
 #'
-#' DAISIE_DE_trait_logpEC(
+#' #' DAISIE_DE_trait_logpEC(
 #'   brts                    = brts,
 #'   phy                     = phy,
-#'   traits                  = rep(FALSE, length(brts)),
+#'   traits                  = traits,
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
+#'   trait_mainland_ancestor = c(1, 0),
 #'   num_observed_states     = 2,
-#'   num_hidden_states       = 1,
-#'   atol                    = 1e-10,
-#'   rtol                    = 1e-10,
+#'   num_hidden_states       = 2,
+#'   atol                    = 1e-15,
+#'   rtol                    = 1e-15,
 #'   methode                 = "ode45")
 #'
 #' # Or DAISIE style:
@@ -55,20 +56,21 @@
 #'   matrix(c(
 #'     rep(0, 4)
 #'   ), nrow = 2),
-#'   0, c(1,0)
+#'   0
 #' )
 #'
 #' DAISIE_DE_trait_logpEC(
 #'   brts                    = brts,
 #'   phy                     = phy,
-#'   traits                  = rep(FALSE, length(brts)),
+#'   traits                  = traits,
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
+#'   trait_mainland_ancestor = c(1, 0),
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 1,
-#'   atol                    = 1e-10,
-#'   rtol                    = 1e-10,
+#'   atol                    = 1e-15,
+#'   rtol                    = 1e-15,
 #'   methode                 = "ode45")
 
 DAISIE_DE_trait_logpEC <- function(

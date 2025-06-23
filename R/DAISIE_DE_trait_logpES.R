@@ -19,18 +19,6 @@
 #' trait <- 0
 #' sampling_fraction <- c(1,1)
 #'
-#' parameter <- list(
-#'   c(2.546591, 1.2, 1, 0.2),
-#'   c(2.678781, 2, 1.9, 3),
-#'   c(0.009326754, 0.003, 0.002, 0.2),
-#'   c(1.008583, 1, 2, 1.5),
-#'   matrix(c(
-#'     0,    1,    0.5,  0,
-#'     0,    0,    0.002,0.005,
-#'     rep(0, 8)
-#'   ), nrow = 4),
-#'   0, c(1,0)
-#' )
 #'
 #' parameter <- list(
 #'   c(2.546591, 2.546591),
@@ -40,7 +28,7 @@
 #'   matrix(c(
 #'     rep(0, 4)
 #'   ), nrow = 2),
-#'   0, c(1, 0)
+#'   0
 #' )
 #'
 #' DAISIE_DE_trait_logpES(
@@ -49,10 +37,11 @@
 #'   status                  = 2,
 #'   sampling_fraction       = sampling_fraction,
 #'   parameter               = parameter,
+#'   trait_mainland_ancestor = c(1, 0),
 #'   num_observed_states     = 2,
-#'   num_hidden_states       = 2,
-#'   atol                    = 1e-10,
-#'   rtol                    = 1e-10,
+#'   num_hidden_states       = 1,
+#'   atol                    = 1e-15,
+#'   rtol                    = 1e-15,
 #'   methode                 = "ode45"
 #' )
 DAISIE_DE_trait_logpES <- function(brts,

@@ -41,7 +41,7 @@
 #'   matrix(c(
 #'     rep(0, 16)
 #'   ), nrow = 4),
-#'   0, c(0,1)
+#'   0
 #' )
 #' # Compute log‐likelihood under the DE‐trait model
 #' DAISIE_DE_trait_logp0(
@@ -49,6 +49,7 @@
 #'   parameter           = parameter,
 #'   num_observed_states     = 2,
 #'   num_hidden_states       = 2,
+#'   trait_mainland_ancestor = c(0, 1),
 #'   atol                = 1e-15,
 #'   rtol                = 1e-15,
 #'   methode             = "ode45"
