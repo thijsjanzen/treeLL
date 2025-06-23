@@ -9,7 +9,7 @@ test_that("logpES", {
     trait <- 0
     sf <- 1
 
-    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0, NA)
+    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0)
 
 
     res1 <-  treeLL::DAISIE_DE_trait_logpNE(
@@ -17,10 +17,11 @@ test_that("logpES", {
       trait                   = trait,
       status                  = 1,
       parameter               = parameter,
+      trait_mainland_ancestor = NA,
       num_observed_states     = 1,
       num_hidden_states       = 1,
-      atol                    = 1e-10,
-      rtol                    = 1e-10,
+      atol                    = 1e-15,
+      rtol                    = 1e-15,
       methode                 = "ode45"
     )
 

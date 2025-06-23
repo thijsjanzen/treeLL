@@ -67,8 +67,6 @@ DAISIE_DE_trait_logpNE <- function(brts,
   t1   <- brts[2]
 
   tp   <- 0
-
-  trait_mainland_ancestor <- parameter[[7]]
   # Time intervals
 
   time2 <- c(tp, t1)
@@ -90,6 +88,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               initial_conditions = initial_conditions2,
                               time = time2,
                               parameter = parameter,
+                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -106,6 +105,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
+                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
@@ -126,6 +126,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               time = time3,
                               parameter = parameter,
                               methode = methode,
+                              trait_mainland_ancestor = trait_mainland_ancestor,
                               rcpp_methode = rcpp_methode,
                               atol = atol,
                               rtol = rtol,
@@ -141,6 +142,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                               initial_conditions = initial_conditions4,
                               time = time4,
                               parameter = parameter,
+                              trait_mainland_ancestor = trait_mainland_ancestor,
                               methode = methode,
                               rcpp_methode = rcpp_methode,
                               atol = atol,

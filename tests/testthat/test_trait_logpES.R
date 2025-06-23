@@ -17,10 +17,11 @@ test_that("logpES", {
       trait                   = trait,
       status                  = 2,
       parameter               = parameter,
+      sampling_fraction       = c(1),
       num_observed_states     = 1,
       num_hidden_states       = 1,
-      atol                    = 1e-10,
-      rtol                    = 1e-10,
+      atol                    = 1e-15,
+      rtol                    = 1e-15,
       methode                 = "ode45"
     )
 
@@ -38,6 +39,7 @@ test_that("logpES", {
       trait                   = trait,
       status                  = 2,
       parameter               = parameter,
+      sampling_fraction       = c(1),
       num_observed_states     = 1,
       num_hidden_states       = 1,
       atol                    = 1e-10,
@@ -52,6 +54,7 @@ test_that("logpES", {
       trait                   = trait,
       status                  = 2,
       parameter               = parameter,
+      sampling_fraction       = c(1),
       num_observed_states     = 1,
       num_hidden_states       = 1,
       atol                    = 1e-10,
