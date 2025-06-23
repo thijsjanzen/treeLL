@@ -24,6 +24,10 @@ loglik_choosepar(
 )
 }
 \arguments{
+\item{trparsopt}{transformed parameters to optimize}
+
+\item{trparsfix}{transformed paramaters that remain fixed}
+
 \item{idparsopt}{a numeric vector with the ID of parameters to be estimated.}
 
 \item{idparsfix}{a numeric vector with the ID of the fixed parameters.}

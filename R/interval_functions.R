@@ -55,10 +55,6 @@ interval2 <- function(t, state, parameter) {
     q_mult_DM2 <- t(q %*% DM2)
     q_mult_DM3 <- t(q %*% DM3)
 
-
-    # TODO: pass trait mainland_ancestor to interval functions
-    # trait mainland ancestor is vector of probabilities
-
     dist_gamma <- dist_gamma_tma(gamma,
                                  trait_mainland_ancestor,
                                  n)

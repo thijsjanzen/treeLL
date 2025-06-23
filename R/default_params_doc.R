@@ -191,6 +191,8 @@
 #'  `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
 #'  `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.
 #' @param status indicator for type of inference required
+#' @param trparsopt transformed parameters to optimize
+#' @param trparsfix transformed paramaters that remain fixed
 #' @return Nothing
 #' @keywords internal
 #' @export
@@ -275,6 +277,8 @@ default_params_doc <- function(phy,
                                trait,
                                mainland,
                                trait_mainland_ancestor,
-                               rcpp_methode) {
+                               rcpp_methode,
+                               trparsopt,
+                               trparsfix) {
   # Nothing
 }

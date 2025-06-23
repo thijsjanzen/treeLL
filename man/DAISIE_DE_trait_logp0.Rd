@@ -52,6 +52,7 @@ have gone extinct prior to the present.
 #Load DAISIE package and data
 library(DAISIE)
 data("Galapagos_datalist")
+datalist <- Galapagos_datalist
 
 parameter <- list(
   c(2.546591, 1.2, 1, 0.2),
