@@ -13,3 +13,6 @@
 src/RcppExports.o
 *.o
 *.so
+*.o
+*.so
+*.tmp
