@@ -226,7 +226,7 @@ class Integrator {
       dnode.storage.emplace_back(dnode.time, y);
     }
 
-   private:
+ private:
     template <typename N>
     void do_integrate(std::vector<double>& state,
                       double t0,
