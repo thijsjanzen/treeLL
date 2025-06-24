@@ -18,7 +18,8 @@ solve_branch(
 )
 }
 \arguments{
-\item{interval_func}{chosen function for interval, can also be string if using Rcpp}
+\item{interval_func}{chosen function for interval, can also be string if
+using Rcpp}
 
 \item{initial_conditions}{vector of initial conditions}
 
@@ -27,7 +28,8 @@ solve_branch(
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{methode}{used integration method, default is ode45}
 
@@ -41,8 +43,9 @@ options available are:
 
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 }
 \description{
 solve along branch

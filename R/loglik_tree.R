@@ -193,7 +193,7 @@ loglik_R_tree <- function(parameter,
   }
 
   phy$node.label <- NULL
-  split_times <- sort(secsse::event_times(phy), decreasing = FALSE)
+  split_times <- sort(event_times(phy), decreasing = FALSE)
   ances <- as.numeric(names(split_times))
   forTime <- cbind(phy$edge, phy$edge.length)
 
@@ -261,7 +261,7 @@ loglik_cpp_tree <- function(parameter,
   }
 
   phy$node.label <- NULL
-  split_times <- sort(secsse::event_times(phy), decreasing = FALSE)
+  split_times <- sort(event_times(phy), decreasing = FALSE)
   ances <- as.numeric(names(split_times))
   forTime <- cbind(phy$edge, phy$edge.length)
 

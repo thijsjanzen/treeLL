@@ -21,7 +21,8 @@ DAISIE_DE_trait_logpES_max_min_age_hidden(
 )
 }
 \arguments{
-\item{brts}{branching times, being: island age, colonization time, branching times}
+\item{brts}{branching times, being: island age, colonization time, branching
+times}
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
@@ -40,7 +41,8 @@ entry in the list corresponds to the sampling proportion for each tree.}
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{num_observed_states}{number of observed states}
 
@@ -58,12 +60,14 @@ options available are:
 \code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
 \code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 }
 \description{
-this function calculates the likelihood of observing a singleton endemic species on an island
-with the trait state \code{i}, and for which only the estimated maximum and minimum ages of colonization are known.
+this function calculates the likelihood of observing a singleton endemic
+species on an island with the trait state \code{i}, and for which only the
+estimated maximum and minimum ages of colonization are known.
 }
 \examples{
 library(DAISIE)

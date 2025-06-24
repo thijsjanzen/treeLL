@@ -55,9 +55,6 @@
 #' @param num_cycles Number of cycles of the optimization. When set to `Inf`,
 #'  the optimization will be repeated until the result is, within the
 #'  tolerance, equal to the starting values, with a maximum of 10 cycles.
-#' @param is_complete_tree logical specifying whether or not a tree with all its
-#'  extinct species is provided. If set to `TRUE`, it also assumes that all
-#'  *all* extinct lineages are present on the tree. Defaults to `FALSE`.
 #' @param verbose sets verbose output; default is `TRUE` when `optimmethod` is
 #'  `"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to
 #'  `FALSE`, optimizer output will be shown.
@@ -218,7 +215,6 @@ default_params_doc <- function(phy,
                                optimethod,
                                num_cycles,
                                loglik_penalty,
-                               is_complete_tree,
                                verbose,
                                num_threads,
                                atol,

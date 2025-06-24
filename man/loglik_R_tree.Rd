@@ -42,7 +42,8 @@ entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 

@@ -3,26 +3,26 @@
 #' @inheritParams default_params_doc
 #' @export
 calc_ml <- function(datalist,
-                      num_observed_states,
-                      num_hidden_states,
-                      idparslist,
-                      idparsopt,
-                      initparsopt,
-                      idparsfix,
-                      parsfix,
-                      cond = "proper_cond",
-                      tol = c(1e-04, 1e-05, 1e-07),
-                      maxiter = 1000 * round((1.25) ^ length(idparsopt)),
-                      optimmethod = "simplex",
-                      methode = "ode45",
-                      rcpp_methode = "odeint::bulirsch_stoer",
-                      num_cycles = 1,
-                      verbose = FALSE,
-                      num_threads = 1,
-                      atol = 1e-15,
-                      rtol = 1e-15,
-                      use_Rcpp = 0
-                      ) {
+                    num_observed_states,
+                    num_hidden_states,
+                    idparslist,
+                    idparsopt,
+                    initparsopt,
+                    idparsfix,
+                    parsfix,
+                    cond = "proper_cond",
+                    tol = c(1e-04, 1e-05, 1e-07),
+                    maxiter = 1000 * round((1.25) ^ length(idparsopt)),
+                    optimmethod = "simplex",
+                    methode = "ode45",
+                    rcpp_methode = "odeint::bulirsch_stoer",
+                    num_cycles = 1,
+                    verbose = FALSE,
+                    num_threads = 1,
+                    atol = 1e-15,
+                    rtol = 1e-15,
+                    use_Rcpp = 0
+) {
   if (identical(as.numeric(sort(c(idparsopt, idparsfix))),
                 as.numeric(sort(unique(unlist(idparslist))))) == FALSE) {
     stop("All elements in idparslist must be included in either
@@ -86,11 +86,11 @@ calc_ml <- function(datalist,
       stop("Optimization has not converged.
                  Try again with different initial values.")
     } else {
-      ml_pars1 <- secsse_transform_parameters(as.numeric(unlist(out$par)),
-                                              trparsfix,
-                                              idparsopt,
-                                              idparsfix,
-                                              idparslist)
+      ml_pars1 <- transform_parameters(as.numeric(unlist(out$par)),
+                                       trparsfix,
+                                       idparsopt,
+                                       idparsfix,
+                                       idparslist)
       out2 <- list(MLpars = ml_pars1,
                    ML = as.numeric(unlist(out$fvalues)),
                    conv = out$conv)
@@ -109,7 +109,7 @@ loglik_choosepar <- function(trparsopt,
                              idparsopt,
                              idparsfix,
                              idparslist,
-                              datalist,
+                             datalist,
                              num_observed_states,
                              num_hidden_states,
                              cond = cond,
@@ -127,9 +127,9 @@ loglik_choosepar <- function(trparsopt,
   if (max(alltrpars) > 1 || min(alltrpars) < 0) {
     loglik <- -Inf
   } else {
-    pars1 <- secsse_transform_parameters(trparsopt, trparsfix,
-                                         idparsopt, idparsfix,
-                                         idparslist)
+    pars1 <- transform_parameters(trparsopt, trparsfix,
+                                  idparsopt, idparsfix,
+                                  idparslist)
 
     loglik <- DAISIE_DE_trait_loglik_CS(parameter = pars1,
                                         datalist = datalist,

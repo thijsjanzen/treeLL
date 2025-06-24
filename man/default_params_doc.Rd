@@ -22,7 +22,6 @@ default_params_doc(
   optimethod,
   num_cycles,
   loglik_penalty,
-  is_complete_tree,
   verbose,
   num_threads,
   atol,
@@ -148,10 +147,6 @@ tolerance, equal to the starting values, with a maximum of 10 cycles.}
 \item{loglik_penalty}{the size of the penalty for all parameters; default is
 0 (no penalty).}
 
-\item{is_complete_tree}{logical specifying whether or not a tree with all its
-extinct species is provided. If set to \code{TRUE}, it also assumes that all
-\emph{all} extinct lineages are present on the tree. Defaults to \code{FALSE}.}
-
 \item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
 \code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
 \code{FALSE}, optimizer output will be shown.}
@@ -223,8 +218,8 @@ states are different from the transition rates for the examined states.
 Normally it should be \code{FALSE} in order to avoid having a huge number of
 parameters.}
 
-\item{trait_info}{data frame where first column has species ids and the second
-one is the trait associated information.}
+\item{trait_info}{data frame where first column has species ids and the
+second one is the trait associated information.}
 
 \item{lambd_and_modeSpe}{a matrix with the 4 models of speciation possible.}
 
@@ -324,7 +319,8 @@ more accurate but slower (default = TRUE)}
 
 \item{missnumspec}{missing number of species}
 
-\item{brts}{branching times, being: island age, colonization time, branching times}
+\item{brts}{branching times, being: island age, colonization time, branching
+times}
 
 \item{use_R_version}{if TRUE (default) uses R based integration. If FALSE,
 uses Rcpp implementation (faster)}
@@ -333,13 +329,16 @@ uses Rcpp implementation (faster)}
 
 \item{rhs_func}{rhs function used in R implementation}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 
-\item{datalist}{a list containing in the first entry: island age and the number of species not present,
-then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
-each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
-3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny}
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
 
 \item{num_observed_states}{number of observed states}
 
@@ -356,7 +355,8 @@ position.}
 
 \item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
 options available are:
