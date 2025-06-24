@@ -36,6 +36,6 @@
 // Uncomment to enable nested parallelism.
 // This feature may improve or may deterioate performance.
 // Default is disabled.
-//#define SECSSE_NESTED_PARALLELISM
+// #define SECSSE_NESTED_PARALLELISM
 
 #endif  // SRC_CONFIG_H_

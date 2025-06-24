@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 #include <algorithm>
+#include <memory>
 #include "config.h"    // NOLINT [build/include_subdir]
 #include <Rcpp.h>
 #include <RcppParallel.h>

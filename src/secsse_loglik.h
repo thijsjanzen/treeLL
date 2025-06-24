@@ -9,9 +9,11 @@
 #include <cassert>
 #include <vector>
 #include <memory>
+#include <string>
+#include <utility>
 #include <algorithm>
-#include "odeint.h"
-#include "secsse_rhs.h"
+#include "odeint.h"             // NOLINT [build/include_subdir]
+#include "secsse_rhs.h"         // NOLINT [build/include_subdir]
 
 
 // retreives value set by RcppParallel::setThreadOptions(numThreads)
@@ -51,7 +53,7 @@ struct inode_t {
   double loglik = 0.0;
 };
 
-}
+}    // namespace terse
 
 namespace storing {
 
@@ -65,7 +67,7 @@ struct storage_t {
 
 struct dnode_t {
   dnode_t() noexcept = default;
-  dnode_t(const terse::dnode_t& rhs) noexcept :
+  explicit dnode_t(const terse::dnode_t& rhs) noexcept :
     state(rhs.state),
     time(rhs.time) {}
   state_ptr state = nullptr;
@@ -75,7 +77,7 @@ struct dnode_t {
 
 struct inode_t {
   inode_t() noexcept = default;
-  inode_t(const terse::inode_t& rhs) :
+  explicit inode_t(const terse::inode_t& rhs) :
     state(rhs.state),
     desc{rhs.desc[0],
          rhs.desc[1]} {}
@@ -83,7 +85,7 @@ struct inode_t {
   dnode_t desc[2];
 };
 
-}
+}  // namespace storing
 
 template <typename INODE>
 using inodes_t = std::vector<INODE>;
@@ -102,7 +104,9 @@ inline std::vector<phy_edge_t> make_phy_edge_vector(
   auto res = std::vector<phy_edge_t>{forTime.nrow()};
   for (size_t i = 0; i < forTime.nrow(); ++i) {
     auto row = forTime.row(i);
-    res[i] = { static_cast<size_t>(row[0]), static_cast<size_t>(row[1]), row[2] };
+    res[i] = { static_cast<size_t>(row[0]),
+               static_cast<size_t>(row[1]),
+               row[2] };
   }
   std::sort(std::begin(res), std::end(res), [](auto& a, auto& b) {
     return a.n < b.n;
@@ -140,7 +144,6 @@ inline inodes_t<terse::inode_t> find_inte_nodes(
 
 template <typename RaIt>
 inline double normalize_loglik(RaIt first, RaIt last) {
-
   return 0.0;
 
   const auto sabs = std::accumulate(first, last, 0.0,
@@ -156,7 +159,7 @@ inline double normalize_loglik(RaIt first, RaIt last) {
 template <typename ODE,
           typename NORMALIZER>
 class Integrator {
-public:
+ public:
   using ode_type = ODE;
 
   Integrator(std::unique_ptr<ode_type>&& od,
@@ -223,7 +226,7 @@ public:
       dnode.storage.emplace_back(dnode.time, y);
     }
 
-  private:
+   private:
     template <typename N>
     void do_integrate(std::vector<double>& state,
                       double t0,
@@ -260,15 +263,16 @@ public:
   inline calc_ll_res calc_ll(
       const INTEGRATOR& integrator,
       inodes_t<terse::inode_t>& inodes,
-      std::vector<std::vector<double>>& /* in/out */ states)
-  {
+      std::vector<std::vector<double>>& /* in/out */ states) {
     auto is_dirty = [](const auto& inode) {
       return inode.state->empty() &&
         (inode.desc[0].state->empty() || inode.desc[1].state->empty());
     };
 
     for (auto first = std::begin(inodes); first != std::end(inodes) ;) {
-      auto last = std::partition(first, std::end(inodes), std::not_fn(is_dirty));
+      auto last = std::partition(first,
+                                 std::end(inodes),
+                                 std::not_fn(is_dirty));
       tbb::parallel_for_each(first, last, [&](auto& inode) {
         integrator(inode);
       });
