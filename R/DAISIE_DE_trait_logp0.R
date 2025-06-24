@@ -1,7 +1,7 @@
 #' testing fuction, for comparison with DAISIE
 #' @description
-#' This function compute the likelihood that all species that colonize the island
-#' have gone extinct prior to the present.
+#' This function computes the likelihood that all species that colonize the
+#' island have gone extinct prior to the present.
 #' @export
 #' @inheritParams default_params_doc
 #' @examples
@@ -69,7 +69,7 @@ DAISIE_DE_trait_logp0 <- function(datalist,
   n <- num_observed_states * num_hidden_states
   t0 <- datalist[[1]]$island_age
   tp <- 0
-  #########interval4 [t_p, t_0]
+  ######### interval4 [t_p, t_0]
 
   initial_conditions40 <- c(rep(0, n),  ### DM1
                             rep(0, n),  ### E

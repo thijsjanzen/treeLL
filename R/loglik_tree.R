@@ -79,7 +79,7 @@ calcThruNodes_hidden <- function(
   nodeN <- numeric()
 
   for (desIndex in 1:2) {
-    y <- states[desNodes[desIndex],]
+    y <- states[desNodes[desIndex], ]
     #
     timeInte <- forTime[which(forTime[, 2] == desNodes[desIndex]), 3]
     ##  To do the calculation in both lineages
@@ -100,8 +100,8 @@ calcThruNodes_hidden <- function(
     }
   }
   ## At the node
-  nodeM <- as.numeric(nodeM[2,-1])
-  nodeN <- as.numeric(nodeN[2,-1])
+  nodeM <- as.numeric(nodeM[2, -1])
+  nodeN <- as.numeric(nodeN[2, -1])
 
 
   lambda_c <- parameter[[1]]
@@ -113,7 +113,7 @@ calcThruNodes_hidden <- function(
   combined_state <- nodeN
   combined_state[1:n] <- lambda_c * DE_N * DE_M
 
-  states[focal,] <- combined_state
+  states[focal, ] <- combined_state
   return(list(states = states,
               loglik = loglik,
               combined_state = combined_state,
@@ -137,23 +137,22 @@ calc_init_state_hidden <- function(trait,
 
   if (is.na(trait)) {
     DE[c(1, num_unique_states)] <- sampling_fraction
-    E[c(1, num_unique_states)]  <- 1 - sampling_fraction
-  }
-
-  else if (trait == trait) {
-    DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-    E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
-
+     E[c(1, num_unique_states)] <- 1 - sampling_fraction
+  } else if (trait == trait) {
+    steps <- num_hidden_states * trait
+    DE[c((steps + 1), num_hidden_states + steps)] <- sampling_fraction
+     E[c((steps + 1), num_hidden_states + steps)] <- 1 - sampling_fraction
   }
 
 
   if (mainland) {
-    DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
-           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
+    steps <- num_hidden_states * trait_mainland_ancestor
+    DM3[c((steps + 1),
+           num_hidden_states + steps)] <- 1
   }
 
 
-  return( c(DE, DM3, E, DA3))
+  return(c(DE, DM3, E, DA3))
   }
 
 
@@ -182,13 +181,15 @@ loglik_R_tree <- function(parameter,
                    ncol = 3 * length(parameter[[1]]) + 1,
                    data = NA)
 
-  for (i in 1:length(traits)) {
+  for (i in seq_along(traits)) {
     states[i, ] <- calc_init_state_hidden(trait = traits[i],
-                                          sampling_fraction = sampling_fraction[ 1 + traits[i] ],
+                                          sampling_fraction =
+                                            sampling_fraction[1 + traits[i]],
                                           num_unique_states = num_unique_states,
                                           num_hidden_states = num_hidden_states,
                                           mainland = mainland,
-                                          trait_mainland_ancestor = trait_mainland_ancestor)
+                                          trait_mainland_ancestor =
+                                            trait_mainland_ancestor)
   }
 
   phy$node.label <- NULL
@@ -200,7 +201,7 @@ loglik_R_tree <- function(parameter,
 
   parameter[[7]] <- trait_mainland_ancestor
 
-  for (i in 1:length(ances)) {
+  for (i in seq_along(ances)) {
     calcul <- calcThruNodes_hidden(ances = ances[i],
                                    states = states,
                                    loglik = loglik,
@@ -249,13 +250,14 @@ loglik_cpp_tree <- function(parameter,
                    ncol = 3 * length(parameter[[1]]) + 1,
                    data = NA)
   # sf = sampling fraction
-  for (i in 1:length(traits)) {
+  for (i in seq_along(traits)) {
     states[i, ] <- calc_init_state_hidden(traits[i],
-                                          sampling_fraction[ 1 + traits[i] ],
+                                          sampling_fraction[1 + traits[i]],
                                           num_unique_states,
                                           num_hidden_states,
                                           mainland = mainland,
-                                          trait_mainland_ancestor = trait_mainland_ancestor)
+                                          trait_mainland_ancestor =
+                                            trait_mainland_ancestor)
   }
 
   phy$node.label <- NULL
@@ -293,4 +295,3 @@ loglik_cpp_tree <- function(parameter,
   prob_states <- matrix(prob_states, nrow = 1)
   return(prob_states)
 }
-

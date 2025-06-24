@@ -9,7 +9,8 @@ test_that("logpES", {
     trait <- 0
     sf <- 1
 
-    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0, NA)
+    parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583,
+                      matrix(c(0), nrow = 1), 0, NA)
 
 
     res1 <-  treeLL::DAISIE_DE_trait_logpNE(
@@ -24,12 +25,13 @@ test_that("logpES", {
       methode                 = "ode45"
     )
 
-    res2 <- DAISIE:::DAISIE_loglik_CS_choice(pars1 = c(2.546591, 2.678781, Inf, 0.009326754, 1.008583),
-                                             pars2 = c(100, 11, 0, 2),
-                                             brts = brts,
-                                             stac = 1,
-                                             missnumspec = 0,
-                                             datalist = datalist)
+    res2 <- DAISIE:::DAISIE_loglik_CS_choice(
+      pars1 = c(2.546591, 2.678781, Inf, 0.009326754, 1.008583),
+      pars2 = c(100, 11, 0, 2),
+      brts = brts,
+      stac = 1,
+      missnumspec = 0,
+      datalist = datalist)
 
     testthat::expect_equal(res1, res2)
 
@@ -62,4 +64,3 @@ test_that("logpES", {
     testthat::expect_equal(res1, res4)
   }
 })
-

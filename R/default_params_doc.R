@@ -115,8 +115,8 @@
 #'  states are different from the transition rates for the examined states.
 #'  Normally it should be `FALSE` in order to avoid having a huge number of
 #'  parameters.
-#' @param trait_info data frame where first column has species ids and the second
-#'  one is the trait associated information.
+#' @param trait_info data frame where first column has species ids and the
+#' second one is the trait associated information.
 #' @param optimmethod A string with method used for optimization. Default is
 #' `"simplex"`. Alternative is `"subplex"`. Both are called from
 #' [DDD::optimizer()], simplex is implemented natively in [DDD], while subplex
@@ -173,18 +173,23 @@
 #' uses Rcpp implementation (faster)
 #' @param rhs_func rhs function used in R implementation
 #' @param methode used integration method, default is ode45
-#' @param brts branching times, being: island age, colonization time, branching times
+#' @param brts branching times, being: island age, colonization time, branching
+#' times
 #' @param missnumspec missing number of species
 #' @param num_hidden_states number of hidden states
 #' @param num_observed_states number of observed states
-#' @param datalist a list containing in the first entry: island age and the number of species not present,
-#' then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
-#' each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
-#' 3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny
+#' @param datalist a list containing in the first entry: island age and the
+#' number of species not present, then from entry 2 until n it contains
+#' individual datasets for which to estimate the loglikelihood together, each
+#' dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+#' 3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+#' 8) phylogeny
 #' @param mainland if TRUE, adjust initial conditions for mainland dynamics
-#' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the mainland ancestor
-#' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-#' value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches
+#' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the
+#' mainland ancestor
+#' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+#' likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+#' the branches
 #' @param rcpp_methode Used integration methode when using Rcpp to integrate,
 #' options available are:
 #'  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,

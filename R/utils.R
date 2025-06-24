@@ -439,8 +439,6 @@ check_input <- function(traits,
     check_root_state_weight(root_state_weight, sampling_fraction)
 
     check_tree(phy, is_complete_tree)
-
-    # check_traits(traits, sampling_fraction)
 }
 
 
@@ -1111,7 +1109,8 @@ get_trait_states <- function(idparslist,
       }
     }
 
-    rlang::warn(message = paste0(output, "\n", "if this is incorrect, consider passing states as matching numeric
+    rlang::warn(message = paste0(output, "\n", "if this is incorrect,
+    consider passing states as matching numeric
   ordering, e.g. 1 for the first state, 2 for the second etc."))
   }
 
@@ -1121,8 +1120,8 @@ get_trait_states <- function(idparslist,
 #' @keywords internal
 extract_data <- function(mat) {
   to_plot <- c()
-  for (i in 1:nrow(mat)) {
-    for (j in 1:ncol(mat)) {
+  for (i in seq_len(nrow(mat))) {
+    for (j in seq_len(ncol(mat))) {
       entry <- mat[i, j]
       if (!is.na(entry)) {
         if (entry > 0) {

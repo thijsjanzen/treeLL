@@ -137,7 +137,8 @@ loglik_choosepar <- function(trparsopt,
                                         rcpp_methode = rcpp_methode,
                                         atol = atol,
                                         rtol = rtol,
-                                        num_observed_states = num_observed_states,
+                                        num_observed_states =
+                                          num_observed_states,
                                         num_hidden_states = num_hidden_states,
                                         cond = cond,
                                         verbose = verbose,
@@ -150,9 +151,5 @@ loglik_choosepar <- function(trparsopt,
       loglik <- -Inf
     }
   }
-  #if (verbose) {
-  #  out_print <- c(trparsopt / (1 - trparsopt), loglik)
-  #  message(paste(out_print, collapse = " "))
-  #}
   return(loglik)
 }

@@ -1,5 +1,6 @@
 
-#' This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,
+#' This function calculates the likelihood of observing a non-endemic lineage
+#' with specified species trait states,
 #'
 #'
 #' @inheritParams default_params_doc
@@ -80,10 +81,13 @@ DAISIE_DE_trait_logpNE <- function(brts,
   if (status == 4) {
     initial_conditions2 <- get_initial_conditions2(status = status,
                                                    trait = trait,
-                                                   num_observed_states = num_observed_states,
-                                                   num_hidden_states = num_hidden_states,
+                                                   num_observed_states =
+                                                     num_observed_states,
+                                                   num_hidden_states =
+                                                     num_hidden_states,
                                                    brts = brts,
-                                                   trait_mainland_ancestor = trait_mainland_ancestor)
+                                                   trait_mainland_ancestor =
+                                                     trait_mainland_ancestor)
     solution2 <- solve_branch(interval_func = interval2,
                               initial_conditions = initial_conditions2,
                               time = time2,
@@ -98,9 +102,12 @@ DAISIE_DE_trait_logpNE <- function(brts,
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution2,
                                                    parameter = parameter,
-                                                   trait_mainland_ancestor = trait_mainland_ancestor,
-                                                   num_observed_states = num_observed_states,
-                                                   num_hidden_states = num_hidden_states)
+                                                   trait_mainland_ancestor =
+                                                     trait_mainland_ancestor,
+                                                   num_observed_states =
+                                                     num_observed_states,
+                                                   num_hidden_states =
+                                                     num_hidden_states)
     solution4 <- solve_branch(interval_func = interval4,
                               initial_conditions = initial_conditions4,
                               time = time4,
@@ -115,8 +122,10 @@ DAISIE_DE_trait_logpNE <- function(brts,
 
   if (status == 1) {
     initial_conditions3 <- get_initial_conditions3(status = status,
-                                                   num_observed_states = num_observed_states,
-                                                   num_hidden_states = num_hidden_states,
+                                                   num_observed_states =
+                                                     num_observed_states,
+                                                   num_hidden_states =
+                                                     num_hidden_states,
                                                    trait = trait,
                                                    sampling_fraction = 1)
     solution3 <- solve_branch(interval_func = interval3,
@@ -133,9 +142,12 @@ DAISIE_DE_trait_logpNE <- function(brts,
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution3,
                                                    parameter = parameter,
-                                                   trait_mainland_ancestor = trait_mainland_ancestor,
-                                                   num_observed_states = num_observed_states,
-                                                   num_hidden_states = num_hidden_states)
+                                                   trait_mainland_ancestor =
+                                                     trait_mainland_ancestor,
+                                                   num_observed_states =
+                                                     num_observed_states,
+                                                   num_hidden_states =
+                                                     num_hidden_states)
     solution4 <- solve_branch(interval_func = interval4,
                               initial_conditions = initial_conditions4,
                               time = time4,

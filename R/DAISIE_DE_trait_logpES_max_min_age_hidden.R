@@ -1,7 +1,8 @@
 #' testing function, for comparison with DAISIE
 #' @description
-#' this function calculates the likelihood of observing a singleton endemic species on an island
-#' with the trait state `i`, and for which only the estimated maximum and minimum ages of colonization are known.
+#' this function calculates the likelihood of observing a singleton endemic
+#' species on an island with the trait state `i`, and for which only the
+#' estimated maximum and minimum ages of colonization are known.
 #' @export
 #' @inheritParams default_params_doc
 #' @examples
@@ -33,19 +34,20 @@
 #'   rtol                  = 1e-10,
 #'   methode               = "ode45"
 #' )
-DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
-                                                      trait,
-                                                      status,
-                                                      sampling_fraction = 1,
-                                                      parameter,
-                                                      trait_mainland_ancestor = NA,
-                                                      num_observed_states,
-                                                      num_hidden_states,
-                                                      atol = 1e-15,
-                                                      rtol = 1e-15,
-                                                      methode = "ode45",
-                                                      rcpp_methode = "odeint::bulirsch_stoer",
-                                                      use_Rcpp = 0) {
+DAISIE_DE_trait_logpES_max_min_age_hidden <-
+                              function(brts,
+                                       trait,
+                                       status,
+                                       sampling_fraction = 1,
+                                       parameter,
+                                       trait_mainland_ancestor = NA,
+                                       num_observed_states,
+                                       num_hidden_states,
+                                       atol = 1e-15,
+                                       rtol = 1e-15,
+                                       methode = "ode45",
+                                       rcpp_methode = "odeint::bulirsch_stoer",
+                                       use_Rcpp = 0) {
   t0   <- brts[1]
   tmax <- brts[2]
   tmin <- brts[3]
@@ -54,18 +56,18 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   # number of unique state
   n <- num_observed_states * num_hidden_states
 
-  #########interval2 [t_p, tmin]
-
-  m = length(parameter[[1]])
-
+  ######### interval2 [t_p, tmin]
 
   ## SOLVED: can't we call 'get_initial_conditions' here? //NO, because brts > 2
   initial_conditions2 <- get_initial_conditions2(status = status,
-                                                 num_observed_states = num_observed_states,
-                                                 num_hidden_states = num_hidden_states,
+                                                 num_observed_states =
+                                                   num_observed_states,
+                                                 num_hidden_states =
+                                                   num_hidden_states,
                                                  trait = trait,
                                                  brts = brts,
-                                                 sampling_fraction = sampling_fraction)
+                                                 sampling_fraction =
+                                                   sampling_fraction)
 
   # Time sequence for interval [tp, tmin]
   time2 <- c(tp, tmin)
@@ -86,13 +88,13 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   # Initial conditions
 
   # only use second row, because the first row of solution3 is the initial state
-  initial_conditions3_max_min <- c(solution2[2,][1:n],                                             ### DE: select DE in solution2
-                                   rep(0, n),                                                      ### DM1: select DE in solution2
-                                   solution2[2,][(n + 1):(n + n)],                         ### DM2: select DM2 in solution2
-                                   solution2[2,][(n + n + 1):(n + n + n)],                 ### DM3: select DM3 in solution2
-                                   solution2[2,][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution2
+  initial_conditions3_max_min <- c(solution2[2, ][1:n],                                             ### DE: select DE in solution2
+                                   rep(0, n),                                                    ### DM1: select DE in solution2
+                                   solution2[2, ][(n + 1):(n + n)],                         ### DM2: select DM2 in solution2
+                                   solution2[2, ][(n + n + 1):(n + n + n)],                 ### DM3: select DM3 in solution2
+                                   solution2[2, ][(n + n + n + 1):(n + n + n + n)],         ### E: select E in solution2
                                    0,                                                              ### DA2
-                                   solution2[2,][length(solution2[2,])])                           ### DA3: select DA3 in solution2
+                                   solution2[2, ][length(solution2[2, ])])                           ### DA3: select DA3 in solution2
 
   initial_conditions3_max_min <- matrix(initial_conditions3_max_min, nrow = 1)
 
@@ -115,9 +117,9 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
   # Initial conditions
 
   # only use second row, because the first row of solution3 is the initial state
-  initial_conditions4_max_min <- c(solution3[2,][(n + n + 1):(n + n + n)],                         ### DM1: select DM2 in solution3
-                                   solution3[2,][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution3
-                                   solution3[2,][length(solution3[2,]) - 1])
+  initial_conditions4_max_min <- c(solution3[2, ][(n + n + 1):(n + n + n)],                         ### DM1: select DM2 in solution3
+                                   solution3[2, ][(n + n + n + n + 1):(n + n + n + n + n)],         ### E: select E in solution3
+                                   solution3[2, ][length(solution3[2, ]) - 1])
 
   initial_conditions4_max_min <- matrix(initial_conditions4_max_min, nrow = 1)
 
@@ -137,7 +139,7 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                             use_Rcpp = use_Rcpp)
 
   # Extract log-likelihood
-  Lk <- solution4[2,][length(solution4[2,])]
+  Lk <- solution4[2, ][length(solution4[2, ])]
   logLkb <- log(Lk)
   return(logLkb)
 }
