@@ -5,7 +5,7 @@ on:
   branches:
       - main
       - dev
- pull_request:
+  pull_request:
 
 name: R-CMD-check
 
@@ -14,7 +14,7 @@ jobs:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-    
+
     strategy:
       fail-fast: false
       matrix:

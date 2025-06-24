@@ -88,6 +88,23 @@ create_q_matrix_int <- function(masterBlock,
     return(Q)
 }
 
+#' @keywords internal
+get_state_names <- function(state_names, num_concealed_states) {
+  num_obs_states <- length(state_names)
+
+  concealed_state_names <- LETTERS[1:num_concealed_states]
+  all_state_names <- c()
+  cnt <- 1
+  for (j in 1:num_concealed_states) {
+    for (i in 1:num_obs_states) {
+      all_state_names[cnt] <- paste0(state_names[i],
+                                     concealed_state_names[j])
+      cnt <- cnt + 1
+    }
+  }
+  return(all_state_names)
+}
+
 
 #' @title Basic Qmatrix
 #' Sets a Q matrix where double transitions are not allowed
@@ -548,7 +565,7 @@ update_values_transform <- function(trpars,
                                     idpars,
                                     parvals) {
     for (i in seq_along(idpars)) {
-        for (j in 1:3) {
+        for (j in 1:6) {
             id <- which(idparslist[[j]] == idpars[i])
             trpars[[j]][id] <- parvals[i]
         }
@@ -566,7 +583,7 @@ transform_params_normal <- function(idparslist,
                                     idparsfuncdefpar,
                                     trparfuncdefpar) {
     trpars1 <- idparslist
-    for (j in 1:3) {
+    for (j in 1:6) {
         trpars1[[j]][] <- NA
     }
     if (length(idparsfix) != 0) {
@@ -588,8 +605,9 @@ transform_params_normal <- function(idparslist,
                                            idparsfuncdefpar,
                                            trparfuncdefpar)
     }
+
     pars1 <- list()
-    for (j in 1:3) {
+    for (j in 1:6) {
         pars1[[j]] <- trpars1[[j]] / (1 - trpars1[[j]])
     }
     return(pars1)
@@ -650,13 +668,6 @@ secsse_transform_parameters <- function(trparsopt,
     }
     return(pars1)
 }
-
-condition_root_edge <- function(mergeBranch2,
-                                nodeM) {
-  # note that we don't do maddison conditioning here.
-
-}
-
 
 #' @keywords internal
 condition <- function(cond,
@@ -1141,4 +1152,43 @@ get_rates <- function(lambda_list, all_states, lambda_order) {
   to_plot$y <- factor(to_plot$y, levels = rev(all_states))
   to_plot$focal_rate <- factor(to_plot$focal_rate, levels = all_states)
   return(to_plot)
+}
+
+#' @keywords internal
+check_arguments <- function(brts = NULL,
+                            parameter = NULL,
+                            phy = NULL,
+                            traits = NULL,
+                            num_observed_states = NULL,
+                            num_hidden_states = NULL,
+                            status = NULL,
+                            sampling_fraction = NULL) {
+
+  if (is.null(brts)) {
+    stop("brts not provided")
+  }
+  if (is.null(parameter)) {
+    stop("parameters not provided at all")
+  }
+  if (!is.list(parameter)) {
+    stop("parameters need to be provided as a list")
+  }
+  if (is.null(phy)) {
+    stop("phy not provided")
+  }
+  if (is.null(traits)) {
+    stop("traits not provided")
+  }
+  if (is.null(num_observed_states)) {
+    stop("number of observed states not provided")
+  }
+  if (is.null(num_hidden_states)) {
+    stop("number of hidden states not provided")
+  }
+  if (is.null(status)) {
+    stop("status not provided")
+  }
+  if (is.null(sampling_fraction)) {
+    stop("sampling_fraction not provided")
+  }
 }

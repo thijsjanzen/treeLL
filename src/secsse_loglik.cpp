@@ -78,14 +78,32 @@ Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances,
                        const Rcpp::NumericVector& lambda_as,
                        const Rcpp::NumericVector& mus,
                        const Rcpp::NumericVector& gammas,
-                       const Rcpp::NumericVector& qs,
+                       const Rcpp::NumericMatrix& qs,
                        const double& p,
+                       const Rcpp::NumericVector& trait_mainland_ancestor,
                        const std::string& method,
                        double atol,
                        double rtol,
                        bool see_states,
                        bool use_normalization) {
+  try {
+    size_t num_unique_states = (states.ncol() - 1) / 3;
 
-  return calc_ll(std::make_unique<loglik::ode_tree>(lambda_cs, lambda_as, mus, gammas, qs, p),
-                 ances, states, forTime, method, atol, rtol, see_states, use_normalization);
+    return calc_ll(std::make_unique<loglik::interval1>(lambda_cs,
+                                                       lambda_as,
+                                                       mus,
+                                                       gammas,
+                                                       qs,
+                                                       p,
+                                                       trait_mainland_ancestor,
+                                                       num_unique_states),
+                                                       ances, states, forTime, method, atol, rtol, see_states, use_normalization);
+  } catch(std::exception &ex) {
+    forward_exception_to_r(ex);
+  } catch (const char* msg) {
+    Rcpp::Rcout << msg << std::endl;
+  } catch(...) {
+    ::Rf_error("c++ exception (unknown reason)");
+  }
+  return NA_REAL;
 }
