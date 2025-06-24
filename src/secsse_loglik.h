@@ -67,7 +67,7 @@ struct storage_t {
 
 struct dnode_t {
   dnode_t() noexcept = default;
-  explicit dnode_t(const terse::dnode_t& rhs) noexcept :
+  dnode_t(const terse::dnode_t& rhs) noexcept :
     state(rhs.state),
     time(rhs.time) {}
   state_ptr state = nullptr;
@@ -77,7 +77,7 @@ struct dnode_t {
 
 struct inode_t {
   inode_t() noexcept = default;
-  explicit inode_t(const terse::inode_t& rhs) :
+  inode_t(const terse::inode_t& rhs) :
     state(rhs.state),
     desc{rhs.desc[0],
          rhs.desc[1]} {}
@@ -148,8 +148,8 @@ inline double normalize_loglik(RaIt first, RaIt last) {
 
   const auto sabs = std::accumulate(first, last, 0.0,
                                     [](const auto& s, const auto& x) {
-    return s + std::abs(x);
-  });
+                                      return s + std::abs(x);
+                                    });
   if (sabs <= 0.0) return 0.0;
   const auto fact = 1.0 / sabs;
   for (; first != last; ++first) *first *= fact;
@@ -159,7 +159,7 @@ inline double normalize_loglik(RaIt first, RaIt last) {
 template <typename ODE,
           typename NORMALIZER>
 class Integrator {
- public:
+public:
   using ode_type = ODE;
 
   Integrator(std::unique_ptr<ode_type>&& od,
@@ -193,14 +193,14 @@ class Integrator {
                                                       std::end(y[i]));
       }
 #ifdef SECSSE_NESTED_PARALLELISM
-    );
+      );                        // NOLINT [build/include_subdir]
 #endif
     inode.state->resize(s);
     od_->mergebranch(y[0], y[1], *inode.state);
     inode.loglik = inode.desc[0].loglik
-                 + inode.desc[1].loglik
-                 + normalize_loglik(std::begin(*inode.state),
-                                    std::end(*inode.state));
+    + inode.desc[1].loglik
+    + normalize_loglik(std::begin(*inode.state),
+                       std::end(*inode.state));
     }
 
     void operator()(std::vector<double>& state, double t0, double t1,
@@ -226,7 +226,7 @@ class Integrator {
       dnode.storage.emplace_back(dnode.time, y);
     }
 
-   private:
+  private:
     template <typename N>
     void do_integrate(std::vector<double>& state,
                       double t0,
