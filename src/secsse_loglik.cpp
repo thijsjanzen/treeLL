@@ -8,6 +8,10 @@
 #include <cstdlib>    // std::getenv, std::atoi
 #include <vector>
 #include <chrono>
+#include <utility>
+#include <algorithm>
+#include <string>
+
 #include "config.h"    // NOLINT [build/include_subdir]
 #include <Rcpp.h>
 #include <RcppParallel.h>
@@ -46,9 +50,18 @@ Rcpp::List calc_ll(std::unique_ptr<ODE> od,
 
   calc_ll_res ll_res;
   if (use_normalization) {
-    ll_res  = calc_ll(Integrator<ODE, odeintcpp::normalize>(      std::move(od), method, atol, rtol), inodes, tstates);
+    ll_res  = calc_ll(Integrator<ODE, odeintcpp::normalize>(std::move(od),
+                                                            method,
+                                                            atol,
+                                                            rtol),
+                                                            inodes, tstates);
   } else {
-    ll_res = calc_ll(Integrator<ODE, odeintcpp::no_normalization>(std::move(od), method, atol, rtol), inodes, tstates);
+    ll_res = calc_ll(Integrator<ODE, odeintcpp::no_normalization>(std::move(od),
+                                                                  method,
+                                                                  atol,
+                                                                  rtol),
+                                                                  inodes,
+                                                                  tstates);
   }
 
 
@@ -97,7 +110,14 @@ Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances,
                                                        p,
                                                        trait_mainland_ancestor,
                                                        num_unique_states),
-                                                       ances, states, forTime, method, atol, rtol, see_states, use_normalization);
+                                                       ances,
+                                                       states,
+                                                       forTime,
+                                                       method,
+                                                       atol,
+                                                       rtol,
+                                                       see_states,
+                                                       use_normalization);
   } catch(std::exception &ex) {
     forward_exception_to_r(ex);
   } catch (const char* msg) {

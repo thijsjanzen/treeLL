@@ -1,4 +1,4 @@
-//  Copyright (c) 2021 - 2023, Hanno Hildenbrandt
+//  Copyright (c) 2021 - 2025, Hanno Hildenbrandt
 //
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
@@ -114,16 +114,19 @@ namespace odeintcpp {
     } else if ("odeint::runge_kutta_fehlberg78" == stepper_name) {
       integrate(bno::make_controlled<bno::runge_kutta_fehlberg78<STATE>>(atol,
                                                                          rtol),
-                                                          *ode, y, t0, t1, dt, norm);
+                                                          *ode, y, t0, t1,
+                                                          dt, norm);
     } else if ("odeint::runge_kutta_dopri5" == stepper_name) {
       integrate(bno::make_controlled<bno::runge_kutta_dopri5<STATE>>(atol,
                                                                      rtol),
-                                                          *ode, y, t0, t1, dt, norm);
+                                                          *ode, y, t0, t1,
+                                                          dt, norm);
     } else if ("odeint::bulirsch_stoer" == stepper_name) {
       // no controlled stepper for bulirsch stoer
       integrate(bno::bulirsch_stoer<STATE, double, STATE, bstime_t>(atol,
                                                                     rtol),
-                                                           *ode, y, t0, t1, dt, norm);
+                                                           *ode, y, t0, t1,
+                                                           dt, norm);
     } else if ("odeint::runge_kutta4" == stepper_name) {
       integrate(bno::runge_kutta4<STATE>(), *ode, y, t0, t1, dt, norm);
     } else {

@@ -1,3 +1,10 @@
+//
+//  Copyright (c) 2025, Thijs Janzen and Hanno Hildenbrandt
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+
 #pragma once
 
 #include <Rcpp.h>
@@ -5,8 +12,8 @@
 
 template <typename T>
 class vector_view_t {
-public:
-  vector_view_t(T* data, size_t n) : first_(data), n_(n) {};
+ public:
+  vector_view_t(T* data, size_t n) : first_(data), n_(n) {}
 
   size_t size() const noexcept { return n_; }
   T* begin() const noexcept { return first_; }
@@ -14,19 +21,18 @@ public:
   T& operator[](size_t i) const { return *(first_ + i); }
   void advance(size_t s) noexcept { first_ += s; }
 
-private:
+ private:
   T* first_ = nullptr;
   size_t n_ = 0;
 };
 
 class sq_matrix {
-private:
+ private:
   std::vector<double> data_;
   const size_t n_;
 
-public:
-  sq_matrix(const Rcpp::NumericMatrix& mat) : n_(mat.nrow()) {
-
+ public:
+  explicit sq_matrix(const Rcpp::NumericMatrix& mat) : n_(mat.nrow()) {
     data_ = std::vector<double>(n_ * n_);
     for (size_t i = 0; i < n_; ++i) {
       for (size_t j = 0; j < n_; ++j) {
@@ -37,7 +43,6 @@ public:
 
   sq_matrix(const Rcpp::NumericVector& vec,
             size_t n) : n_(n) {
-
     data_ = std::vector<double>(n_ * n_);
     for (size_t i = 0; i < n_; ++i) {
       for (size_t j = 0; j < n_; ++j) {
@@ -50,7 +55,7 @@ public:
     data_ = other.get_data_();
   }
 
-  sq_matrix(size_t n) : n_(n) {}
+  explicit sq_matrix(size_t n) : n_(n) {}
 
   double value(size_t i, size_t j) const {
     return data_[i * n_ + j];
@@ -99,7 +104,6 @@ public:
         auto b = value(i, j);
 
         s += a * b;
-        //s += v[i] * value(i, j);
       }
       out[i] = s;
     }
@@ -119,7 +123,6 @@ public:
         auto b = value(i, j);
 
         s += a * b;
-        //s += v[i] * value(i, j);
       }
       out[i] = s;
     }
