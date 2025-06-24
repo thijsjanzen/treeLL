@@ -61,8 +61,8 @@ algorithm. Default is \code{c(1e-04, 1e-05, 1e-05)}.}
 
 \item{optimmethod}{A string with method used for optimization. Default is
 \code{"simplex"}. Alternative is \code{"subplex"}. Both are called from
-\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in \link{DDD}, while subplex
-is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
+\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in the package \link{DDD},
+while subplex is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
 
 \item{methode}{used integration method, default is ode45}
 

@@ -103,8 +103,6 @@
 #' @param seed pseudo-random number generator seed.
 #' @param parameters list where first vector represents lambdas, the second mus
 #' and the third transition rates.
-#' @param prob_func a function to calculate the probability of interest, see
-#' description.
 #' @param masterBlock matrix of transitions among only examined states, `NA` in
 #'  the main diagonal, used to build the full transition rates matrix.
 #' @param diff.conceal Boolean stating if the concealed states should be
@@ -116,9 +114,8 @@
 #' second one is the trait associated information.
 #' @param optimmethod A string with method used for optimization. Default is
 #' `"simplex"`. Alternative is `"subplex"`. Both are called from
-#' [DDD::optimizer()], simplex is implemented natively in [DDD], while subplex
-#' is ultimately called from [subplex::subplex()].
-#' @param lambd_and_modeSpe a matrix with the 4 models of speciation possible.
+#' [DDD::optimizer()], simplex is implemented natively in the package [DDD],
+#' while subplex is ultimately called from [subplex::subplex()].
 #' @param initloglik A numeric with the value of loglikehood obtained prior to
 #'  optimisation. Only used internally.
 #' @param state_names vector of names of all observed states.

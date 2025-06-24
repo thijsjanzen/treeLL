@@ -297,8 +297,8 @@ effects at the crown.}
 
 \item{optimmethod}{A string with method used for optimization. Default is
 \code{"simplex"}. Alternative is \code{"subplex"}. Both are called from
-\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in \link{DDD}, while subplex
-is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
+\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in the package \link{DDD},
+while subplex is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
 
 \item{display_warning}{display a warning if necessary}
 
@@ -359,11 +359,6 @@ options available are:
 \item{trparsopt}{transformed parameters to optimize}
 
 \item{trparsfix}{transformed paramaters that remain fixed}
-
-\item{prob_func}{a function to calculate the probability of interest, see
-description.}
-
-\item{lambd_and_modeSpe}{a matrix with the 4 models of speciation possible.}
 }
 \value{
 Nothing
