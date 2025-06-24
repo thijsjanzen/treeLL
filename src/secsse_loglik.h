@@ -67,7 +67,7 @@ struct storage_t {
 
 struct dnode_t {
   dnode_t() noexcept = default;
-  dnode_t(const terse::dnode_t& rhs) noexcept :
+  dnode_t(const terse::dnode_t& rhs) noexcept :    // NOLINT [runtime/explicit]
     state(rhs.state),
     time(rhs.time) {}
   state_ptr state = nullptr;
@@ -77,7 +77,7 @@ struct dnode_t {
 
 struct inode_t {
   inode_t() noexcept = default;
-  inode_t(const terse::inode_t& rhs) :
+  inode_t(const terse::inode_t& rhs) :             // NOLINT [runtime/explicit]
     state(rhs.state),
     desc{rhs.desc[0],
          rhs.desc[1]} {}
@@ -159,7 +159,7 @@ inline double normalize_loglik(RaIt first, RaIt last) {
 template <typename ODE,
           typename NORMALIZER>
 class Integrator {
-public:
+ public:
   using ode_type = ODE;
 
   Integrator(std::unique_ptr<ode_type>&& od,
@@ -226,7 +226,7 @@ public:
       dnode.storage.emplace_back(dnode.time, y);
     }
 
-  private:
+   private:
     template <typename N>
     void do_integrate(std::vector<double>& state,
                       double t0,
@@ -248,7 +248,7 @@ public:
     const std::string method_;
     const double atol_;
     const double rtol_;
-  };
+  };                               // NOLINT [whitespace/indent]
 
 
   struct calc_ll_res {
