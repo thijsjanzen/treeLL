@@ -19,7 +19,6 @@ default_params_doc(
   sampling_fraction,
   tol,
   maxiter,
-  optimethod,
   num_cycles,
   loglik_penalty,
   verbose,
@@ -42,12 +41,10 @@ default_params_doc(
   max_tries,
   drop_extinct,
   seed,
-  prob_func,
   parameters,
   masterBlock,
   diff.conceal,
   trait_info,
-  lambd_and_modeSpe,
   initloglik,
   initfactors,
   idparsfuncdefpar,
@@ -203,9 +200,6 @@ the tree. Defaults to \code{TRUE}.}
 
 \item{seed}{pseudo-random number generator seed.}
 
-\item{prob_func}{a function to calculate the probability of interest, see
-description.}
-
 \item{parameters}{list where first vector represents lambdas, the second mus
 and the third transition rates.}
 
@@ -220,8 +214,6 @@ parameters.}
 
 \item{trait_info}{data frame where first column has species ids and the
 second one is the trait associated information.}
-
-\item{lambd_and_modeSpe}{a matrix with the 4 models of speciation possible.}
 
 \item{initloglik}{A numeric with the value of loglikehood obtained prior to
 optimisation. Only used internally.}
@@ -281,8 +273,8 @@ three entries:
 In each entry, integers numbers (1-n) indicate the parameter to be
 optimized.}
 
-\item{ml_pars}{resulting parameter estimates as returned by for instance
-\code{\link[=cla_secsse_ml]{cla_secsse_ml()}}, having the same structure as \code{param_post}.}
+\item{ml_pars}{resulting parameter estimates, having the same structure as
+\code{param_posit}.}
 
 \item{mu_vector}{previously defined mus - used to choose indicator number.}
 
@@ -367,6 +359,11 @@ options available are:
 \item{trparsopt}{transformed parameters to optimize}
 
 \item{trparsfix}{transformed paramaters that remain fixed}
+
+\item{prob_func}{a function to calculate the probability of interest, see
+description.}
+
+\item{lambd_and_modeSpe}{a matrix with the 4 models of speciation possible.}
 }
 \value{
 Nothing

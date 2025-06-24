@@ -19,6 +19,37 @@ get_state_names <- function(state_names, num_concealed_states) {
 }
 
 
+#' @keywords internal
+create_q_matrix_int <- function(masterBlock,
+                                concealnewQMatr,
+                                ntraits,
+                                diff.conceal) {
+  Q <- NULL
+  for (i in 1:ntraits) {
+    Qrow <- NULL
+    for (ii in 1:ntraits) {
+      entry <- masterBlock[i, ii]
+      if (is.na(entry)) {
+        Qrow <- cbind(Qrow, masterBlock)
+      } else {
+        if (diff.conceal == TRUE) {
+          entry <- concealnewQMatr[i, ii]
+        }
+
+        outDiagBlock <- matrix(0,
+                               ncol = ntraits,
+                               nrow = ntraits,
+                               byrow = TRUE)
+        diag(outDiagBlock) <- entry
+        Qrow <- cbind(Qrow, outDiagBlock)
+      }
+    }
+    Q <- rbind(Q, Qrow)
+  }
+  return(Q)
+}
+
+
 #' @title Basic Qmatrix
 #' Sets a Q matrix where double transitions are not allowed
 #'

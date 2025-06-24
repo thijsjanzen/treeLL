@@ -157,8 +157,8 @@
 #'
 #'  In each entry, integers numbers (1-n) indicate the parameter to be
 #'  optimized.
-#' @param ml_pars resulting parameter estimates as returned by for instance
-#'  [cla_secsse_ml()], having the same structure as `param_post`.
+#' @param ml_pars resulting parameter estimates, having the same structure as
+#' `param_posit`.
 #' @param mu_vector previously defined mus - used to choose indicator number.
 #' @param display_warning display a warning if necessary
 #' @param take_into_account_root_edge if TRUE, the LL integration is continued
@@ -212,7 +212,6 @@ default_params_doc <- function(phy,
                                sampling_fraction,
                                tol,
                                maxiter,
-                               optimethod,
                                num_cycles,
                                loglik_penalty,
                                verbose,
@@ -235,12 +234,10 @@ default_params_doc <- function(phy,
                                max_tries,
                                drop_extinct,
                                seed,
-                               prob_func,
                                parameters,
                                masterBlock,
                                diff.conceal,
                                trait_info,
-                               lambd_and_modeSpe,
                                initloglik,
                                initfactors,
                                idparsfuncdefpar,
