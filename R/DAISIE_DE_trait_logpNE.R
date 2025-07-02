@@ -26,11 +26,11 @@
 #'   ), nrow = 2),
 #'   0
 #' )
-#' brts <- datalist[[2]]$branching_times
+#' brts <- datalist[[3]]$branching_times
 #' DAISIE_DE_trait_logpNE(
 #'   brts                    = brts,
 #'   trait                   = trait,
-#'   status                  = 1,
+#'   status                  = 4,
 #'   parameter               = parameter,
 #'   trait_mainland_ancestor = c(1, 0),
 #'   num_observed_states     = 2,
@@ -59,7 +59,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                   num_observed_states = num_observed_states,
                   num_hidden_states = num_hidden_states,
                   status = status,
-                  sampling_fraction = 1)
+                  sampling_fraction = sampling_fraction)
 
   # Unpack times from brts
   t0   <- brts[1]
@@ -83,6 +83,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
                                                    brts = brts,
+                                                   sampling_fraction = sampling_fraction,
                                                    trait_mainland_ancestor = trait_mainland_ancestor)
     solution2 <- solve_branch(interval_func = interval2,
                               initial_conditions = initial_conditions2,
@@ -118,7 +119,7 @@ DAISIE_DE_trait_logpNE <- function(brts,
                                                    num_observed_states = num_observed_states,
                                                    num_hidden_states = num_hidden_states,
                                                    trait = trait,
-                                                   sampling_fraction = 1)
+                                                   sampling_fraction = sampling_fraction)
     solution3 <- solve_branch(interval_func = interval3,
                               initial_conditions = initial_conditions3,
                               time = time3,

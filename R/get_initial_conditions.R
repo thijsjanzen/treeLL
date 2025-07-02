@@ -7,7 +7,7 @@ get_initial_conditions2 <- function(status,
                                     num_observed_states,
                                     num_hidden_states,
                                     brts,
-                                    sampling_fraction = c(1),
+                                    sampling_fraction,
                                     trait_mainland_ancestor) {
   n <- num_observed_states * num_hidden_states
   num_unique_states <- n
@@ -35,7 +35,7 @@ get_initial_conditions2 <- function(status,
     return(matrix(initial_conditions2, nrow = 1))
   } else if (status == 2 && length(brts) == 2) {
 
-    if (is.na(trait)) {
+    if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -146,7 +146,7 @@ get_initial_conditions3 <- function(status,
                              res[length(res)])                                      ## DA3
   }
   else if (status == 5) {
-    if (is.na(trait)) {
+    if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))

@@ -56,7 +56,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 
     phy <- datalist[[i]]$phylogeny
 
-    trait_mainland_ancestor <- datalist[[i]]$root_state[2]
+    trait_mainland_ancestor <- datalist[[i]]$root_state
 
     if (stac %in% c(1, 4)) {
       loglikelihood <- DAISIE_DE_trait_logpNE(brts = brts,

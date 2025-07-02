@@ -65,7 +65,8 @@ DAISIE_DE_trait_logpES_max_min_age_hidden <- function(brts,
                                                  num_hidden_states = num_hidden_states,
                                                  trait = trait,
                                                  brts = brts,
-                                                 sampling_fraction = sampling_fraction)
+                                                 sampling_fraction = sampling_fraction,
+                                                 trait_mainland_ancestor = trait_mainland_ancestor)
 
   # Time sequence for interval [tp, tmin]
   time2 <- c(tp, tmin)

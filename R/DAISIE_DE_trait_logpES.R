@@ -32,14 +32,14 @@
 #' )
 #'
 #' DAISIE_DE_trait_logpES(
-#'   brts                    = brts,
-#'   trait                   = 0,
+#'   brts                    = data_list1[[17]]$branching_times,
+#'   trait                   = data_list1[[17]]$traits,
 #'   status                  = 2,
-#'   sampling_fraction       = sampling_fraction,
+#'   sampling_fraction       = data_list1[[17]]$sampling_fraction,
 #'   parameter               = parameter,
-#'   trait_mainland_ancestor = c(1, 0),
+#'   trait_mainland_ancestor = data_list1[[17]]$branching_times,
 #'   num_observed_states     = 2,
-#'   num_hidden_states       = 1,
+#'   num_hidden_states       = 2,
 #'   atol                    = 1e-15,
 #'   rtol                    = 1e-15,
 #'   methode                 = "ode45"
@@ -64,7 +64,7 @@ DAISIE_DE_trait_logpES <- function(brts,
                   num_observed_states,
                   num_hidden_states,
                   status,
-                  sampling_fraction = 0)
+                  sampling_fraction = sampling_fraction)
 
   # Unpack times from brts
   t0   <- brts[1]
