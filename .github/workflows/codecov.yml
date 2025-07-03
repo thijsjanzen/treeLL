@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main, dev]
 
-name: test-coverage-new
+name: codecov
 
 permissions: read-all
 
