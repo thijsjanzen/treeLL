@@ -26,6 +26,7 @@ test_that("logp0", {
                 methode = "lsodes",
                 reltolint = 1e-10,
                 abstolint = 1e-10)
+
       testthat::expect_equal(res1, res2)
 
       res3 <-  DAISIE_DE_trait_logp0(

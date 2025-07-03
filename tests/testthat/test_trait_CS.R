@@ -2,7 +2,7 @@ test_that("CS", {
 
   if (requireNamespace("DAISIE")) {
 
-    if (packageVersion("DAISIE") >= "4.6.0") {
+    if (packageVersion("DAISIE") < "4.6.0") {
 
       data("Galapagos_datalist", package = "DAISIE")
       datalist <- Galapagos_datalist
@@ -23,7 +23,7 @@ test_that("CS", {
       )
 
 
-      res3 <-  DAISIE_DE_trait_logp0(
+      res3 <-  DAISIE_DE_trait_loglik_CS(
         datalist            = datalist,
         parameter           = parameter,
         num_observed_states     = 2,

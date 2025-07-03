@@ -25,9 +25,7 @@ Imports:
 Suggests: 
  secsse,
  DAISIE,
- testthat,
- knitr,
- rmarkdown
+ testthat
 LinkingTo: 
  Rcpp,
  RcppParallel,
@@ -38,4 +36,4 @@ Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE
