@@ -39,9 +39,9 @@ mus and the third transition rates.}
 
 \item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
 options available are:
-\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
-\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
-\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
+ `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+ `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+ `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
 likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along

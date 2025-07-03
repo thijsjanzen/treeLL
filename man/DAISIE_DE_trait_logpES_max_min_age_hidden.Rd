@@ -26,8 +26,8 @@ times}
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
-\code{vignette("starting_secsse", package = "secsse")}. When providing a
-\code{multiPhylo} set of multiple phylognies, traits should be a list where
+`vignette("starting_secsse", package = "secsse")`. When providing a
+`multiPhylo` set of multiple phylognies, traits should be a list where
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
@@ -35,7 +35,7 @@ position.}
 
 \item{sampling_fraction}{vector that states the sampling proportion per
 trait state. It must have as many elements as there are trait states. When
-using a \code{multiPhylo} object, sampling fraction should be list where each
+using a `multiPhylo` object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{parameter}{list where first vector represents lambdas, the second
@@ -56,9 +56,9 @@ mainland ancestor}
 
 \item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
 options available are:
-\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
-\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
-\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
+ `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+ `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+ `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
 likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
@@ -66,7 +66,7 @@ the branches}
 }
 \description{
 this function calculates the likelihood of observing a singleton endemic
-species on an island with the trait state \code{i}, and for which only the
+species on an island with the trait state `i`, and for which only the
 estimated maximum and minimum ages of colonization are known.
 }
 \examples{

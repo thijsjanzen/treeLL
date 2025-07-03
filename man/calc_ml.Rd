@@ -50,35 +50,35 @@ to be estimated.}
 
 \item{parsfix}{a numeric vector with the value of the fixed parameters.}
 
-\item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
-\code{"proper_cond"} (default). For details, see vignette.}
+\item{cond}{condition on the existence of a node root: `"maddison_cond"`,
+`"proper_cond"` (default). For details, see vignette.}
 
 \item{tol}{A numeric vector with the maximum tolerance of the optimization
-algorithm. Default is \code{c(1e-04, 1e-05, 1e-05)}.}
+algorithm. Default is `c(1e-04, 1e-05, 1e-05)`.}
 
 \item{maxiter}{max number of iterations. Default is
-\code{1000 * round((1.25) ^ length(idparsopt))}.}
+`1000 * round((1.25) ^ length(idparsopt))`.}
 
 \item{optimmethod}{A string with method used for optimization. Default is
-\code{"simplex"}. Alternative is \code{"subplex"}. Both are called from
-\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in the package \link{DDD},
-while subplex is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
+`"simplex"`. Alternative is `"subplex"`. Both are called from
+[DDD::optimizer()], simplex is implemented natively in the package [DDD],
+while subplex is ultimately called from [subplex::subplex()].}
 
 \item{methode}{used integration method, default is ode45}
 
 \item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
 options available are:
-\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
-\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
-\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
+ `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+ `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+ `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
 
-\item{num_cycles}{Number of cycles of the optimization. When set to \code{Inf},
+\item{num_cycles}{Number of cycles of the optimization. When set to `Inf`,
 the optimization will be repeated until the result is, within the
 tolerance, equal to the starting values, with a maximum of 10 cycles.}
 
-\item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
-\code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
-\code{FALSE}, optimizer output will be shown.}
+\item{verbose}{sets verbose output; default is `TRUE` when `optimmethod` is
+`"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to
+`FALSE`, optimizer output will be shown.}
 
 \item{num_threads}{number of threads to be used. Default is one thread.}
 
