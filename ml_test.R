@@ -6,9 +6,10 @@ for (i in 2:length(datalist)) {
                                  replace = TRUE)
   datalist[[i]]$sampling_fraction <- rep(1, 2)
   datalist[[i]]$phylogeny <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+  datalist[[i]]$root_state <- c(1, 1)
 }
 
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0, 0 )
 
 res1 <-  DAISIE_DE_trait_logp0(
   datalist            = datalist,
@@ -19,7 +20,23 @@ res1 <-  DAISIE_DE_trait_logp0(
   rtol                = 1e-10,
   methode             = "lsodes"
 )
-res1
+
+parameter <- list()
+parameter[[1]] <- c(2.546591, 2.546591)
+parameter[[2]] <- c(2.678781, 2.678781)
+parameter[[3]] <- c(0.009326754, 0.009326754)
+parameter[[4]] <- c(1.008583, 1.008583)
+parameter[[5]] <- matrix(c(0), nrow = 2, ncol = 2)
+parameter[[6]] <- 0
+
+
+res2 <- DAISIE_DE_trait_loglik_CS(parameter = parameter,
+                                  datalist = datalist,
+                                  num_observed_states = 2,
+                                  num_hidden_states = 1,
+                                  use_Rcpp = 2)
+
+
 
 # but now we want to optimize
 

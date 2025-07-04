@@ -35,7 +35,7 @@ get_initial_conditions2 <- function(status,
     return(matrix(initial_conditions2, nrow = 1))
   } else if (status == 2 && length(brts) == 2) {
 
-    if (is.na(trait)) {
+    if (any(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -58,7 +58,7 @@ get_initial_conditions2 <- function(status,
     DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   } else if (status == 4) {
-    if (is.na(trait)) {
+    if (any(is.na(trait))) {
       DM2[c(1, n)] <- 1
     } else {
       DM2[c((num_hidden_states * trait + 1),
@@ -66,7 +66,7 @@ get_initial_conditions2 <- function(status,
     }
 
   } else if (status == 8) {
-    if (is.na(trait)) {
+    if (any(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -77,7 +77,7 @@ get_initial_conditions2 <- function(status,
             num_hidden_states + trait * num_hidden_states)] <- 1
     }
   } else if (status == 9)  {
-    if (is.na(trait)) {
+    if (any(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
@@ -127,13 +127,13 @@ get_initial_conditions3 <- function(status,
   sampling_fraction <- sampling_fraction[1 + trait]
 
   if (status == 1) {
-    if (is.na(trait)) {
+    if (any(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
       }
       DM2[c(1, n)] <- s
-    } else if (trait == trait) {
+    } else {
       DM2[c((num_hidden_states * trait + 1),
             num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
     }
@@ -148,7 +148,7 @@ get_initial_conditions3 <- function(status,
                              0,                                                     ## DA2
                              res[length(res)])                                      ## DA3
   } else if (status == 5) {
-    if (is.na(trait)) {
+    if (any(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
