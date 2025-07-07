@@ -42,6 +42,7 @@
 DAISIE_DE_trait_logpNE <- function(brts,
                                    status,
                                    trait,
+                                   sampling_fraction,
                                    num_observed_states,
                                    num_hidden_states,
                                    trait_mainland_ancestor = NA,
