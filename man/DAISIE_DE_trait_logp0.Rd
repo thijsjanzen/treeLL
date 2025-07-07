@@ -48,8 +48,8 @@ likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
 the branches}
 }
 \description{
-This function computes the likelihood that all species that colonize the
-island have gone extinct prior to the present.
+This function compute the likelihood that all species that colonize the island
+have gone extinct prior to the present.
 }
 \examples{
 #Load DAISIE package and data

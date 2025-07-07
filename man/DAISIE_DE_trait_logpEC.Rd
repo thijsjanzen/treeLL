@@ -73,9 +73,8 @@ likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
 the branches}
 }
 \description{
-This function calculates the likelihood of observing a clade with specified
-species trait states, given known colonization time. It is designed for
-comparison with DAISIE-based models.
+This function calculates the likelihood of observing a clade with specified species trait states,
+given known colonization time. It is designed for comparison with DAISIE-based models.
 }
 \examples{
 library(DAISIE)
@@ -99,7 +98,7 @@ parameter <- list(
     0,    0,    0.002,0.005,
     rep(0, 8)
   ), nrow = 4),
-  0
+  1
 )
 
  DAISIE_DE_trait_logpEC(

@@ -65,9 +65,8 @@ likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
 the branches}
 }
 \description{
-this function calculates the likelihood of observing a singleton endemic
-species on an island with the trait state `i`, and for which only the
-estimated maximum and minimum ages of colonization are known.
+this function calculates the likelihood of observing a singleton endemic species on an island
+with the trait state `i`, and for which only the estimated maximum and minimum ages of colonization are known.
 }
 \examples{
 library(DAISIE)

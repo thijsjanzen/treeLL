@@ -2,8 +2,7 @@
 % Please edit documentation in R/DAISIE_DE_trait_logpNE.R
 \name{DAISIE_DE_trait_logpNE}
 \alias{DAISIE_DE_trait_logpNE}
-\title{This function calculates the likelihood of observing a non-endemic lineage
-with specified species trait states,}
+\title{This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,}
 \usage{
 DAISIE_DE_trait_logpNE(
   brts,
@@ -12,6 +11,7 @@ DAISIE_DE_trait_logpNE(
   num_observed_states,
   num_hidden_states,
   trait_mainland_ancestor = NA,
+  sampling_fraction,
   parameter,
   atol = 1e-15,
   rtol = 1e-15,
@@ -40,6 +40,11 @@ position.}
 \item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
 mainland ancestor}
 
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a `multiPhylo` object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
+
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
 
@@ -60,8 +65,7 @@ likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
 the branches}
 }
 \description{
-This function calculates the likelihood of observing a non-endemic lineage
-with specified species trait states,
+This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,
 }
 \examples{
 library(DAISIE)
@@ -83,11 +87,11 @@ parameter <- list(
   ), nrow = 2),
   0
 )
-brts <- datalist[[2]]$branching_times
+brts <- datalist[[3]]$branching_times
 DAISIE_DE_trait_logpNE(
   brts                    = brts,
   trait                   = trait,
-  status                  = 1,
+  status                  = 4,
   parameter               = parameter,
   trait_mainland_ancestor = c(1, 0),
   num_observed_states     = 2,
