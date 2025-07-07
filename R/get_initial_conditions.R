@@ -35,13 +35,17 @@ get_initial_conditions2 <- function(status,
     return(matrix(initial_conditions2, nrow = 1))
   } else if (status == 2 && length(brts) == 2) {
 
+    if (length(trait) > 1) {
+      stop("status == 2 assumes trait is not a vector, but received a vector")
+    }
+
     if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
       }
-      DE[c(1, n)] <- s
-      E[c(1, n)]  <- 1 - s
+      DE[1:n] <- s
+      E[1:n]  <- 1 - s
     } else {
       DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
       E[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
@@ -55,8 +59,12 @@ get_initial_conditions2 <- function(status,
           num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   }
   else if (status == 4) {
+    if (length(trait) > 1) {
+      stop("status == 4 assumes trait is not a vector, but received a vector")
+    }
+
     if ( is.na(trait) ) {
-      DM2[c(1, n)] <- 1
+      DM2[1:n] <- 1
     }
     else {
       DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
@@ -64,25 +72,32 @@ get_initial_conditions2 <- function(status,
 
   }
   else if(status == 8) {
+    if (length(trait) > 1) {
+      stop("status == 8 assumes trait is not a vector, but received a vector")
+    }
     if (is.na(trait)) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
       }
-      DM2[c(1, n)] <- s
+      DM2[1:n] <- s
     }
     else {
       DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- 1
     }
   }
   else if(status == 9)  {
+    if (length(trait) > 1) {
+      stop("status == 9 assumes trait is not a vector, but received a vector")
+    }
+
     if (is.na(trait)) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
       }
-      DE[c(1, n)] <- s
-      E[c(1, n)]  <- 1 - s
+      DE[1:n] <- s
+      E[1:n]  <- 1 - s
     }
     else  {
       DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
@@ -124,12 +139,16 @@ get_initial_conditions3 <- function(status,
   sampling_fraction <- sampling_fraction[1 + trait]
 
   if (status == 1) {
+    if (length(trait) > 1) {
+      stop("status == 1 assumes trait is not a vector, but received a vector")
+    }
+
     if (is.na(trait)) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
       }
-      DM2[c(1, n)] <- s
+      DM2[1:n] <- s
     }
     else if (trait == trait) {
       DM2[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
@@ -146,13 +165,17 @@ get_initial_conditions3 <- function(status,
                              res[length(res)])                                      ## DA3
   }
   else if (status == 5) {
+    if (length(trait) > 1) {
+      stop("status == 5 assumes trait is not a vector, but received a vector")
+    }
+
     if (all(is.na(trait))) {
       s <- c()
       for (i in seq_along(sampling_fraction)) {
         s <- c(s, rep(sampling_fraction[i], num_hidden_states))
       }
-      DE[c(1, n)] <- s
-      E[c(1, n)]  <- 1 - s
+      DE[1:n] <- s
+      E[1:n]  <- 1 - s
     }
     else  {
       DE[c((num_hidden_states * trait + 1), num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
