@@ -8,6 +8,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden(
   brts,
   trait,
   status,
+  sampling_fraction,
   parameter,
   trait_mainland_ancestor = NA,
   num_observed_states,
@@ -31,6 +32,11 @@ each entry in the list corresponds to the matching phylogeny on that
 position.}
 
 \item{status}{indicator for type of inference required}
+
+\item{sampling_fraction}{vector that states the sampling proportion per
+trait state. It must have as many elements as there are trait states. When
+using a `multiPhylo` object, sampling fraction should be list where each
+entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}

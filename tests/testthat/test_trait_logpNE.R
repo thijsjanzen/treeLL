@@ -20,6 +20,7 @@ test_that("logpES", {
       parameter               = parameter,
       num_observed_states     = 1,
       num_hidden_states       = 1,
+      sampling_fraction       = 1,
       atol                    = 1e-10,
       rtol                    = 1e-10,
       methode                 = "ode45"
@@ -42,10 +43,11 @@ test_that("logpES", {
       parameter               = parameter,
       num_observed_states     = 1,
       num_hidden_states       = 1,
+      sampling_fraction       = 1,
       atol                    = 1e-10,
       rtol                    = 1e-10,
       methode                 = "ode45",
-      use_Rcpp                = 0)
+      use_Rcpp                = 1)
 
     testthat::expect_equal(res1, res3)
 
@@ -56,6 +58,7 @@ test_that("logpES", {
       parameter               = parameter,
       num_observed_states     = 1,
       num_hidden_states       = 1,
+      sampling_fraction       = 1,
       atol                    = 1e-10,
       rtol                    = 1e-10,
       methode                 = "ode45",

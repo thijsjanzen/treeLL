@@ -11,6 +11,7 @@ test_that("logpNE_max_min_age_coltime", {
                                               parameter             = parameter,
                                               num_observed_states   = 1,
                                               num_hidden_states     = 1,
+                                              sampling_fraction     = 1,
                                               atol                  = 1e-15,
                                               rtol                  = 1e-15,
                                               methode               = "ode45"
@@ -33,6 +34,7 @@ test_that("logpNE_max_min_age_coltime", {
                                               parameter             = parameter,
                                               num_observed_states   = 1,
                                               num_hidden_states     = 1,
+                                              sampling_fraction     = 1,
                                               atol                  = 1e-15,
                                               rtol                  = 1e-15,
                                               methode               = "ode45",

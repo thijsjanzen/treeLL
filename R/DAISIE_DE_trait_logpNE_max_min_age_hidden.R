@@ -43,6 +43,7 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <-
                               function(brts,
                                        trait,
                                        status,
+                                       sampling_fraction,
                                        parameter,
                                        trait_mainland_ancestor = NA,
                                        num_observed_states,
