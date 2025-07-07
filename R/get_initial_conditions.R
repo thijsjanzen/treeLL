@@ -23,14 +23,15 @@ get_initial_conditions2 <- function(status,
   # only use the sampling fraction of the focal trait, assuming traits start
   # counting at 0.
 
-  sampling_fraction <- sampling_fraction[1 + trait]
+  if (length(trait) == 1)
+    if (!is.na(trait)) sampling_fraction <- sampling_fraction[1 + trait]
 
   if (status == 2 && length(brts) > 2) {
-    initial_conditions2 <- c(res[1:n],                      ## DE
+    initial_conditions2 <- c( res[1:n],                      ## DE
                              (res[1:n]) * res[length(res)], ## DM2
-                             res[(n + 1):(n + n)],          ## DM3
-                             res[(n + n + 1):(n + n + n)],  ## E
-                             res[length(res)])              ## DA3
+                              res[(n + 1):(n + n)],          ## DM3
+                              res[(n + n + 1):(n + n + n)],  ## E
+                              res[length(res)])              ## DA3
     # pre-emptive return because this one is constructed differently.
     return(matrix(initial_conditions2, nrow = 1))
   } else if (status == 2 && length(brts) == 2) {
