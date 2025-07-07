@@ -7,7 +7,6 @@ get_initial_conditions2 <- function(status,
                                     num_observed_states,
                                     num_hidden_states,
                                     brts,
-                                    sampling_fraction = NA,
                                     sampling_fraction,
                                     trait_mainland_ancestor) {
   n <- num_observed_states * num_hidden_states
