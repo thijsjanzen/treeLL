@@ -7,11 +7,8 @@ get_initial_conditions2 <- function(status,
                                     num_observed_states,
                                     num_hidden_states,
                                     brts,
-<<<<<<< HEAD
                                     sampling_fraction = NA,
-=======
                                     sampling_fraction,
->>>>>>> 39239c285e14fc5e6bd927224c9f1b40b7eae1af
                                     trait_mainland_ancestor) {
   n <- num_observed_states * num_hidden_states
   num_unique_states <- n
