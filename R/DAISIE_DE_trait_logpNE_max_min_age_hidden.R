@@ -68,7 +68,9 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden <-
                                                  num_hidden_states =
                                                    num_hidden_states,
                                                  trait = trait,
-                                                 brts = brts)
+                                                 brts = brts,
+                                                 sampling_fraction = sampling_fraction,
+                                                 trait_mainland_ancestor = trait_mainland_ancestor)
 
 
 

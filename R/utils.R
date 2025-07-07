@@ -2,25 +2,6 @@
 #' @rawNamespace import(Rcpp)
 #' @rawNamespace importFrom(RcppParallel, RcppParallelLibs)
 #' @keywords internal
-check_tree <- function(phy) {
-  if (ape::is.rooted(phy) == FALSE) {
-    stop("The tree needs to be rooted.")
-  }
-
-  if (ape::is.binary(phy) == FALSE) {
-    stop("The tree needs to be fully resolved.")
-  }
-  # using option = 2, which uses the variance, the default method until ape
-  # 3.5. This seems to be less sensitive.
-  if (ape::is.ultrametric(phy, option = 2) == FALSE) {
-    stop("The tree needs to be ultrametric.")
-  }
-  if (any(phy$edge.length == 0)) {
-    stop("The tree must have internode distancs that are all larger than 0.")
-  }
-}
-
-#' @keywords internal
 transf_funcdefpar <- function(idparsfuncdefpar,
                               functions_defining_params,
                               idfactorsopt,

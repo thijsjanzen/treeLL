@@ -1,9 +1,8 @@
 #' Testing function for comparison with DAISIE
 #'
 #' @description
-#' This function calculates the likelihood of observing a clade with specified
-#' species trait states, given known colonization time. It is designed for
-#' comparison with DAISIE-based models.
+#' This function calculates the likelihood of observing a clade with specified species trait states,
+#' given known colonization time. It is designed for comparison with DAISIE-based models.
 #'
 #' @inheritParams default_params_doc
 #'
@@ -31,7 +30,7 @@
 #'     0,    0,    0.002,0.005,
 #'     rep(0, 8)
 #'   ), nrow = 4),
-#'   0
+#'   1
 #' )
 #'
 #'  DAISIE_DE_trait_logpEC(
@@ -104,12 +103,16 @@ DAISIE_DE_trait_logpEC <- function(
   tmax <- brts[2]
   t1   <- brts[2]
   t2   <- brts[3]
+  tp   <- 0
 
   # Time intervals
 
   time2 <- c(t2, t1)
   time3 <- c(t2, tmax)
   time4 <- c(tmax, t0)
+
+  # Number of states in the system
+  #n <- num_observed_states * num_hidden_states
 
   # Solve for interval [tp, t2] (stem phase)
   res <- c()
@@ -149,15 +152,11 @@ DAISIE_DE_trait_logpEC <- function(
     initial_conditions2 <- get_initial_conditions2(status = status,
                                                    res = res,
                                                    trait = traits,
-                                                   num_observed_states =
-                                                     num_observed_states,
-                                                   num_hidden_states =
-                                                     num_hidden_states,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states,
                                                    brts = brts,
-                                                   sampling_fraction =
-                                                     sampling_fraction,
-                                                   trait_mainland_ancestor =
-                                                     trait_mainland_ancestor)
+                                                   sampling_fraction = sampling_fraction,
+                                                   trait_mainland_ancestor = trait_mainland_ancestor)
 
     solution2 <- solve_branch(interval_func = interval2,
                               initial_conditions = initial_conditions2,
@@ -173,12 +172,9 @@ DAISIE_DE_trait_logpEC <- function(
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution2,
                                                    parameter = parameter,
-                                                   trait_mainland_ancestor =
-                                                     trait_mainland_ancestor,
-                                                   num_observed_states =
-                                                     num_observed_states,
-                                                   num_hidden_states =
-                                                     num_hidden_states)
+                                                   trait_mainland_ancestor = trait_mainland_ancestor,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
 
     solution4 <- solve_branch(interval_func = interval4,
                               initial_conditions = initial_conditions4,
@@ -195,13 +191,10 @@ DAISIE_DE_trait_logpEC <- function(
   if (status == 6) {
     initial_conditions3 <- get_initial_conditions3(status = status,
                                                    res = res,
-                                                   num_observed_states =
-                                                     num_observed_states,
-                                                   num_hidden_states =
-                                                     num_hidden_states,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states,
                                                    trait = traits,
-                                                   sampling_fraction =
-                                                     sampling_fraction)
+                                                   sampling_fraction = sampling_fraction)
     solution3 <- solve_branch(interval_func = interval3,
                               initial_conditions = initial_conditions3,
                               time = time3,
@@ -217,12 +210,9 @@ DAISIE_DE_trait_logpEC <- function(
     initial_conditions4 <- get_initial_conditions4(status = status,
                                                    solution = solution3,
                                                    parameter = parameter,
-                                                   trait_mainland_ancestor =
-                                                     trait_mainland_ancestor,
-                                                   num_observed_states =
-                                                     num_observed_states,
-                                                   num_hidden_states =
-                                                     num_hidden_states)
+                                                   trait_mainland_ancestor = trait_mainland_ancestor,
+                                                   num_observed_states = num_observed_states,
+                                                   num_hidden_states = num_hidden_states)
     solution4 <- solve_branch(interval_func = interval4,
                               initial_conditions = initial_conditions4,
                               time = time4,

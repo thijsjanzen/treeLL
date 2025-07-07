@@ -88,14 +88,14 @@ default_params_doc(
 )
 }
 \arguments{
-\item{phy}{phylogenetic tree of class \code{phylo}, rooted and with
+\item{phy}{phylogenetic tree of class `phylo`, rooted and with
 branch lengths. Alternatively, multiple phylogenetic trees can be provided
-as the \code{multiPhylo} class.}
+as the `multiPhylo` class.}
 
 \item{traits}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
-\code{vignette("starting_secsse", package = "secsse")}. When providing a
-\code{multiPhylo} set of multiple phylognies, traits should be a list where
+`vignette("starting_secsse", package = "secsse")`. When providing a
+`multiPhylo` set of multiple phylognies, traits should be a list where
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
@@ -112,41 +112,41 @@ to be estimated.}
 \item{idparsopt}{a numeric vector with the ID of parameters to be estimated.}
 
 \item{idfactorsopt}{id of the factors that will be optimized. There are not
-fixed factors, so use a constant within \code{functions_defining_params}.}
+fixed factors, so use a constant within `functions_defining_params`.}
 
 \item{parsfix}{a numeric vector with the value of the fixed parameters.}
 
-\item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
-\code{"proper_cond"} (default). For details, see vignette.}
+\item{cond}{condition on the existence of a node root: `"maddison_cond"`,
+`"proper_cond"` (default). For details, see vignette.}
 
 \item{root_state_weight}{the method to weigh the states:
-\code{"maddison_weights"}, \code{"proper_weights"} (default) or \code{"equal_weights"}.
-It can also be specified for the root state: the vector \code{c(1, 0, 0)}
+`"maddison_weights"`, `"proper_weights"` (default) or `"equal_weights"`.
+It can also be specified for the root state: the vector `c(1, 0, 0)`
 indicates state 1 was the root state. When
-using a \code{multiPhylo} object, root_state_weight should be list where each
+using a `multiPhylo` object, root_state_weight should be list where each
 entry in the list corresponds to the root_state_weight for each tree.}
 
 \item{sampling_fraction}{vector that states the sampling proportion per
 trait state. It must have as many elements as there are trait states. When
-using a \code{multiPhylo} object, sampling fraction should be list where each
+using a `multiPhylo` object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{tol}{A numeric vector with the maximum tolerance of the optimization
-algorithm. Default is \code{c(1e-04, 1e-05, 1e-05)}.}
+algorithm. Default is `c(1e-04, 1e-05, 1e-05)`.}
 
 \item{maxiter}{max number of iterations. Default is
-\code{1000 * round((1.25) ^ length(idparsopt))}.}
+`1000 * round((1.25) ^ length(idparsopt))`.}
 
-\item{num_cycles}{Number of cycles of the optimization. When set to \code{Inf},
+\item{num_cycles}{Number of cycles of the optimization. When set to `Inf`,
 the optimization will be repeated until the result is, within the
 tolerance, equal to the starting values, with a maximum of 10 cycles.}
 
 \item{loglik_penalty}{the size of the penalty for all parameters; default is
 0 (no penalty).}
 
-\item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
-\code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
-\code{FALSE}, optimizer output will be shown.}
+\item{verbose}{sets verbose output; default is `TRUE` when `optimmethod` is
+`"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to
+`FALSE`, optimizer output will be shown.}
 
 \item{num_threads}{number of threads to be used. Default is one thread.}
 
@@ -155,21 +155,21 @@ tolerance, equal to the starting values, with a maximum of 10 cycles.}
 \item{rtol}{A numeric specifying the relative tolerance of integration.}
 
 \item{method}{integration method used, available are:
-\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
-\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
-\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
+`"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+`"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+`"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
 
 \item{setting_calculation}{argument used internally to speed up calculation.
-It should be left blank (default : \code{setting_calculation = NULL}).}
+It should be left blank (default : `setting_calculation = NULL`).}
 
 \item{num_steps}{number of substeps to show intermediate likelihoods
 along a branch.}
 
 \item{see_ancestral_states}{Boolean for whether the ancestral states should
-be shown? Defaults to \code{FALSE}.}
+be shown? Defaults to `FALSE`.}
 
 \item{lambdas}{speciation rates, in the form of a list of matrices.}
 
@@ -184,32 +184,32 @@ on non-extinction and this crown age.}
 \item{pool_init_states}{pool of initial states at the crown, in case this is
 different from all available states, otherwise leave at NULL}
 
-\item{conditioning}{can be \code{"obs_states"}, \code{"true_states"} or \code{"none"}, the
+\item{conditioning}{can be `"obs_states"`, `"true_states"` or `"none"`, the
 tree is simulated until one is generated that contains all observed states
-(\code{"obs_states"}), all true states (e.g. all combinations of obs and hidden
-states), or is always returned (\code{"none"}). Alternatively, a vector with
+(`"obs_states"`), all true states (e.g. all combinations of obs and hidden
+states), or is always returned (`"none"`). Alternatively, a vector with
 the names of required observed states can be provided, e.g. c("S", "N").}
 
 \item{non_extinction}{boolean stating if the tree should be conditioned on
-non-extinction of the crown lineages. Defaults to \code{TRUE}.}
+non-extinction of the crown lineages. Defaults to `TRUE`.}
 
 \item{max_tries}{maximum number of simulations to try to obtain a tree.}
 
 \item{drop_extinct}{boolean stating if extinct species should be dropped from
-the tree. Defaults to \code{TRUE}.}
+the tree. Defaults to `TRUE`.}
 
 \item{seed}{pseudo-random number generator seed.}
 
 \item{parameters}{list where first vector represents lambdas, the second mus
 and the third transition rates.}
 
-\item{masterBlock}{matrix of transitions among only examined states, \code{NA} in
+\item{masterBlock}{matrix of transitions among only examined states, `NA` in
 the main diagonal, used to build the full transition rates matrix.}
 
 \item{diff.conceal}{Boolean stating if the concealed states should be
 different. E.g. that the transition rates for the concealed
 states are different from the transition rates for the examined states.
-Normally it should be \code{FALSE} in order to avoid having a huge number of
+Normally it should be `FALSE` in order to avoid having a huge number of
 parameters.}
 
 \item{trait_info}{data frame where first column has species ids and the
@@ -218,15 +218,15 @@ second one is the trait associated information.}
 \item{initloglik}{A numeric with the value of loglikehood obtained prior to
 optimisation. Only used internally.}
 
-\item{initfactors}{the initial guess for a factor (it should be set to \code{NULL}
+\item{initfactors}{the initial guess for a factor (it should be set to `NULL`
 when no factors).}
 
 \item{idparsfuncdefpar}{id of the parameters which will be a function of
 optimized and/or fixed parameters. The order of id should match
-\code{functions_defining_params}.}
+`functions_defining_params`.}
 
 \item{functions_defining_params}{a list of functions. Each element will be a
-function which defines a parameter e.g. \code{id_3 <- (id_1 + id_2) / 2}. See
+function which defines a parameter e.g. `id_3 <- (id_1 + id_2) / 2`. See
 example.}
 
 \item{state_names}{vector of names of all observed states.}
@@ -234,47 +234,43 @@ example.}
 \item{transition_matrix}{a matrix containing a description of all speciation
 events, where the first column indicates the source state, the second and
 third column indicate the two daughter states, and the fourth column gives
-the rate indicator used. E.g.: \verb{["SA", "S", "A", 1]} for a trait state
-\code{"SA"} which upon speciation generates two daughter species with traits
-\code{"S"} and \code{"A"}, where the number 1 is used as indicator for optimization
+the rate indicator used. E.g.: `["SA", "S", "A", 1]` for a trait state
+`"SA"` which upon speciation generates two daughter species with traits
+`"S"` and `"A"`, where the number 1 is used as indicator for optimization
 of the likelihood.}
 
-\item{model}{used model, choice of \code{"ETD"} (Examined Traits Diversification),
-\code{"CTD"} (Concealed Traits Diversification) or \code{"CR"} (Constant Rate).}
+\item{model}{used model, choice of `"ETD"` (Examined Traits Diversification),
+`"CTD"` (Concealed Traits Diversification) or `"CR"` (Constant Rate).}
 
 \item{shift_matrix}{matrix of shifts, indicating in order:
-\enumerate{
-\item starting state (typically the column in the transition matrix)
-\item ending state (typically the row in the transition matrix)
-\item associated rate indicator.
-}}
+1. starting state (typically the column in the transition matrix)
+2. ending state (typically the row in the transition matrix)
+3. associated rate indicator.}
 
-\item{q_matrix}{\code{q_matrix} with only transitions between observed states.}
+\item{q_matrix}{`q_matrix` with only transitions between observed states.}
 
 \item{lambda_list}{previously generated list of lambda matrices,
 used to infer the rate number to start with.}
 
-\item{object}{lambda matrices, \code{q_matrix} or mu vector.}
+\item{object}{lambda matrices, `q_matrix` or mu vector.}
 
 \item{params}{parameters in order, where each value reflects the value
-of the parameter at that position, e.g. \code{c(0.3, 0.2, 0.1)} will fill out
+of the parameter at that position, e.g. `c(0.3, 0.2, 0.1)` will fill out
 the value 0.3 for the parameter with rate identifier 1, 0.2 for the
 parameter with rate identifier 2 and 0.1 for the parameter with rate
 identifier 3.}
 
 \item{param_posit}{initial parameter structure, consisting of a list with
-three entries:
-\enumerate{
-\item lambda matrices
-\item mus
-\item Q matrix
-}
+ three entries:
+   1. lambda matrices
+   2. mus
+   3. Q matrix
 
-In each entry, integers numbers (1-n) indicate the parameter to be
-optimized.}
+ In each entry, integers numbers (1-n) indicate the parameter to be
+ optimized.}
 
 \item{ml_pars}{resulting parameter estimates, having the same structure as
-\code{param_posit}.}
+`param_posit`.}
 
 \item{mu_vector}{previously defined mus - used to choose indicator number.}
 
@@ -296,9 +292,9 @@ for direct comparison with BiSSE and facilitates implementing speciation
 effects at the crown.}
 
 \item{optimmethod}{A string with method used for optimization. Default is
-\code{"simplex"}. Alternative is \code{"subplex"}. Both are called from
-\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in the package \link{DDD},
-while subplex is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
+`"simplex"`. Alternative is `"subplex"`. Both are called from
+[DDD::optimizer()], simplex is implemented natively in the package [DDD],
+while subplex is ultimately called from [subplex::subplex()].}
 
 \item{display_warning}{display a warning if necessary}
 
@@ -340,8 +336,8 @@ dataset has the following fields: 1) colonist_name, 2) b ranching_times,
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
-\code{vignette("starting_secsse", package = "secsse")}. When providing a
-\code{multiPhylo} set of multiple phylognies, traits should be a list where
+`vignette("starting_secsse", package = "secsse")`. When providing a
+`multiPhylo` set of multiple phylognies, traits should be a list where
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
@@ -352,9 +348,9 @@ mainland ancestor}
 
 \item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
 options available are:
-\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
-\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
-\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
+ `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+ `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+ `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
 
 \item{trparsopt}{transformed parameters to optimize}
 
