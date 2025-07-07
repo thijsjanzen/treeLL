@@ -1,39 +1,47 @@
 test_that("CS", {
 
   if (requireNamespace("DAISIE")) {
-
-    if (packageVersion("DAISIE") < "4.6.0") {
-
       data("Galapagos_datalist", package = "DAISIE")
       datalist <- Galapagos_datalist
 
-      parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583,
-                        matrix(c(0), nrow = 1), 0, 1)
+      parameter <- list(c(2.546591, 2.546591),
+                        c(2.678781, 2.678781),
+                        c(0.009326754, 0.009326754),
+                        c(1.008583, 1.008583),
+                        matrix(c(0), nrow = 2, ncol = 2), 0)
 
-      res1 <-  DAISIE_DE_trait_loglik_CS(
+      for (i in 2:length(datalist)) {
+        datalist[[i]]$phylogeny <- DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+        num_tips <- length(datalist[[i]]$phylogeny$tip.label)
+        datalist[[i]]$sampling_fraction <- rep(1, 2)
+        datalist[[i]]$traits <- sample(c(0, 1), size = num_tips,
+                                       replace = TRUE)
+        datalist[[i]]$root_state <- c(1, 1)
+      }
+
+      res1 <-  treeLL::DAISIE_DE_trait_loglik_CS(
         datalist            = datalist,
         parameter           = parameter,
         num_observed_states     = 2,
         num_hidden_states       = 1,
-        atol                = 1e-10,
-        rtol                = 1e-10,
+        atol                = 1e-12,
+        rtol                = 1e-12,
         methode             = "lsodes",
         use_Rcpp            = 0,
-        verbose = TRUE
+        verbose             = FALSE
       )
 
 
-      res3 <-  DAISIE_DE_trait_loglik_CS(
+      res3 <-  treeLL::DAISIE_DE_trait_loglik_CS(
         datalist            = datalist,
         parameter           = parameter,
         num_observed_states     = 2,
         num_hidden_states       = 1,
-        atol                = 1e-10,
-        rtol                = 1e-10,
+        atol                = 1e-15,
+        rtol                = 1e-15,
         methode             = "lsodes",
         use_Rcpp = 2
       )
       testthat::expect_equal(res1, res3, tol = 0.005)
-    }
   }
 })

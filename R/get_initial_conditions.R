@@ -48,20 +48,20 @@ get_initial_conditions2 <- function(status,
       DE[1:n] <- s
       E[1:n]  <- 1 - s
     } else {
-      DE[c((num_hidden_states * trait + 1),
-           num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-      E[c((num_hidden_states * trait + 1),
-          num_hidden_states + trait * num_hidden_states)] <-
+      DE[(num_hidden_states * trait + 1):
+         (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+      E[(num_hidden_states * trait + 1):
+        (num_hidden_states + trait * num_hidden_states)] <-
                                                            1 - sampling_fraction
     }
 
   } else if (status == 3 && length(brts) == 2) {
-    DE[c((num_hidden_states * trait + 1),
-         num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-    E[c((num_hidden_states * trait + 1),
-        num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
-    DM3[c((num_hidden_states * trait_mainland_ancestor + 1),
-          num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
+    DE[(num_hidden_states * trait + 1):
+       (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+    E[(num_hidden_states * trait + 1):
+      (num_hidden_states + trait * num_hidden_states)] <- 1 - sampling_fraction
+    DM3[(num_hidden_states * trait_mainland_ancestor + 1):
+        (num_hidden_states + trait_mainland_ancestor * num_hidden_states)] <- 1
   } else if (status == 4) {
 
     if (length(trait) > 1) {
@@ -71,8 +71,8 @@ get_initial_conditions2 <- function(status,
     if (is.na(trait)) {
       DM2[1:n] <- 1
     } else {
-      DM2[c((num_hidden_states * trait + 1),
-            num_hidden_states + trait * num_hidden_states)] <- 1
+      DM2[(num_hidden_states * trait + 1):
+          (num_hidden_states + trait * num_hidden_states)] <- 1
     }
 
   } else if (status == 8) {
@@ -87,8 +87,8 @@ get_initial_conditions2 <- function(status,
       }
       DM2[1:n] <- s
     } else {
-      DM2[c((num_hidden_states * trait + 1),
-            num_hidden_states + trait * num_hidden_states)] <- 1
+      DM2[(num_hidden_states * trait + 1):
+          (num_hidden_states + trait * num_hidden_states)] <- 1
     }
   } else if (status == 9)  {
     if (length(trait) > 1) {
@@ -103,10 +103,10 @@ get_initial_conditions2 <- function(status,
       DE[1:n] <- s
       E[1:n]  <- 1 - s
     } else  {
-      DE[c((num_hidden_states * trait + 1),
-           num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-      E[c((num_hidden_states * trait + 1),
-          num_hidden_states + trait * num_hidden_states)]  <-
+      DE[(num_hidden_states * trait + 1):
+         (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+      E[(num_hidden_states * trait + 1):
+        (num_hidden_states + trait * num_hidden_states)]  <-
                                                            1 - sampling_fraction
     }
   }
@@ -142,7 +142,7 @@ get_initial_conditions3 <- function(status,
   # only use the sampling fraction of the focal trait, assuming traits start
   # counting at 0.
 
-  sampling_fraction <- sampling_fraction[1 + trait]
+  #sampling_fraction <- sampling_fraction[1 + trait]
 
   if (status == 1) {
     if (length(trait) > 1) {
@@ -157,8 +157,8 @@ get_initial_conditions3 <- function(status,
       }
       DM2[1:n] <- s
     } else if (trait == trait) {
-      DM2[c((num_hidden_states * trait + 1),
-            num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+      DM2[(num_hidden_states * trait + 1):
+          (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
     }
 
     initial_conditions3 <- c(DE, DM1, DM2, DM3, E, DA2, DA3)
@@ -183,10 +183,10 @@ get_initial_conditions3 <- function(status,
       DE[1:n] <- s
       E[1:n]  <- 1 - s
     } else  {
-      DE[c((num_hidden_states * trait + 1),
-           num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
-      E[c((num_hidden_states * trait + 1),
-          num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
+      DE[(num_hidden_states * trait + 1):
+         (num_hidden_states + trait * num_hidden_states)] <- sampling_fraction
+      E[(num_hidden_states * trait + 1):
+        (num_hidden_states + trait * num_hidden_states)]  <- 1 - sampling_fraction
     }
 
     initial_conditions3 <- c(DE, DM1, DM2, DM3, E, DA2, DA3)

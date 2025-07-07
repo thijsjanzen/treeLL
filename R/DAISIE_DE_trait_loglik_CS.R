@@ -47,6 +47,11 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
 
   for (i in 2:length(datalist)) {
 
+    if (i == 6) {
+      a <- 5;
+      cat("hello\n")
+    }
+
     stac <- datalist[[i]]$stac
     brts <- datalist[[i]]$branching_times
     traits <- datalist[[i]]$traits
@@ -162,7 +167,7 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
                                                   trait_mainland_ancestor = trait_mainland_ancestor,
                                                   num_observed_states = num_observed_states,
                                                   num_hidden_states = num_hidden_states,
-                                                  sampling_frction = sampling_fraction,
+                                                  sampling_fraction = sampling_fraction,
                                                   atol  = atol,
                                                   rtol  = rtol,
                                                   methode = "ode45",

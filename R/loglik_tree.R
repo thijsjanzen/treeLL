@@ -136,19 +136,18 @@ calc_init_state_hidden <- function(trait,
 
 
   if (is.na(trait)) {
-    DE[c(1, num_unique_states)] <- sampling_fraction
-     E[c(1, num_unique_states)] <- 1 - sampling_fraction
+    DE[1:num_unique_states] <- sampling_fraction
+     E[1:num_unique_states] <- 1 - sampling_fraction
   } else if (trait == trait) {
     steps <- num_hidden_states * trait
-    DE[c((steps + 1), num_hidden_states + steps)] <- sampling_fraction
-     E[c((steps + 1), num_hidden_states + steps)] <- 1 - sampling_fraction
+    DE[(steps + 1):(num_hidden_states + steps)] <- sampling_fraction
+     E[(steps + 1):(num_hidden_states + steps)] <- 1 - sampling_fraction
   }
 
 
   if (mainland) {
     steps <- num_hidden_states * trait_mainland_ancestor
-    DM3[c((steps + 1),
-           num_hidden_states + steps)] <- 1
+    DM3[(steps + 1):(num_hidden_states + steps)] <- 1
   }
 
 
@@ -182,7 +181,7 @@ loglik_R_tree <- function(parameter,
                    data = NA)
 
   for (i in seq_along(traits)) {
-    states[i, ] <- calc_init_state_hidden(trait = traits[i],
+    res <- calc_init_state_hidden(trait = traits[i],
                                           sampling_fraction =
                                             sampling_fraction[1 + traits[i]],
                                           num_unique_states = num_unique_states,
@@ -190,6 +189,7 @@ loglik_R_tree <- function(parameter,
                                           mainland = mainland,
                                           trait_mainland_ancestor =
                                             trait_mainland_ancestor)
+  states[i, ] <- res
   }
 
   phy$node.label <- NULL
