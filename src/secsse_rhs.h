@@ -10,7 +10,9 @@
 #include <RcppParallel.h>
 #include <type_traits>
 #include <vector>
-#include "sq_matrix.h"
+#include <utility>
+#include <string>
+#include "sq_matrix.h"                  // NOLINT [build/include_subdir]
 
 namespace loglik {
 
@@ -52,14 +54,14 @@ inline double calc_sum(const std::vector<double>& dist_g_,
 }
 
 struct interval {
-  const rvector<const double> lc_; // cladogenesis rates
-  const rvector<const double> m_; //  extinction rates
+  const rvector<const double> lc_;   // cladogenesis rates
+  const rvector<const double> m_;    //  extinction rates
 
-  const rvector<const double> la_; // anagenesis rates
-  const sq_matrix q_; // transition rates
+  const rvector<const double> la_;   // anagenesis rates
+  const sq_matrix q_;                // transition rates
   const double p_;
 
-  const size_t n_; // number of unique states
+  const size_t n_;                  // number of unique states
 
   const std::vector<double> t_vec;
 
@@ -90,7 +92,6 @@ struct interval {
 
 
 struct interval1 : public interval {
-
   using interval::interval;
 
   size_t size() const noexcept {
@@ -113,8 +114,7 @@ struct interval1 : public interval {
   // along the branches
   void operator()(const std::vector<double>& x,
                 std::vector<double>& dxdt,
-                const double /* t */) const
-  {
+                const double /* t */) const {
     auto DA3 = x.back();
 
     auto DE  = vector_view_t<const double>(x.data() , n_);
@@ -135,10 +135,11 @@ struct interval1 : public interval {
         2 * lc_[i] * DE[i] * E[i] +
         q_mult_DE[i];
       // DM3
-      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
-        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
-        (1 - p_) * q_mult_DM3[i] +
-        s_g_DM3;
+      dxdt[i + n_] =
+       -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
+       (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+       (1 - p_) * q_mult_DM3[i] +
+       s_g_DM3;
       // E
       dxdt[i + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
         lc_[i] * E[i] * E[i] +
@@ -162,8 +163,7 @@ struct interval2 : public interval {
   // along the branches
   void operator()(const std::vector<double>& x,
                 std::vector<double>& dxdt,
-                const double /* t */) const
-  {
+                const double /* t */) const {
     auto DA3 = x.back();
 
     auto DE  = vector_view_t<const double>(x.data() + 0 * n_, n_);
@@ -187,15 +187,18 @@ struct interval2 : public interval {
         q_mult_DE[i];
 
       // DM2
-      dxdt[i + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
-        (la_[i] * DE[i] + 2 * lc_[i] * DE[i] * E[i] + p_ * q_mult_DE[i]) * DA3 +
-        (1 - p_) * q_mult_DM2[i];
+      dxdt[i + n_] =
+       -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
+       (la_[i] * DE[i] + 2 * lc_[i] * DE[i] * E[i] + p_ * q_mult_DE[i]) * DA3 +
+       (1 - p_) * q_mult_DM2[i];
 
       // DM3
-      dxdt[i + n_ + n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
-        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
-        (1 - p_) * q_mult_DM3[i] +
-        s_g_DM3;
+      dxdt[i + n_ + n_] =
+      -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
+       (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+       (1 - p_) * q_mult_DM3[i] +
+       s_g_DM3;
+
       // E
       dxdt[i + n_ + n_ + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
         lc_[i] * E[i] * E[i] +
@@ -216,9 +219,7 @@ struct interval3 : public interval {
   }
   void operator()(const std::vector<double>& x,
                 std::vector<double>& dxdt,
-                const double /* t */) const
-  {
-
+                const double /* t */) const {
     auto DA3 = x.back();
     auto DA2 = x[x.size() - 2];
 
@@ -246,22 +247,26 @@ struct interval3 : public interval {
         q_mult_DE[i];
 
       // DM1
-      dxdt[i + 1 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
-        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
-        (1 - p_) * q_mult_DM1[i] +
-        s_g_DM2;
+      dxdt[i + 1 * n_] =
+       -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
+       (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
+       (1 - p_) * q_mult_DM1[i] +
+       s_g_DM2;
+
       // DM2
-      dxdt[i + 2 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
-        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
-        (la_[i] * DE[i] + 2 * lc_[i] * DE[i]  + p_ * q_mult_DE[i]) * DA3 +
-        (1 - p_) * q_mult_DM2[i] +
-        s_g_DM2;
+      dxdt[i + 2 * n_] =
+       -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM2[i] +
+       (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA2 +
+       (la_[i] * DE[i] + 2 * lc_[i] * DE[i]  + p_ * q_mult_DE[i]) * DA3 +
+       (1 - p_) * q_mult_DM2[i] +
+       s_g_DM2;
 
       // DM3
-      dxdt[i + 3 * n_] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
-        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
-        (1 - p_) * q_mult_DM3[i] +
-        s_g_DM3;
+      dxdt[i + 3 * n_] =
+      -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM3[i] +
+       (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA3 +
+       (1 - p_) * q_mult_DM3[i] +
+       s_g_DM3;
 
       // E
       dxdt[i + 4 * n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
@@ -301,10 +306,11 @@ struct interval4 : public interval {
       auto lambda_c_mu_t_vec_sum = lc_[i] + m_[i] + t_vec[i];
 
       // DM1
-      dxdt[i] = -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
-        (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA1 +
-        (1 - p_) * q_mult_DM1[i] +
-        s_g_DM1;
+      dxdt[i] =
+      -(lambda_c_mu_t_vec_sum + sum_dist_g_ + la_[i]) * DM1[i] +
+       (m_[i] + la_[i] * E[i] + lc_[i] * E[i] * E[i] + p_ * q_mult_E[i]) * DA1 +
+       (1 - p_) * q_mult_DM1[i] +
+       s_g_DM1;
 
       // E
       dxdt[i + n_] = m_[i] - (lambda_c_mu_t_vec_sum) * E[i] +
@@ -317,4 +323,4 @@ struct interval4 : public interval {
   }
 };
 
-} // namespace secsse
+}   // namespace loglik

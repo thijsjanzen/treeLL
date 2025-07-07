@@ -2,7 +2,8 @@
 % Please edit documentation in R/DAISIE_DE_trait_logpNE.R
 \name{DAISIE_DE_trait_logpNE}
 \alias{DAISIE_DE_trait_logpNE}
-\title{This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,}
+\title{This function calculates the likelihood of observing a non-endemic lineage
+with specified species trait states,}
 \usage{
 DAISIE_DE_trait_logpNE(
   brts,
@@ -20,7 +21,8 @@ DAISIE_DE_trait_logpNE(
 )
 }
 \arguments{
-\item{brts}{branching times, being: island age, colonization time, branching times}
+\item{brts}{branching times, being: island age, colonization time, branching
+times}
 
 \item{status}{indicator for type of inference required}
 
@@ -35,7 +37,8 @@ position.}
 
 \item{num_hidden_states}{number of hidden states}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
@@ -52,11 +55,13 @@ options available are:
 \code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
 \code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 }
 \description{
-This function calculates the likelihood of observing a non-endemic lineage with specified species trait states,
+This function calculates the likelihood of observing a non-endemic lineage
+with specified species trait states,
 }
 \examples{
 library(DAISIE)

@@ -20,7 +20,8 @@ DAISIE_DE_trait_logpNE_max_min_age_hidden(
 )
 }
 \arguments{
-\item{brts}{branching times, being: island age, colonization time, branching times}
+\item{brts}{branching times, being: island age, colonization time, branching
+times}
 
 \item{trait}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
@@ -34,7 +35,8 @@ position.}
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{num_observed_states}{number of observed states}
 
@@ -52,13 +54,15 @@ options available are:
 \code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
 \code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 }
 \description{
-this function calculates the likelihood of observing a singleton species on an island
-with the trait state \code{i}, either non-endemic or rendered endemic by a trait change, and
-for which only the estimated maximum age of colonization is known.
+this function calculates the likelihood of observing a singleton species on
+an island with the trait state \code{i}, either non-endemic or rendered endemic
+by a trait change, and for which only the estimated maximum age of
+colonization is known.
 }
 \examples{
 # load DAISIE package and data
@@ -77,7 +81,8 @@ parameter <- list(
   0, c(0,1)
 )
 status <- 8
-parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583, matrix(c(0), nrow = 1), 0 )
+parameter <- list(2.546591, 2.678781, 0.009326754, 1.008583,
+                  matrix(c(0), nrow = 1), 0 )
 
 
 DAISIE_DE_trait_logpNE_max_min_age_hidden(

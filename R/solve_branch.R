@@ -2,7 +2,8 @@
 #' @description
 #' solve along branch
 #' @inheritParams default_params_doc
-#' @param interval_func chosen function for interval, can also be string if using Rcpp
+#' @param interval_func chosen function for interval, can also be string if
+#' using Rcpp
 #' @param initial_conditions vector of initial conditions
 #' @param time vector with two time points
 #' @export
@@ -20,13 +21,13 @@ solve_branch <- function(interval_func,
   if (use_Rcpp <= 1) {
     parameter[[7]] <- trait_mainland_ancestor
     solution <- deSolve::ode(
-        y = initial_conditions,
-        times = time,
-        func = interval_func,
-        parms = parameter,
-        method = methode,
-        atol = atol,
-        rtol = rtol
+      y = initial_conditions,
+      times = time,
+      func = interval_func,
+      parms = parameter,
+      method = methode,
+      atol = atol,
+      rtol = rtol
     )
     solution <- matrix(solution[, -1], nrow = 2)
   } else {

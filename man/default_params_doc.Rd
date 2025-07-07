@@ -19,10 +19,8 @@ default_params_doc(
   sampling_fraction,
   tol,
   maxiter,
-  optimethod,
   num_cycles,
   loglik_penalty,
-  is_complete_tree,
   verbose,
   num_threads,
   atol,
@@ -43,12 +41,10 @@ default_params_doc(
   max_tries,
   drop_extinct,
   seed,
-  prob_func,
   parameters,
   masterBlock,
   diff.conceal,
   trait_info,
-  lambd_and_modeSpe,
   initloglik,
   initfactors,
   idparsfuncdefpar,
@@ -148,10 +144,6 @@ tolerance, equal to the starting values, with a maximum of 10 cycles.}
 \item{loglik_penalty}{the size of the penalty for all parameters; default is
 0 (no penalty).}
 
-\item{is_complete_tree}{logical specifying whether or not a tree with all its
-extinct species is provided. If set to \code{TRUE}, it also assumes that all
-\emph{all} extinct lineages are present on the tree. Defaults to \code{FALSE}.}
-
 \item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
 \code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
 \code{FALSE}, optimizer output will be shown.}
@@ -208,9 +200,6 @@ the tree. Defaults to \code{TRUE}.}
 
 \item{seed}{pseudo-random number generator seed.}
 
-\item{prob_func}{a function to calculate the probability of interest, see
-description.}
-
 \item{parameters}{list where first vector represents lambdas, the second mus
 and the third transition rates.}
 
@@ -223,10 +212,8 @@ states are different from the transition rates for the examined states.
 Normally it should be \code{FALSE} in order to avoid having a huge number of
 parameters.}
 
-\item{trait_info}{data frame where first column has species ids and the second
-one is the trait associated information.}
-
-\item{lambd_and_modeSpe}{a matrix with the 4 models of speciation possible.}
+\item{trait_info}{data frame where first column has species ids and the
+second one is the trait associated information.}
 
 \item{initloglik}{A numeric with the value of loglikehood obtained prior to
 optimisation. Only used internally.}
@@ -286,8 +273,8 @@ three entries:
 In each entry, integers numbers (1-n) indicate the parameter to be
 optimized.}
 
-\item{ml_pars}{resulting parameter estimates as returned by for instance
-\code{\link[=cla_secsse_ml]{cla_secsse_ml()}}, having the same structure as \code{param_post}.}
+\item{ml_pars}{resulting parameter estimates, having the same structure as
+\code{param_posit}.}
 
 \item{mu_vector}{previously defined mus - used to choose indicator number.}
 
@@ -310,8 +297,8 @@ effects at the crown.}
 
 \item{optimmethod}{A string with method used for optimization. Default is
 \code{"simplex"}. Alternative is \code{"subplex"}. Both are called from
-\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in \link{DDD}, while subplex
-is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
+\code{\link[DDD:optimizer]{DDD::optimizer()}}, simplex is implemented natively in the package \link{DDD},
+while subplex is ultimately called from \code{\link[subplex:subplex]{subplex::subplex()}}.}
 
 \item{display_warning}{display a warning if necessary}
 
@@ -324,7 +311,8 @@ more accurate but slower (default = TRUE)}
 
 \item{missnumspec}{missing number of species}
 
-\item{brts}{branching times, being: island age, colonization time, branching times}
+\item{brts}{branching times, being: island age, colonization time, branching
+times}
 
 \item{use_R_version}{if TRUE (default) uses R based integration. If FALSE,
 uses Rcpp implementation (faster)}
@@ -333,13 +321,16 @@ uses Rcpp implementation (faster)}
 
 \item{rhs_func}{rhs function used in R implementation}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 
-\item{datalist}{a list containing in the first entry: island age and the number of species not present,
-then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
-each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
-3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny}
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
 
 \item{num_observed_states}{number of observed states}
 
@@ -356,7 +347,8 @@ position.}
 
 \item{mainland}{if TRUE, adjust initial conditions for mainland dynamics}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
 options available are:

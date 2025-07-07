@@ -8,6 +8,10 @@
 #include <cstdlib>    // std::getenv, std::atoi
 #include <vector>
 #include <chrono>
+#include <utility>
+#include <algorithm>
+#include <string>
+
 #include "config.h"    // NOLINT [build/include_subdir]
 #include <Rcpp.h>
 #include <RcppParallel.h>
@@ -34,21 +38,34 @@ Rcpp::List calc_ll(std::unique_ptr<ODE> od,
                    bool see_states,
                    bool use_normalization) {
   auto num_threads = get_rcpp_num_threads();
-  auto global_control = tbb::global_control(tbb::global_control::max_allowed_parallelism, num_threads);
+  auto global_control = tbb::global_control(
+    tbb::global_control::max_allowed_parallelism, num_threads);
 
   auto T0 = std::chrono::high_resolution_clock::now();
   std::vector<std::vector<double>> tstates{};
   for (int i = 0; i < states.nrow(); ++i) {
     tstates.emplace_back(states.row(i).begin(), states.row(i).end());
   }
-  const auto phy_edge = make_phy_edge_vector(loglik::rmatrix<const double>(forTime));
-  auto inodes = find_inte_nodes(phy_edge, loglik::rvector<const int>(ances), tstates);
+  const auto phy_edge = make_phy_edge_vector(
+                            loglik::rmatrix<const double>(forTime));
+  auto inodes = find_inte_nodes(phy_edge,
+                                loglik::rvector<const int>(ances),
+                                tstates);
 
   calc_ll_res ll_res;
   if (use_normalization) {
-    ll_res  = calc_ll(Integrator<ODE, odeintcpp::normalize>(      std::move(od), method, atol, rtol), inodes, tstates);
+    ll_res  = calc_ll(Integrator<ODE, odeintcpp::normalize>(std::move(od),
+                                                            method,
+                                                            atol,
+                                                            rtol),
+                                                            inodes, tstates);
   } else {
-    ll_res = calc_ll(Integrator<ODE, odeintcpp::no_normalization>(std::move(od), method, atol, rtol), inodes, tstates);
+    ll_res = calc_ll(Integrator<ODE, odeintcpp::no_normalization>(std::move(od),
+                                                                  method,
+                                                                  atol,
+                                                                  rtol),
+                                                                  inodes,
+                                                                  tstates);
   }
 
 
@@ -97,7 +114,14 @@ Rcpp::List calc_ll_cpp(const Rcpp::IntegerVector& ances,
                                                        p,
                                                        trait_mainland_ancestor,
                                                        num_unique_states),
-                                                       ances, states, forTime, method, atol, rtol, see_states, use_normalization);
+                                                       ances,
+                                                       states,
+                                                       forTime,
+                                                       method,
+                                                       atol,
+                                                       rtol,
+                                                       see_states,
+                                                       use_normalization);
   } catch(std::exception &ex) {
     forward_exception_to_r(ex);
   } catch (const char* msg) {

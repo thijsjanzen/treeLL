@@ -55,9 +55,6 @@
 #' @param num_cycles Number of cycles of the optimization. When set to `Inf`,
 #'  the optimization will be repeated until the result is, within the
 #'  tolerance, equal to the starting values, with a maximum of 10 cycles.
-#' @param is_complete_tree logical specifying whether or not a tree with all its
-#'  extinct species is provided. If set to `TRUE`, it also assumes that all
-#'  *all* extinct lineages are present on the tree. Defaults to `FALSE`.
 #' @param verbose sets verbose output; default is `TRUE` when `optimmethod` is
 #'  `"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to
 #'  `FALSE`, optimizer output will be shown.
@@ -106,8 +103,6 @@
 #' @param seed pseudo-random number generator seed.
 #' @param parameters list where first vector represents lambdas, the second mus
 #' and the third transition rates.
-#' @param prob_func a function to calculate the probability of interest, see
-#' description.
 #' @param masterBlock matrix of transitions among only examined states, `NA` in
 #'  the main diagonal, used to build the full transition rates matrix.
 #' @param diff.conceal Boolean stating if the concealed states should be
@@ -115,13 +110,12 @@
 #'  states are different from the transition rates for the examined states.
 #'  Normally it should be `FALSE` in order to avoid having a huge number of
 #'  parameters.
-#' @param trait_info data frame where first column has species ids and the second
-#'  one is the trait associated information.
+#' @param trait_info data frame where first column has species ids and the
+#' second one is the trait associated information.
 #' @param optimmethod A string with method used for optimization. Default is
 #' `"simplex"`. Alternative is `"subplex"`. Both are called from
-#' [DDD::optimizer()], simplex is implemented natively in [DDD], while subplex
-#' is ultimately called from [subplex::subplex()].
-#' @param lambd_and_modeSpe a matrix with the 4 models of speciation possible.
+#' [DDD::optimizer()], simplex is implemented natively in the package [DDD],
+#' while subplex is ultimately called from [subplex::subplex()].
 #' @param initloglik A numeric with the value of loglikehood obtained prior to
 #'  optimisation. Only used internally.
 #' @param state_names vector of names of all observed states.
@@ -160,8 +154,8 @@
 #'
 #'  In each entry, integers numbers (1-n) indicate the parameter to be
 #'  optimized.
-#' @param ml_pars resulting parameter estimates as returned by for instance
-#'  [cla_secsse_ml()], having the same structure as `param_post`.
+#' @param ml_pars resulting parameter estimates, having the same structure as
+#' `param_posit`.
 #' @param mu_vector previously defined mus - used to choose indicator number.
 #' @param display_warning display a warning if necessary
 #' @param take_into_account_root_edge if TRUE, the LL integration is continued
@@ -173,18 +167,23 @@
 #' uses Rcpp implementation (faster)
 #' @param rhs_func rhs function used in R implementation
 #' @param methode used integration method, default is ode45
-#' @param brts branching times, being: island age, colonization time, branching times
+#' @param brts branching times, being: island age, colonization time, branching
+#' times
 #' @param missnumspec missing number of species
 #' @param num_hidden_states number of hidden states
 #' @param num_observed_states number of observed states
-#' @param datalist a list containing in the first entry: island age and the number of species not present,
-#' then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
-#' each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
-#' 3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny
+#' @param datalist a list containing in the first entry: island age and the
+#' number of species not present, then from entry 2 until n it contains
+#' individual datasets for which to estimate the loglikelihood together, each
+#' dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+#' 3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+#' 8) phylogeny
 #' @param mainland if TRUE, adjust initial conditions for mainland dynamics
-#' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the mainland ancestor
-#' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-#' value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches
+#' @param trait_mainland_ancestor if mainland is TRUE, sets the trait of the
+#' mainland ancestor
+#' @param use_Rcpp default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+#' likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+#' the branches
 #' @param rcpp_methode Used integration methode when using Rcpp to integrate,
 #' options available are:
 #'  `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
@@ -210,10 +209,8 @@ default_params_doc <- function(phy,
                                sampling_fraction,
                                tol,
                                maxiter,
-                               optimethod,
                                num_cycles,
                                loglik_penalty,
-                               is_complete_tree,
                                verbose,
                                num_threads,
                                atol,
@@ -234,12 +231,10 @@ default_params_doc <- function(phy,
                                max_tries,
                                drop_extinct,
                                seed,
-                               prob_func,
                                parameters,
                                masterBlock,
                                diff.conceal,
                                trait_info,
-                               lambd_and_modeSpe,
                                initloglik,
                                initfactors,
                                idparsfuncdefpar,

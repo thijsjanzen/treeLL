@@ -23,7 +23,8 @@ DAISIE_DE_trait_logpEC(
 )
 }
 \arguments{
-\item{brts}{branching times, being: island age, colonization time, branching times}
+\item{brts}{branching times, being: island age, colonization time, branching
+times}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
@@ -43,7 +44,8 @@ position.}
 
 \item{num_hidden_states}{number of hidden states}
 
-\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the mainland ancestor}
+\item{trait_mainland_ancestor}{if mainland is TRUE, sets the trait of the
+mainland ancestor}
 
 \item{status}{indicator for type of inference required}
 
@@ -66,12 +68,14 @@ options available are:
 \code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
 \code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 }
 \description{
-This function calculates the likelihood of observing a clade with specified species trait states,
-given known colonization time. It is designed for comparison with DAISIE-based models.
+This function calculates the likelihood of observing a clade with specified
+species trait states, given known colonization time. It is designed for
+comparison with DAISIE-based models.
 }
 \examples{
 library(DAISIE)

@@ -1,5 +1,7 @@
 test_that("R vs Rcpp", {
-  phy <- ape::read.tree(text = "((A:2.1483291,B:2.1483291):0.209405,C:2.3577341):11.7431696;")
+  phy <- ape::read.tree(text =
+              "((A:2.1483291,B:2.1483291):0.209405,C:2.3577341):11.7431696;"
+              )
 
   traits <- c(1, 1, 0)
 
@@ -7,10 +9,10 @@ test_that("R vs Rcpp", {
   num_observed_states <- 2
   num_total_states <- num_hidden_states * num_observed_states
 
-  lambda_c <- rep(1, num_total_states) #   c(1, 1)
-  lambda_a <- rep(0, num_total_states) # c(0.0, 0.0)
-  mus      <- rep(0, num_total_states)  # c(0, 0)
-  gammas   <- rep(0.01, num_total_states) # c(0.01, 0.01)
+  lambda_c <- rep(1, num_total_states)
+  lambda_a <- rep(0, num_total_states)
+  mus      <- rep(0, num_total_states)
+  gammas   <- rep(0.01, num_total_states)
   p <- 0
   tma <- c(1, 0)
 
@@ -19,7 +21,7 @@ test_that("R vs Rcpp", {
   parameters[[2]] <- lambda_a
   parameters[[3]] <- mus
   parameters[[4]] <- gammas
-  parameters[[5]] <- NA # placeholder
+  parameters[[5]] <- NA    # placeholder
   parameters[[6]] <- p
 
   # we have to re-write the q rates as a matrix:
@@ -35,17 +37,16 @@ test_that("R vs Rcpp", {
 
   parameters[[5]] <- expanded_matrix
 
-  all_tma <- list( c(1, 0),
-                   c(0, 1),
-                   c(NA, NA))
+  all_tma <- list(c(1, 0),
+                  c(0, 1),
+                  c(NA, NA))
 
-  for (i in 1:length(all_tma)) {
-    parameters[[7]] <- all_tma[[i]]
+  for (i in seq_along(all_tma)) {
 
     res_hidden <- treeLL::loglik_R_tree(parameter = parameters,
                                         phy = phy,
                                         traits = traits,
-                                        trait_mainland_ancestor = tma,
+                                        trait_mainland_ancestor = all_tma[[i]],
                                         num_hidden_states = 2,
                                         sampling_fraction = c(1, 1))
 
@@ -54,9 +55,8 @@ test_that("R vs Rcpp", {
                                        traits = traits,
                                        num_hidden_states = 2,
                                        sampling_fraction = c(1, 1),
-                                       trait_mainland_ancestor = tma,)
+                                       trait_mainland_ancestor = all_tma[[i]])
 
     testthat::expect_equal(res_hidden, res_cpp)
   }
 })
-

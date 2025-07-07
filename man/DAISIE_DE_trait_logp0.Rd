@@ -17,10 +17,12 @@ DAISIE_DE_trait_logp0(
 )
 }
 \arguments{
-\item{datalist}{a list containing in the first entry: island age and the number of species not present,
-then from entry 2 until n it contains individual datasets for which to estimate the loglikelihood together,
-each dataset has the following fields: 1) colonist_name, 2) b ranching_times,
-3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction, 8) phylogeny}
+\item{datalist}{a list containing in the first entry: island age and the
+number of species not present, then from entry 2 until n it contains
+individual datasets for which to estimate the loglikelihood together, each
+dataset has the following fields: 1) colonist_name, 2) b ranching_times,
+3) stac, 4) missing_species, 5) type1or2, 6) traits, 7) sampling fraction,
+8) phylogeny}
 
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
@@ -41,12 +43,13 @@ options available are:
 \code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
 \code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
 
-\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree likelihood,
-value 2 = use Rcpp for the tree likelihood AND the ODEs along the branches}
+\item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
+likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along
+the branches}
 }
 \description{
-This function compute the likelihood that all species that colonize the island
-have gone extinct prior to the present.
+This function computes the likelihood that all species that colonize the
+island have gone extinct prior to the present.
 }
 \examples{
 #Load DAISIE package and data

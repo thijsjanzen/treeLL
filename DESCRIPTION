@@ -2,7 +2,6 @@ Package: treeLL
 Type: Package
 Title: Bare-bones package allowing for implemenation of tree-likelihood
 Version: 0.0.1
-Date: 2025-05-02
 License: GPL (>= 3)
 Authors@R: c(
  person(given = "Thijs",
@@ -20,13 +19,11 @@ Depends: R (>= 4.2.0)
 Imports: 
  DDD,
  deSolve,
- geiger,
- secsse,
  ape,
  Rcpp (>= 1.0.10),
- RcppParallel,
- rlang
+ RcppParallel
 Suggests: 
+ secsse,
  DAISIE,
  testthat,
  knitr,
