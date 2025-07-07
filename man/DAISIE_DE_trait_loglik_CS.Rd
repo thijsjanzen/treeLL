@@ -34,9 +34,9 @@ dataset has the following fields: 1) colonist_name, 2) b ranching_times,
 
 \item{rcpp_methode}{Used integration methode when using Rcpp to integrate,
 options available are:
-\code{"odeint::runge_kutta_cash_karp54"}, \code{"odeint::runge_kutta_fehlberg78"},
-\code{"odeint::runge_kutta_dopri5"}, \code{"odeint::bulirsch_stoer"} and
-\code{"odeint::runge_kutta4"}. Default method is: \code{"odeint::bulirsch_stoer"}.}
+ `"odeint::runge_kutta_cash_karp54"`, `"odeint::runge_kutta_fehlberg78"`,
+ `"odeint::runge_kutta_dopri5"`, `"odeint::bulirsch_stoer"` and
+ `"odeint::runge_kutta4"`. Default method is: `"odeint::bulirsch_stoer"`.}
 
 \item{atol}{A numeric specifying the absolute tolerance of integration.}
 
@@ -46,14 +46,14 @@ options available are:
 
 \item{num_hidden_states}{number of hidden states}
 
-\item{cond}{condition on the existence of a node root: \code{"maddison_cond"},
-\code{"proper_cond"} (default). For details, see vignette.}
+\item{cond}{condition on the existence of a node root: `"maddison_cond"`,
+`"proper_cond"` (default). For details, see vignette.}
 
 \item{num_threads}{number of threads to be used. Default is one thread.}
 
-\item{verbose}{sets verbose output; default is \code{TRUE} when \code{optimmethod} is
-\code{"simplex"}. If \code{optimmethod} is set to \code{"simplex"}, then even if set to
-\code{FALSE}, optimizer output will be shown.}
+\item{verbose}{sets verbose output; default is `TRUE` when `optimmethod` is
+`"simplex"`. If `optimmethod` is set to `"simplex"`, then even if set to
+`FALSE`, optimizer output will be shown.}
 
 \item{use_Rcpp}{default is 0: use no Rcpp. Value 1 = use Rcpp for the tree
 likelihood, value 2 = use Rcpp for the tree likelihood AND the ODEs along

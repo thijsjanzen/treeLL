@@ -9,6 +9,11 @@ Authors@R: c(
         email = "t.janzen@rug.nl",
         role = c("cre", "aut"),
         comment = c(ORCID = "0000-0002-4162-1140")),
+ person(given = "Ornela",
+           family = "Dehayem Nanwou",
+           email = "o.d.nanwou@rug.nl",
+           role = c("ctb"),
+           comment = c(ORCID = "0009-0009-0507-1215")),
  person(given = "Hanno",
         family = "Hildenbrandt",
         email = "h.hildenbrandt@rug.nl",
@@ -26,7 +31,6 @@ Suggests:
  secsse,
  DAISIE,
  testthat,
- knitr,
  rmarkdown
 LinkingTo: 
  Rcpp,
@@ -36,6 +40,4 @@ NeedsCompilation: yes
 SystemRequirements: C++17
 Encoding: UTF-8
 LazyData: true
-VignetteBuilder: knitr
 RoxygenNote: 7.3.2
-Roxygen: list(markdown = TRUE)

@@ -22,20 +22,20 @@ loglik_R_tree(
 \item{parameter}{list where first vector represents lambdas, the second
 mus and the third transition rates.}
 
-\item{phy}{phylogenetic tree of class \code{phylo}, rooted and with
+\item{phy}{phylogenetic tree of class `phylo`, rooted and with
 branch lengths. Alternatively, multiple phylogenetic trees can be provided
-as the \code{multiPhylo} class.}
+as the `multiPhylo` class.}
 
 \item{traits}{vector with trait states for each tip in the phylogeny. The
 order of the states must be the same as the tree tips. For help, see
-\code{vignette("starting_secsse", package = "secsse")}. When providing a
-\code{multiPhylo} set of multiple phylognies, traits should be a list where
+`vignette("starting_secsse", package = "secsse")`. When providing a
+`multiPhylo` set of multiple phylognies, traits should be a list where
 each entry in the list corresponds to the matching phylogeny on that
 position.}
 
 \item{sampling_fraction}{vector that states the sampling proportion per
 trait state. It must have as many elements as there are trait states. When
-using a \code{multiPhylo} object, sampling fraction should be list where each
+using a `multiPhylo` object, sampling fraction should be list where each
 entry in the list corresponds to the sampling proportion for each tree.}
 
 \item{num_hidden_states}{number of hidden states}
