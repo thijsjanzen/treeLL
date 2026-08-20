@@ -51,37 +51,55 @@ use_stationary_weights <- function(Q) {
 ################
 
 compute_mainland_stationary_weights <- function(stat_weights,
-                                     Mp,
-                                     M,
-                                     num_hidden_states) {
+                                                Mp,
+                                                M,
+                                                num_hidden_states) {
 
-  weights1 <- c()
+  # Number of mainland species with missing observed trait
+  M_NA <- M - sum(Mp)
+
+  # Empirical distribution across observed states
+  p <- Mp / sum(Mp)
+
+  # Allocate missing-trait species across observed states
+  effective_Mp <- Mp + M_NA * p
+
+  weights <- c()
 
   for (j in seq_along(Mp)) {
 
-    idx <- ((j - 1) * num_hidden_states + 1):(j * num_hidden_states)
+    idx <- ((j - 1) * num_hidden_states + 1):
+      (j * num_hidden_states)
 
+    # Stationary distribution within observed state j
     weights_j <- stat_weights[idx]
-    if (sum(weights_j) == 0){
 
-      weights_j <- weights_j
-    } else{
-      weights_j <- weights_j * (Mp[j] / M) / sum(weights_j)
+    if (sum(weights_j) == 0) {
 
+      # No stationary information for the hidden states:
+      # distribute uniformly among them
+      weights_j <- rep(
+        (effective_Mp[j] / M) / num_hidden_states,
+        num_hidden_states
+      )
+
+    } else {
+
+      # Normalize hidden-state stationary weights within observed state j
+      # and give the whole group its empirical observed-state mass
+      weights_j <-
+        weights_j / sum(weights_j) *
+        (effective_Mp[j] / M)
     }
-    weights1 <- c(weights1, weights_j)
+
+    weights <- c(weights, weights_j)
   }
 
-  weights1 <- weights1 / sum(weights1)
-
-  weights2 <- stat_weights * (1 - (sum(Mp) / M)) / sum(stat_weights)
-
-  weights <- weights1 + weights2
+  # Numerical safety
   weights <- weights / sum(weights)
 
   return(weights)
 }
-
 
 compute_likelihood_stationary_weights <- function(Lk_vec,
                                                 Mp,
