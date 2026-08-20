@@ -119,18 +119,24 @@ compute_mainland_weights <- function(Mp,
                                      M,
                                      num_hidden_states) {
 
-  weights1 <- c()
+  # Number of mainland species with missing trait information
+  M_NA <- M - sum(Mp)
 
-  for (j in seq_along(Mp)) {
+  # Empirical distribution among observed states
+  p <- Mp / sum(Mp)
 
-    weights_j <- rep((Mp[j] / M), num_hidden_states)
-    weights1 <- c(weights1, weights_j)
-  }
+  # Allocate species with missing traits according to p
+  effective_Mp <- Mp + M_NA * p
 
-  weights2 <- (1 - (sum(Mp) / M))
+  # Convert to probabilities across observed states
+  weights_observed <- effective_Mp / M
 
-  weights <- weights1 + weights2
-  weights <- weights / sum(weights)
+  # Distribute each observed-state probability equally
+  # among its hidden states
+  weights <- rep(
+    weights_observed / num_hidden_states,
+    each = num_hidden_states
+  )
 
   return(weights)
 }
