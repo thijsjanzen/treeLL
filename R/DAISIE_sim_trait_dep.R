@@ -92,6 +92,15 @@ DAISIE_sim_trait_dep <- function(time,
                                  num_observed_states,
                                  num_hidden_states) {
 
+
+  p <- trait_pars$p
+  n <- num_observed_states * num_hidden_states
+
+  # p must match q's dimensions, with the diagonal fixed at 1
+  if (!all(dim(p) == c(n, n))) {
+    stop("p must have the same dimensions as q")
+  }
+
   island_replicates <- vector("list", replicates)
   fail_idx  <- integer(0)
   fail_msg  <- character(0)
