@@ -219,12 +219,17 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
         if (length(island_spec_state1) > 0) {
           totrans <- DDD::sample2(island_spec_state1, 1)
           # optional: convert immigrant → endemic if p==1, etc.
-          if (p == 1 && island_spec[totrans,4] == "I") {
-            island_spec[totrans,4] <- "A"
+          totrans <- DDD::sample2(island_spec_state1, 1)
+          # transition (i + 1) -> j is accompanied by anagenesis
+          # with probability p[i + 1, j]
+          if (island_spec[totrans, 4] == "I" &&
+              stats::runif(1) < p[i + 1, j]) {
+            island_spec[totrans, 4] <- "A"
           }
           # finally update the trait
 
           island_spec[totrans,8] <- as.character(j)
+
         }
       }
     }

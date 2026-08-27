@@ -28,30 +28,36 @@ loglik_hidden_rhs <- function(t, state, parameter) {
                                  trait_mainland_ancestor,
                                  n)
 
+    # element-wise combination of p and q (p[i,j] always pairs with q[i,j])
+    pq  <- p * q
+    opq <- (1 - p) * q
+
     q_mult_E   <- t(q %*% E)
     q_mult_DE  <- t(q %*% DE)
     q_mult_DM3 <- t(q %*% DM3)
+    pq_mult_E    <- t(pq %*% E)
+    opq_mult_DM3 <- t(opq %*% DM3)
 
 
-    lambda_c_mu_t_vec_sum <- lambdac + mu + t_vec
-    E_sq <- E * E
 
-    dDE <- -(lambda_c_mu_t_vec_sum) * DE +
+
+    dDE <- -(lambdac + mu + t_vec) * DE +
       2 * lambdac * DE * E +
       q_mult_DE
 
-    dDM3 <-  -(lambda_c_mu_t_vec_sum + sum(dist_gamma) + lambdaa) * DM3 +
-      (mu + lambdaa * E + lambdac * E_sq + p * q_mult_E) * DA3 +
-      (1 - p) * q_mult_DM3 +
+    dDM3 <-  -(lambdac + mu + t_vec + sum(dist_gamma) + lambdaa) * DM3 +
+      (mu + lambdaa * E + lambdac * E * E + pq_mult_E) * DA3 +
+      opq_mult_DM3 +
       sum(dist_gamma * DM3)
 
-    dE <- mu - (lambda_c_mu_t_vec_sum) * E +
-      lambdac * E_sq +
+    dE <- mu - (lambdac + mu + t_vec) * E +
+      lambdac * E * E +
       q_mult_E
 
     dDA3 <- -sum(dist_gamma) * DA3 + sum(dist_gamma * DM3)
 
-    return(list(c(dDE, dDM3, dE, dDA3)))
+    return(list(c(dDE, dDM3, dE, dDA3))
+    )
   })
 }
 

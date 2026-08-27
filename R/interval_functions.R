@@ -176,9 +176,6 @@ interval2 <- function(t, state, parameter) {
     if (!all(dim(p) == dim(q))) {
       stop("p must have the same dimensions as q")
     }
-    if (!all(diag(p) == 1)) {
-      stop("the diagonal of p must be filled with 1")
-    }
 
     # element-wise combination of p and q (p[i,j] always pairs with q[i,j])
     pq  <- p * q
@@ -239,9 +236,6 @@ interval3 <- function(t, state, parameter) {
     # p must match q's dimensions, with the diagonal fixed at 1
     if (!all(dim(p) == dim(q))) {
       stop("p must have the same dimensions as q")
-    }
-    if (!all(diag(p) == 1)) {
-      stop("the diagonal of p must be filled with 1")
     }
 
     # element-wise combination of p and q (p[i,j] always pairs with q[i,j])
@@ -310,9 +304,6 @@ interval4 <- function(t, state, parameter) {
     # p must match q's dimensions, with the diagonal fixed at 1
     if (!all(dim(p) == dim(q))) {
       stop("p must have the same dimensions as q")
-    }
-    if (!all(diag(p) == 1)) {
-      stop("the diagonal of p must be filled with 1")
     }
 
     # element-wise combination of p and q (p[i,j] always pairs with q[i,j])
