@@ -342,3 +342,4 @@ interval4 <- function(t, state, parameter) {
     return(list(c(dDM1, dE, dDA1)))
   })
 }
+
