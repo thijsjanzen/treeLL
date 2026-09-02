@@ -12,7 +12,10 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
   n <- num_observed_states*num_hidden_states
   p <- trait_pars$p
 
-
+  # p must match q's dimensions, with the diagonal fixed at 1
+  if (!all(dim(p) == c(n, n))) {
+    stop("p must have the same dimensions as q")
+  }
   ##########################################
   #IMMIGRATION
   for (i in 0:(n - 1)) {
@@ -218,12 +221,8 @@ DAISIE_sim_mult_trait_update_state_CS <- function(timeval,
         island_spec_state1 <- which(island_spec[,8] == as.character(i+1))
         if (length(island_spec_state1) > 0) {
           totrans <- DDD::sample2(island_spec_state1, 1)
-          # optional: convert immigrant → endemic if p==1, etc.
-          totrans <- DDD::sample2(island_spec_state1, 1)
-          # transition (i + 1) -> j is accompanied by anagenesis
-          # with probability p[i + 1, j]
-          if (island_spec[totrans, 4] == "I" &&
-              stats::runif(1) < p[i + 1, j]) {
+          # transition (i + 1) -> j is accompanied by anagenesis when p[i + 1, j] == 1
+          if (island_spec[totrans, 4] == "I" && p[i + 1, j] == 1) {
             island_spec[totrans, 4] <- "A"
           }
           # finally update the trait

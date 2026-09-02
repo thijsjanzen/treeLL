@@ -73,7 +73,7 @@
 #'                 trans_rate4 = 0.,
 #'                  K1 = Inf,
 #'                  K2 = Inf,
-#'                  p = 0)
+#'                  p = matrix(c(0, 1, 1, 0), nrow = 2))
 #' data <- DAISIE_sim_trait_dep (  time = 4,
 #'                         mainland = list(M1 = 100, M2 = 150),
 #'                         trait_pars = trait_pars,
