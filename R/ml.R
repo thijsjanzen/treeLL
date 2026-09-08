@@ -5,11 +5,6 @@
 #' The model includes parameters for cladogenesis, extinction, colonization, anagenesis, and state transitions.
 #' The optimization is done using the `treeLL::calc_ml` function.
 #'
-#' @usage
-#' calc_ml_trait_model(datalist, num_observed_states, num_hidden_states,
-#'                      idparslist, idparsopt, initvals2, idparsfix, parsfix,
-#'                      atol = 1e-11, rtol = 1e-11, num_threads = 8,
-#'                      verbose = TRUE, use_Rcpp = 2)
 #'
 #' @param datalist A list containing the data used for likelihood calculation.
 #' @param num_observed_states The number of observed trait states.
@@ -31,7 +26,7 @@
 #' }
 
 #' @param idparsopt A vector of integers specifying which parameters are to be optimized.
-#' @param initvals2 A numeric vector providing the initial values for the parameters to be optimized.
+#' @param initparsopt A numeric vector providing the initial values for the parameters to be optimized.
 #' @param idparsfix A vector of integers specifying which parameters are to be kept fixed.
 #' @param parsfix A vector of values corresponding to the fixed parameters specified in `idparsfix`.
 #' @param atol  A numeric specifying the absolute tolerance of integration.
@@ -58,65 +53,114 @@
 #'   \item `conv`: The convergence status of the optimization process.
 #' }
 #'
+#' @param cond conditioning on colonisation, passed on to the likelihood.
+#' @param tol tolerances of the optimisation, as c(reltolx, reltolf, abstolx).
+#' @param maxiter maximum number of iterations of the optimisation.
+#' @param optimmethod optimisation method, "simplex" (default) or "subplex".
+#' @param methode used integration method, default is ode45.
+#' @param rcpp_methode integration method used when integrating with Rcpp.
+#' @param num_cycles number of cycles of the optimisation.
+#' @param sampling either "rho" (the default), in which each colonist
+#' contributes the rho-sampling likelihood evaluated at its
+#' \code{sampling_fraction}, or "n", in which it instead contributes the
+#' n-sampling likelihood for its \code{missing_species}. Since
+#' \code{missing_species} is a single total that does not say which trait
+#' states the unsampled species are in, every split of that total over the
+#' observed states contributes and their likelihoods are added. The conversion
+#' is done by \code{DAISIE_DE_trait_n}, which differentiates the rho-sampling
+#' likelihood around rho = 1.
+#'
 #' @examples
 #' \dontrun{
 #' ############## Parameter Estimation
 #' ### Binary State Model without Hidden States
 #'
+#' data("Galapagos_datalist", package = "DAISIE")
+#' datalist <- Galapagos_datalist
+#'
+#' # Mainland species that never colonised, split over the observed trait
+#' # states, plus those whose trait state is unknown.
+#' datalist[[1]]$not_present_by_state <- rep(datalist[[1]]$not_present / 2, 2)
+#' datalist[[1]]$not_present_NA <- 0
+#'
+#' # Every colonist needs a phylogeny, the trait state of each sampled species
+#' # and the trait distribution of its mainland ancestor. It also needs a
+#' # sampling fraction per observed state (used when sampling = "rho") and the
+#' # total number of unsampled species (used when sampling = "n").
+#' for (i in 2:length(datalist)) {
+#'   datalist[[i]]$phylogeny <-
+#'     DDD::brts2phylo(datalist[[i]]$branching_times[-c(1, 2)])
+#'   datalist[[i]]$phylogeny$root.edge <- 0
+#'   num_tips <- length(datalist[[i]]$phylogeny$tip.label)
+#'   datalist[[i]]$traits <- sample(c(0, 1), size = num_tips, replace = TRUE)
+#'   datalist[[i]]$root_state <- c(0.5, 0.5)
+#'   datalist[[i]]$sampling_fraction <- rep(1, 2)
+#'   datalist[[i]]$missing_species <- 0
+#' }
+#'
 #' # Define the parameter list for the model
 #' idparslist <- list()
-#' idparslist[[1]] <- c(1, 1)  # lambda_c
+#' idparslist[[1]] <- c(1, 1)  # lambda_c, one per trait state
 #' idparslist[[2]] <- c(2, 2)  # mu
 #' idparslist[[3]] <- c(3, 3)  # gamma
 #' idparslist[[4]] <- c(4, 4)  # lambda_a
 #'
-#' # Transition matrix for the model (since there are two trait states)
+#' # Transition matrix for the model (since there are two trait states). The
+#' # diagonal keeps id 0, which is fixed at 0 below.
 #' idparslist[[5]] <- matrix(0, 2, 2)
 #' colnames(idparslist[[5]]) <- c("0", "1")
 #' rownames(idparslist[[5]]) <- colnames(idparslist[[5]])
-#'
-#' # Hidden state transitions (irrelevant here but kept for consistency)
 #' idparslist[[5]][1, 2] <- 5  # 0 -> 1
 #' idparslist[[5]][2, 1] <- 6  # 1 -> 0
-#' idparslist[[5]][1, 1] <- 7  # 0 -> 0
-#' idparslist[[5]][2, 2] <- 7  # 1 -> 1
 #'
-#' # Set p (parameter for anagenesis transition) not to be estimated
-#' idparslist[[6]] <- 8
+#' # p, the probability that a transition results in a new species. It must
+#' # have the same dimensions as the transition matrix.
+#' idparslist[[6]] <- matrix(7, 2, 2)
 #'
-#' # Parameters to optimize
-#' idparsopt <- 1:6
-#' idparsopt <- idparsopt[idparsopt > 0]  # We will optimize parameters 1 to 6
+#' # Parameters to optimize, and the ones that stay fixed. Every id used in
+#' # idparslist has to appear in exactly one of the two, id 0 included.
+#' idparsopt   <- 1:6
+#' initparsopt <- c(1.07, 1.0102, 0.0035, 0.174, 0.001, 0.001)
+#' idparsfix   <- c(0, 7)
+#' parsfix     <- c(0, 0)
 #'
-#' # Example of starting values for the optimization
-#' initvals2 <- c(1.07, 1.0102, 0.0035, 0.174, 1, 1)
+#' # Run the ML estimation with the provided dataset. use_Rcpp = 0 is needed
+#' # while p is a matrix, because cpp_solve still takes a scalar p.
+#' ml_rho <- treeLL::calc_ml(datalist,
+#'                           num_observed_states = 2,
+#'                           num_hidden_states = 1,
+#'                           idparslist = idparslist,
+#'                           idparsopt = idparsopt,
+#'                           initparsopt = initparsopt,
+#'                           idparsfix = idparsfix,
+#'                           parsfix = parsfix,
+#'                           atol = 1e-12,
+#'                           rtol = 1e-12,
+#'                           num_threads = 8,
+#'                           verbose = TRUE,
+#'                           use_Rcpp = 0,
+#'                           sampling = "rho")
 #'
-#' # Preparing the parameter optimization values
-#' initparsopt <- initvals2
-#' idparsfix = c(0, 7, 8) # We will not optimize parameters 1 to 6
-#' parsfix <- c(0, 0, 0)  # Fixed parameter, qs and p not to be estimated
-#' trparsopt <- initparsopt / (1 + initparsopt)
-#' trparsopt[which(initparsopt == Inf)] <- 1
-#' trparsfix <- parsfix / (1 + parsfix)
-#' trparsfix[which(parsfix == Inf)] <- 1
-#'
-#' # Run the ML estimation with the provided dataset
-#' ml_estimates <- treeLL::calc_ml(datalist,
-#'                                 num_observed_states = 2,
-#'                                 num_hidden_states = 1,
-#'                                 idparslist = idparslist,
-#'                                 idparsopt = idparsopt,
-#'                                 initparsopt = initvals2,
-#'                                 idparsfix = idparsfix,
-#'                                 parsfix = parsfix,
-#'                                 atol = 1e-15,
-#'                                 rtol = 1e-15,
-#'                                 num_threads = 8,
-#'                                 verbose = TRUE,
-#'                                 use_Rcpp = 2)
+#' # The same fit, but with the missing species given per observed trait state
+#' # instead of a sampling fraction.
+#' ml_n <- treeLL::calc_ml(datalist,
+#'                         num_observed_states = 2,
+#'                         num_hidden_states = 1,
+#'                         idparslist = idparslist,
+#'                         idparsopt = idparsopt,
+#'                         initparsopt = initparsopt,
+#'                         idparsfix = idparsfix,
+#'                         parsfix = parsfix,
+#'                         atol = 1e-12,
+#'                         rtol = 1e-12,
+#'                         num_threads = 8,
+#'                         verbose = TRUE,
+#'                         use_Rcpp = 0,
+#'                         sampling = "n")
 #'
 #' # View the results
-#' print(ml_estimates)
+#' print(ml_rho)
+#' print(ml_n)
 #' }
 #'
 #'
@@ -142,7 +186,8 @@ calc_ml <- function(datalist,
                     num_threads = 1,
                     atol = 1e-15,
                     rtol = 1e-15,
-                    use_Rcpp = 0
+                    use_Rcpp = 0,
+                    sampling = "rho"
 ) {
   if (identical(as.numeric(sort(c(idparsopt, idparsfix))),
                 as.numeric(sort(unique(unlist(idparslist))))) == FALSE) {
@@ -174,7 +219,8 @@ calc_ml <- function(datalist,
                                  rcpp_methode = rcpp_methode,
                                  verbose = verbose,
                                  use_Rcpp = use_Rcpp,
-                                 num_threads = num_threads)
+                                 num_threads = num_threads,
+                                 sampling = sampling)
   # Function here
   if (verbose) print_init_ll(initloglik = initloglik)
 
@@ -202,7 +248,8 @@ calc_ml <- function(datalist,
                           rcpp_methode = rcpp_methode,
                           verbose = verbose,
                           use_Rcpp = use_Rcpp,
-                          num_threads = num_threads)
+                          num_threads = num_threads,
+                          sampling = sampling)
     if (out$conv != 0) {
       stop("Optimization has not converged.
                  Try again with different initial values.")
@@ -248,6 +295,7 @@ loglik_choosepar <- function(trparsopt,
                              rcpp_methode,
                              verbose,
                              use_Rcpp,
+                             sampling = "rho",
                              num_threads) {
   alltrpars <- c(trparsopt, trparsfix)
 
@@ -272,7 +320,8 @@ loglik_choosepar <- function(trparsopt,
                                         cond = cond,
                                         verbose = verbose,
                                         use_Rcpp = use_Rcpp,
-                                        num_threads = num_threads)
+                                        num_threads = num_threads,
+                                        sampling = sampling)
 
     if (is.nan(loglik) || is.na(loglik)) {
       warning("There are parameter values used which cause
