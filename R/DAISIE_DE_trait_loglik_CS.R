@@ -141,31 +141,16 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
         clade_args[names(clade_args) %in% names(formals(logp_function))])
     } else {
       # n-sampling: the numbers of unsampled species per observed trait state
-      # come straight from the datalist and replace the sampling fractions;
+      # come straight from the datalist and replace the sampling fractions.
       # DAISIE_DE_trait_n differentiates the rho-sampling likelihood to get
       # there, and supplies 'traits' itself under whichever name
-      # logp_function uses.
-      #
-      # The only thing summed over here is the trait state of a sampled
-      # species recorded as NA, which is a genuine unknown with disjoint
-      # outcomes. Doing that here, rather than passing NA down, also keeps the
-      # conversion away from the is.na(trait) initial conditions, which are
-      # discontinuous at rho = 1 and so cannot be expanded around.
-      missnumspec <- datalist[[i]]$missing_species
-      assignments <- trait_assignments(traits = traits,
-                                       num_observed_states =
-                                         num_observed_states,
-                                       i = i)
-      n_args <- clade_args[names(clade_args) != "trait"]
-      logliks <- numeric(length(assignments))
-      for (k in seq_along(assignments)) {
-        n_args$traits <- assignments[[k]]
-        logliks[k] <- do.call(
-          DAISIE_DE_trait_n,
-          c(list(DAISIE_DE_trait_function = logp_function,
-                 missnumspec = missnumspec), n_args))$loglik
-      }
-      loglikelihood <- list(loglik = log_sum_exp(logliks))
+      # logp_function uses - hence dropping the singular 'trait' first, so it
+      # is not passed twice.
+      loglikelihood <- do.call(
+        DAISIE_DE_trait_n,
+        c(list(DAISIE_DE_trait_function = logp_function,
+               missnumspec = datalist[[i]]$missing_species),
+          clade_args[names(clade_args) != "trait"]))
     }
 
     vec_loglikelihood[i - 1] <- loglikelihood$loglik
@@ -175,4 +160,3 @@ DAISIE_DE_trait_loglik_CS <- function( parameter,
   return(loglik)
 
 }
-
