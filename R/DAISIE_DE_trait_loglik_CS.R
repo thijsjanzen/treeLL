@@ -58,7 +58,7 @@ DAISIE_DE_trait_loglik_CS <- function(
       trait_mainland_ancestor = NA,
       methode = methode,
       use_Rcpp = use_Rcpp
-    )$loglik
+    )
 
     if (is.null(datalist[[1]]$not_present)) {
 
